@@ -1,22 +1,28 @@
 {
   "name": "bookwerx-core-express",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A double-entry bookkeeping engine that supports multiple currencies written using express.",
   "main": "app.js",
   "scripts": {
-    "test": "test.js",
+    "test": "mocha",
     "start": "node app.js"
   },
   "keywords": [
-    "bookkeeping","bookwerx","multi-currency"
+    "bookkeeping",
+    "bookwerx",
+    "multi-currency"
   ],
   "author": "http://github.com/bostontrader",
   "license": "MIT",
   "dependencies": {
     "express": "4.13.4",
+    "morgan": "1.7.0",
     "mysql": "2.10.2"
   },
   "devDependencies": {
-    "mocha": "2.5.1"
+    "chai": "3.5.0",
+    "cheerio": "0.20.0",
+    "mocha": "2.5.1",
+    "supertest": "1.2.0"
   }
 }
