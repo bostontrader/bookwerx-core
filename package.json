@@ -1,6 +1,6 @@
 {
   "name": "bookwerx-core-express",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "A double-entry bookkeeping engine that supports multiple currencies written using express.",
   "main": "app.js",
   "scripts": {
