@@ -2,14 +2,14 @@ var app = require("../app");
 
 var supertest = require("supertest");
 
-var currencies;
+var categories;
 
-describe("tests basic CRUD for Currencies", function() {
+describe("tests basic CRUD for Categories", function() {
 
-    describe("tests delete all currencies",function() {
-        it("gets the collection of all currencies", function(done) {
+    describe("tests delete all categories",function() {
+        it("gets the collection of all categories", function(done) {
             supertest(app)
-                .get("/currencies")
+                .get("/categories")
                 .set("Accept", "application/json")
                 .expect(200)
                 .expect("Content-Type", /application\/json/)
@@ -17,9 +17,9 @@ describe("tests basic CRUD for Currencies", function() {
                 .end(done);
         });
 
-        it("deletes all currencies, if any", function(done) {
+        it("deletes all categories, if any", function(done) {
 
-            for (let currency of currencies) {
+            for (let currency of categories) {
                 // delete currencyrequest(app)
                 //.get('/')
             }
@@ -28,9 +28,9 @@ describe("tests basic CRUD for Currencies", function() {
 
         });
 
-        it("ensures zero currencies remaining", function(done) {
+        it("ensures zero categories remaining", function(done) {
             supertest(app)
-                .get("/currencies")
+                .get("/categories")
                 .set("Accept", "application/json")
                 .expect(200)
                 .expect("Content-Type", /application\/json/)
@@ -44,7 +44,7 @@ describe("tests basic CRUD for Currencies", function() {
         // This should just fail.  Don't worry about the exact error message.
         it("POSTs a record with missing title and fails", function(done) {
             supertest(app)
-                .post("/currencies") // by default, application/x-www-form-urlencoded
+                .post("/categories") // by default, application/x-www-form-urlencoded
                 .send("symbol=sym")
                 .set("Accept", "application/json")
                 .expect(200)
@@ -56,7 +56,7 @@ describe("tests basic CRUD for Currencies", function() {
         // This should just fail.  Don't worry about the exact error message.
         it("POSTs a record with missing symbol and fails", function(done) {
             supertest(app)
-                .post("/currencies") // by default, application/x-www-form-urlencoded
+                .post("/categories") // by default, application/x-www-form-urlencoded
                 .send("title=example title")
                 .set("Accept", "application/json")
                 .expect(200)
@@ -67,7 +67,7 @@ describe("tests basic CRUD for Currencies", function() {
 
         it("POSTs a good record and succeeds", function(done) {
             supertest(app)
-                .post("/currencies") // by default, application/x-www-form-urlencoded
+                .post("/categories") // by default, application/x-www-form-urlencoded
                 .send("symbol=sym")
                 .send("title=example title")
                 .set("Accept", "application/json")
@@ -80,7 +80,7 @@ describe("tests basic CRUD for Currencies", function() {
         // This should just fail.  Don't worry about the exact error message.
         it("POSTs a record with duplicate symbol and fails", function(done) {
             supertest(app)
-                .post("/currencies") // by default, application/x-www-form-urlencoded
+                .post("/categories") // by default, application/x-www-form-urlencoded
                 .send("symbol=sym")
                 .send("title=example title")
                 .set("Accept", "application/json")
@@ -96,7 +96,7 @@ describe("tests basic CRUD for Currencies", function() {
 
         it("PUTs a good record and succeeds", function(done) {
             supertest(app)
-                .put("/currencies/1") // by default, application/x-www-form-urlencoded
+                .put("/categories/1") // by default, application/x-www-form-urlencoded
                 .send("symbol=sym")
                 .send("title=title")
                 .set("Accept", "application/json")
@@ -114,7 +114,7 @@ describe("tests basic CRUD for Currencies", function() {
 });
 
 function hasZeroRecords(res) {
-    cnt=JSON.parse(res.text).currencies.length;
+    cnt=JSON.parse(res.text).categories.length;
     if (cnt != 0) throw new Error("There should not be any remaining records.");
 }
 
@@ -122,7 +122,7 @@ function hasZeroOrMoreRecords(res) {
     // If this line executes successfully then we know
     // that there's no error and that we have an array
     // of 0 or more currency records.
-    currencies = JSON.parse(res.text).currencies;
+    categories = JSON.parse(res.text).categories;
 }
 
 function JSONError(res) {

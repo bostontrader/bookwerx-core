@@ -1,28 +1,28 @@
 module.exports = function(app, connection) {
 
-    app.get("/currencies", function (req, res) {
+    app.get("/categories", function (req, res) {
 
-        var rows = connection.query("select id, symbol, title from currencies", function (err, rows, fields) {
+        var rows = connection.query("select id, symbol, title from categories", function (err, rows, fields) {
             if (err)
                 res.json({"error":JSON.stringify(err)});
             else {
-                var j = {"currencies": []};
+                var j = {"categories": []};
                 for (let row of rows) {
                     var newRow = {
                         "id": row.id,
                         "symbol": row.symbol,
                         "title": row.title
                     };
-                    j.currencies.push(newRow);
+                    j.categories.push(newRow);
                 }
                 res.json(j);
             }
         });
     });
 
-    app.get("/currencies/:id", function (req, res) {
+    app.get("/categories/:id", function (req, res) {
         var id = parseInt(req.params.id);
-        var query = "select id, symbol, title from currencies where id=? limit 1";
+        var query = "select id, symbol, title from categories where id=? limit 1";
 
         var rows = connection.query(query, [connection.escape(id)], function (err, rows, fields) {
             if (err) {
@@ -40,7 +40,7 @@ module.exports = function(app, connection) {
 
     // By default, MySQL does not allow null values in fields so all of
     // the fields of this record are required.
-    app.post("/currencies", function(req, res) {
+    app.post("/categories", function(req, res) {
 
         var title = req.body.title;
         //if(title) title=connection.escape(title);
@@ -48,7 +48,7 @@ module.exports = function(app, connection) {
         var symbol = req.body.symbol;
         //if(symbol) symbol = connection.escape(symbol);
 
-        var query = "INSERT INTO currencies (title, symbol) VALUES (?, ?)";
+        var query = "INSERT INTO categories (title, symbol) VALUES (?, ?)";
 
         // This does the escaping for us
         var rows = connection.query(query, [title,symbol], function (err, rows, fields) {
@@ -61,7 +61,7 @@ module.exports = function(app, connection) {
 
     // By default, MySQL does not allow null values in fields so all of
     // the fields of this record are required.
-    app.put("/currencies/:id", function(req, res) {
+    app.put("/categories/:id", function(req, res) {
         var id = parseInt(req.params.id);
         escape=[];
 
@@ -83,7 +83,7 @@ module.exports = function(app, connection) {
         }
 
         // id is already essentially escaped by parseInt ???
-        var query = "UPDATE currencies SET " + sett + " where id="+id;
+        var query = "UPDATE categories SET " + sett + " where id="+id;
 
         // We have to do the escaping manually because otherwise we get
         // parse errors.

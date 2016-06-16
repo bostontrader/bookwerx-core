@@ -44,6 +44,9 @@ app.post("/brainwipe", function(req, res) {
 var currencies_routes = require("./currencies");
 currencies_routes(app, dbConnection);
 
+var categories_routes = require("./categories");
+categories_routes(app, dbConnection);
+
 app.listen(app.get("port"), function() {
     console.log("App started on port " + app.get("port"));
 });
