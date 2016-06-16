@@ -2,21 +2,21 @@ module.exports = function(app, connection) {
 
     app.get("/currencies", function (req, res) {
 
-        var query = "select id, symbol, title from currencies";
-
-        var rows = connection.query(query, function (err, rows, fields) {
-            //if (err)  //throw err;
-            //else {
-            var j={"currencies":[]};
-            for (let row of rows) {
-                var newRow={
-                    "id":row.id,
-                    "symbol":row.symbol,
-                    "title":row.title
-                };
-                j.currencies.push(newRow);
+        var rows = connection.query("select id, symbol, title from currencies", function (err, rows, fields) {
+            if (err)
+                res.json({"error":JSON.stringify(err)});
+            else {
+                var j = {"currencies": []};
+                for (let row of rows) {
+                    var newRow = {
+                        "id": row.id,
+                        "symbol": row.symbol,
+                        "title": row.title
+                    };
+                    j.currencies.push(newRow);
+                }
+                res.json(j);
             }
-            res.json(j);
         });
     });
 
@@ -26,20 +26,64 @@ module.exports = function(app, connection) {
 
         var rows = connection.query(query, [connection.escape(id)], function (err, rows, fields) {
             if (err) {
-
-                i = 0; //throw err;
+                res.json({"error":JSON.stringify(err)});
             } else {
-                //var j={"currencies":[]};
-                //for (let row of rows) {
                 var newRow = {
                     "id": rows[0].id,
                     "symbol": rows[0].symbol,
                     "title": rows[0].title
                 };
-                //j.currencies.push(newRow);
-                //}
                 res.json(newRow);
             }
         });
     });
+
+    // By default, MySQL does not allow null values in fields so all of
+    // the fields of this record are required.
+    app.post("/currencies", function(req, res) {
+
+        var title = connection.escape(req.body.title);
+        var symbol = connection.escape(req.body.symbol);
+        var query = "INSERT INTO currencies (title, symbol) VALUES (?, ?)";
+
+        var rows = connection.query(query, [title,symbol], function (err, rows, fields) {
+            if (err)
+                res.json({"error": JSON.stringify(err)});
+            else
+                res.json({"result": "ok"});
+        });
+    });
+
+    // By default, MySQL does not allow null values in fields so all of
+    // the fields of this record are required.
+    app.put("/currencies/:id", function(req, res) {
+        var id = parseInt(req.params.id);
+        escape=[];
+
+        var sett = "";
+        var symbol = req.body.symbol;
+        var comma = "";
+        if(symbol) {
+            sett = "symbol=?" + sett;
+            escape.unshift(symbol);
+            comma = ",";
+        }
+
+        var title = req.body.title;
+        if(title) {
+            sett = "title=?" + comma + sett;
+            escape.unshift(title);
+        }
+
+        // id is already essentially escaped by parseInt ???
+        var query = "UPDATE currencies SET " + sett + " where id="+id;
+
+        var rows = connection.query(query, [escape], function (err, rows, fields) {
+            if (err)
+                res.json({"error": JSON.stringify(err)});
+            else
+                res.json({"result": "ok"});
+        });
+    });
+
 }

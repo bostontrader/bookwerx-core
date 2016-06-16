@@ -52,3 +52,14 @@ Although the actual dr and cr numbers will no longer "balance", if we consider
 them to be equivalent amounts then we can compute exchange rate information.
 This however is a job for other packages such as [bookwerx-reporting](http://github.com/bostontrader/bookwerx-reporting).
 
+##API Notes
+1. All API calls return JSON.
+2. Any call that returns JSON containing a key
+entitled 'error' did not succeed.  Please scrutinize the
+value of 'error' for clues about the problem.
+3. Any GET that is successful will return what you expect.
+4. Any call that is _not_ GET and _is_ successful will
+return
+Any API call will return {"result":"ok"}
+##Misc Notes
+https://github.com/felixge/node-mysql
