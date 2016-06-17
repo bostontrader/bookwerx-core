@@ -43,10 +43,7 @@ module.exports = function(app, connection) {
     app.post("/currencies", function(req, res) {
 
         var title = req.body.title;
-        //if(title) title=connection.escape(title);
-
         var symbol = req.body.symbol;
-        //if(symbol) symbol = connection.escape(symbol);
 
         var query = "INSERT INTO currencies (title, symbol) VALUES (?, ?)";
 
