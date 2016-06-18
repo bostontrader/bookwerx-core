@@ -41,9 +41,7 @@ module.exports = function(app, connection) {
     app.post("/accounts", function(req, res) {
 
         var title = req.body.title;
-        //if(title) title=connection.escape(title);
-
-        var query = "INSERT INTO accounts (title) VALUES (?, ?)";
+        var query = "INSERT INTO accounts (title) VALUES (?)";
 
         // This does the escaping for us
         var rows = connection.query(query, [title], function (err, rows, fields) {

@@ -4,40 +4,7 @@ var supertest = require("supertest");
 
 var accounts;
 
-describe("tests basic CRUD for Currencies", function() {
-
-    describe("tests delete all accounts",function() {
-        it("gets the collection of all accounts", function(done) {
-            supertest(app)
-                .get("/accounts")
-                .set("Accept", "application/json")
-                .expect(200)
-                .expect("Content-Type", /application\/json/)
-                .expect(hasZeroOrMoreRecords)
-                .end(done);
-        });
-
-        it("deletes all accounts, if any", function(done) {
-
-            for (let currency of accounts) {
-                // delete currencyrequest(app)
-                //.get('/')
-            }
-
-            done();
-
-        });
-
-        it("ensures zero accounts remaining", function(done) {
-            supertest(app)
-                .get("/accounts")
-                .set("Accept", "application/json")
-                .expect(200)
-                .expect("Content-Type", /application\/json/)
-                .expect(hasZeroRecords)
-                .end(done);
-        });
-    });
+describe("tests basic CRUD for Accounts", function() {
 
     describe("try to POST a new record",function() {
 
@@ -56,7 +23,6 @@ describe("tests basic CRUD for Currencies", function() {
         it("POSTs a good record and succeeds", function(done) {
             supertest(app)
                 .post("/accounts") // by default, application/x-www-form-urlencoded
-                //.send("symbol=sym")
                 .send("title=example title")
                 .set("Accept", "application/json")
                 .expect(200)

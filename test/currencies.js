@@ -6,39 +6,6 @@ var currencies;
 
 describe("tests basic CRUD for Currencies", function() {
 
-    describe("tests delete all currencies",function() {
-        it("gets the collection of all currencies", function(done) {
-            supertest(app)
-                .get("/currencies")
-                .set("Accept", "application/json")
-                .expect(200)
-                .expect("Content-Type", /application\/json/)
-                .expect(hasZeroOrMoreRecords)
-                .end(done);
-        });
-
-        it("deletes all currencies, if any", function(done) {
-
-            for (let currency of currencies) {
-                // delete currencyrequest(app)
-                //.get('/')
-            }
-
-            done();
-
-        });
-
-        it("ensures zero currencies remaining", function(done) {
-            supertest(app)
-                .get("/currencies")
-                .set("Accept", "application/json")
-                .expect(200)
-                .expect("Content-Type", /application\/json/)
-                .expect(hasZeroRecords)
-                .end(done);
-        });
-    });
-
     describe("try to POST a new record",function() {
 
         // This should just fail.  Don't worry about the exact error message.

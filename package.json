@@ -4,7 +4,7 @@
   "description": "A double-entry bookkeeping engine that supports multiple currencies written using express.",
   "main": "app.js",
   "scripts": {
-    "test": "mocha",
+    "test": "node $NODE_DEBUG_OPTION ./node_modules/mocha/bin/mocha",
     "start": "node app.js"
   },
   "keywords": [

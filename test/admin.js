@@ -2,9 +2,15 @@ var app = require("../app");
 
 var supertest = require("supertest");
 
-describe("brainwipe", function() {
+// In order to determine the quantity of records in a response, in an
+// assertion function, we need to use a table name.  I don't know how to
+// pass this name directly to the assertion function, so make this variable
+// mutually visible to the caller and assertion function.
+var tableName;
 
-    it("POSTs the brainwipe command", function(done) {
+describe.only("brainwipe", function() {
+
+    it("POST brainwipe", function(done) {
         supertest(app)
             .post("/brainwipe")
             .set("Accept", "application/json")
@@ -15,25 +21,32 @@ describe("brainwipe", function() {
     });
 
     it("Verifies the erasure of the db", function(done) {
-        supertest(app)
-            .get("/categories")
-            .set("Accept", "application/json")
-            .expect(200)
-            .expect("Content-Type", /application\/json/)
-            .expect(hasZeroRecords);
 
-        supertest(app)
-            .get("/currencies")
-            .set("Accept", "application/json")
-            .expect(200)
-            .expect("Content-Type", /application\/json/)
-            .expect(hasZeroRecords)
-            .end(done);
+        function examineOneTable(st, tn) {
+
+            tableName = tn;
+
+            return st
+                .get("/" + tableName)
+                .set("Accept", "application/json")
+                .expect(200)
+                .expect("Content-Type", /application\/json/)
+                .expect(hasZeroRecords);
+        }
+
+        examineOneTable(supertest(app), "accountss");
+        // accounts_categories is not publicly visible
+        examineOneTable(supertest(app), "categories");
+        examineOneTable(supertest(app), "currencies");
+        examineOneTable(supertest(app), "distributions");
+        examineOneTable(supertest(app), "transactions").end(done);
     });
 
+
     function hasZeroRecords(res) {
-        cnt=JSON.parse(res.text).currencies.length;
-        if (cnt != 0) throw new Error("There should not be any remaining records.");
+        var j = JSON.parse(res.text);
+        var cnt = j[tableName].length;
+        if (cnt != 0) throw new Error("There should not be any remaining " + tableName + " records.");
     }
 
     function JSONResponseOK(res) {

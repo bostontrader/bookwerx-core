@@ -36,24 +36,25 @@ app.post("/brainwipe", function(req, res) {
 
     // Be careful to list these in the order of deletion, in order to keep
     // the constraints happy
-    var queries = [
-        "delete from distributions",
-        "delete from transactions",
-        "delete from currencies",
-        "delete from accounts_categories",
-        "delete from accounts",
-        "delete from categories"
-    ];
+    dbConnection.query("delete from distributions", function (err, rows, fields) {
+        if (err) res.json({"error":JSON.stringify(err)})});
 
-    for(let query in queryies) {
-        dbConnection.query(query, function (err, rows, fields) {
-            if (err)
-                res.json({"error":JSON.stringify(err)});
-        });
-    }
+    dbConnection.query("delete from transactions", function (err, rows, fields) {
+        if (err) res.json({"error":JSON.stringify(err)})});
+
+    dbConnection.query("delete from currencies", function (err, rows, fields) {
+        if (err) res.json({"error":JSON.stringify(err)})});
+
+    dbConnection.query("delete from accounts_categories", function (err, rows, fields) {
+        if (err) res.json({"error":JSON.stringify(err)})});
+
+    dbConnection.query("delete from accounts", function (err, rows, fields) {
+        if (err) res.json({"error":JSON.stringify(err)})});
+
+    dbConnection.query("delete from categories", function (err, rows, fields) {
+        if (err) res.json({"error":JSON.stringify(err)})});
 
     res.json({"result":"ok"});
-
 });
 
 var accounts_routes = require("./accounts");
