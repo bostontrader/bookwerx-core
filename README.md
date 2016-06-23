@@ -24,6 +24,17 @@ perhaps you can benefit from using [bookwerx-core-express](http://github.com/bos
 This package is composed of a server written using
 Javascript/express and operates on a MySQL db.
 
+##Getting Started
+
+1. You will need node and npm.
+
+2. You will probably want git also.
+
+3. git clone https://github.com/bostontrader/bookwerx-core-express.git
+
+4. From inside the bookwerx-core-express directory: npm install
+
+
 ##Multi-Currencies
 
 This package enables the user to maintain a list of currencies relevant to their app.
@@ -61,5 +72,7 @@ value of 'error' for clues about the problem.
 4. Any call that is _not_ GET and _is_ successful will
 return
 Any API call will return {"result":"ok"}
+
+
 ##Misc Notes
 https://github.com/felixge/node-mysql
