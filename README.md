@@ -30,9 +30,16 @@ Javascript/express and operates on a MySQL db.
 
 2. You will probably want git also.
 
-3. git clone https://github.com/bostontrader/bookwerx-core-express.git
+3. You will need mysql.
+  * Install using a method of your choice, such as perhaps [lemp](http://github.com/bostontrader/lemp)
+  * Establish a suitable schema.
+  * Import seed.sql into the schema.  This is all structure and no data.
 
-4. From inside the bookwerx-core-express directory: npm install
+4. Modify database.js to point to contain the actual credentials for your db.
+
+5. git clone https://github.com/bostontrader/bookwerx-core-express.git
+
+6. From inside the bookwerx-core-express directory: npm install
 
 
 ##Multi-Currencies
