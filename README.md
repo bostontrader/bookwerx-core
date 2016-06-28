@@ -1,7 +1,12 @@
 #Introduction
 
-The purpose of this package is to provide an API that supports multi-currency
- bookkeeping, using the good-ole double-entry model.
+The purpose of **bookwerx-core** is to provide an API that supports multi-currency
+ bookkeeping, using the good-ole double-entry model, slightly adapted to squeeze 
+ in multiple currencies.  It uses [node](https://nodejs.org), [express](http://expressjs.com/), and [mongodb](https://www.mongodb.com/).
+
+Any application that deals with "money" (fiat, precious metals, cryptocoins) will
+quickly encounter the need for bookkeeping.  Rolling your own methods are as usual,
+ easier said than done, so perhaps  you can save yourself some grief and enjoy **bookwerx-core** instead.
 
 With this API, the user can:
 
@@ -14,32 +19,25 @@ such as accounts and transactions.
 
 This API is the minimum necessary to populate your db with bookkeeping information,
 ensure that it is internally consistent, and nuke it from orbit and start over if necessary.
-More sophisticated analysis, such as the production of financial reports is the
-job for other packages such as [bookwerx-reporting](http://github.com/bostontrader/bookwerx-reporting).
 
-Any application that deals with "money" (fiat, precious metals, cryptocoins) will
-quickly encounter the need for bookkeeping.  Rolling your own methods are as usual, easier said than done, so
-perhaps you can benefit from using [bookwerx-core-express](http://github.com/bostontrader/bookwerx-core-express).
+A package that provides a web-based front-end using Angular 2 can be found at [bookwerx-ui]
+(http://github.com/bostontrader/bookwerx-reporting) and for more sophisticated analysis, 
+such as the production of financial reports and graphing, please see 
+ [bookwerx-reporting](http://github.com/bostontrader/bookwerx-reporting).
 
-This package is composed of a server written using
-Javascript/express and operates on a MySQL db.
+
 
 ##Getting Started
 
 1. You will need node and npm.
 
-2. You will probably want git also.
+2. You will need git.
 
-3. You will need mysql.
-  * Install using a method of your choice, such as perhaps [lemp](http://github.com/bostontrader/lemp)
-  * Establish a suitable schema.
-  * Import seed.sql into the schema.  This is all structure and no data.
+3. You will need mongodb.
 
-4. Modify database.js to point to contain the actual credentials for your db.
+4. git clone https://github.com/bostontrader/bookwerx-core-express.git
 
-5. git clone https://github.com/bostontrader/bookwerx-core-express.git
-
-6. From inside the bookwerx-core-express directory: npm install
+5. From inside the bookwerx-core-express directory: npm install
 
 
 ##Multi-Currencies
@@ -58,9 +56,9 @@ crediting the other.
 ##Data Analysis
 
 As mentioned earlier, this package merely records the basic bookkeeping objects.
-More sophisticated analysis usually belongs in other packages such as
-[bookwerx-reporting](http://github.com/bostontrader/bookwerx-reporting).  What actually happened (the transactions) belong here.
-What does any of this mean belongs elsewhere.
+More sophisticated analysis belongs in other packages such as
+[bookwerx-reporting](http://github.com/bostontrader/bookwerx-reporting).  "What actually happened" (the transactions) belong here.
+But "what does any of this mean" belongs elsewhere.
 
 The ordinary debits==credits rule applies for any transaction that only deals
  with a single currency.  That is a consistency check that belongs with this package.
@@ -77,9 +75,4 @@ entitled 'error' did not succeed.  Please scrutinize the
 value of 'error' for clues about the problem.
 3. Any GET that is successful will return what you expect.
 4. Any call that is _not_ GET and _is_ successful will
-return
-Any API call will return {"result":"ok"}
-
-
-##Misc Notes
-https://github.com/felixge/node-mysql
+return {"result":"ok"}
