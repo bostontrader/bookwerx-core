@@ -15,7 +15,7 @@ let mongoURL = 'mongodb://localhost:27017/bookwerx-test'
 
 app.use(bodyParser.urlencoded())
 
-app.set("port", process.env.PORT || 3006)
+app.set("port", process.env.PORT || 3001)
 
 // Connect to the mongo server...
 MongoClient.connect(mongoURL).then(function resolve(mongoDb){

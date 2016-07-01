@@ -21,9 +21,11 @@ module.exports = function(app, db) {
     })
 
     app.post("/accounts", function(req, res) {
+        //let newId=new ObjectId()
         db.collection('accounts').insertOne({title: req.body.title})
             .then(function resolve(result){
-                res.json({"result": "ok"})
+                //result.newId=newId.toString()
+                res.json({"result": result.ops})
             }).catch(function reject(error){
                 console.log(error)
                 res.json({"error": error})

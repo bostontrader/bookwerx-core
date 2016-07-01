@@ -10,7 +10,10 @@
   "keywords": [
     "bookkeeping",
     "bookwerx",
-    "multi-currency","node","express","mongodb"
+    "multi-currency",
+    "node",
+    "express",
+    "mongodb"
   ],
   "author": "http://github.com/bostontrader",
   "license": "MIT",
@@ -18,7 +21,8 @@
     "body-parser": "1.15.2",
     "express": "4.13.4",
     "mongodb": "2.1.18",
-    "morgan": "1.7.0"
+    "morgan": "1.7.0",
+    "superagent-as-promised": "4.0.0"
   },
   "devDependencies": {
     "chai": "3.5.0",

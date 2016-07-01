@@ -1,78 +1,69 @@
-var app = require("../app");
+'use strict'
 
-var supertest = require("supertest");
+let assert = require('chai').assert
+let superagent = require('superagent');
+require('superagent-as-promised')(superagent);
 
-var accounts;
+describe.only("Test basic CRUD for Accounts", function() {
 
-describe("tests basic CRUD for Accounts", function() {
+    it("Test basic CRUD for Accounts", done=> {
 
-    describe("try to POST a new record",function() {
+        let firstNewRecord = {'title':'first new title'}
+        let updatedRecord = {'title':'updated title'}
+        let firstNewId
+        let urlBase = "localhost:3001"
 
-        // This should just fail.  Don't worry about the exact error message.
-        it("POSTs a record with missing title and fails", function(done) {
-            supertest(app)
-                .post("/accounts") // by default, application/x-www-form-urlencoded
-                //.send("symbol=sym")
-                .set("Accept", "application/json")
-                .expect(200)
-                .expect("Content-Type", /application\/json/)
-                .expect(JSONError)
-                .end(done);
-        });
+        // 1. Brainwipe.  Tested elsewhere
+        superagent
+            .post(urlBase+'/brainwipe')
+            .then(response=>{
+                console.log("1. Brainwipe response: "+response.text)
 
-        it("POSTs a good record and succeeds", function(done) {
-            supertest(app)
-                .post("/accounts") // by default, application/x-www-form-urlencoded
-                .send("title=example title")
-                .set("Accept", "application/json")
-                .expect(200)
-                .expect("Content-Type", /application\/json/)
-                .expect(JSONResponseOK)
-                .end(done);
-        });
+                // 2. Post a new record.
+                return superagent
+                    .post(urlBase+'/accounts')
+                    .send('title='+firstNewRecord.title)
 
+            }).then(response=>{
+                console.log("2. Post new record response: "+response.text)
+                firstNewId=JSON.parse(response.text).result[0]._id
+
+                // 3. Read the record back.
+                return superagent
+                    .get(urlBase+'/accounts/'+firstNewId)
+
+            }).then(response=>{
+                console.log("3. Read the record back response: "+response.text)
+                // Do the fields read match the fields written?
+                assert.equal(JSON.parse(response.text)[0].title,firstNewRecord.title)
+
+                // 4. Update the record.
+                return superagent
+                    .put(urlBase+'/accounts/'+firstNewId)
+                    .send('title='+JSON.parse(response.text))
+
+            }).then(response=>{
+                console.log("4. Update the record response: "+response.text)
+
+                // 5. Read the record back.
+                return superagent
+                    .get(urlBase+'/accounts/'+firstNewId)
+
+            }).then(response=>{
+                console.log("5. Read the record back response: " + response.text)
+                // Do the fields read match the fields written?
+                assert.equal(JSON.parse(response.text)[0].title, JSON.parse(response.text))
+
+                // 6. Now delete the record
+                return superagent
+                    .del(urlBase+'/accounts/'+firstNewId)
+
+            }).then(response=>{
+                console.log("6. Delete the record response: " + response.text)
+                done()
+            }).catch( function(error) {
+                console.dir(error);
+                done()
+            })
     });
-
-    describe("try to PUT to an existing record",function() {
-
-        it("PUTs a good record and succeeds", function(done) {
-            supertest(app)
-                .put("/accounts/1") // by default, application/x-www-form-urlencoded
-                //.send("symbol=sym")
-                .send("title=title")
-                .set("Accept", "application/json")
-                .expect(200)
-                .expect("Content-Type", /application\/json/)
-                .expect(JSONResponseOK)
-                .end(done);
-        });
-
-        // PUT to a non-existant record simply results in zero rows updated.
-        // No error.
-
-    });
-
 });
-
-function hasZeroRecords(res) {
-    cnt=JSON.parse(res.text).accounts.length;
-    if (cnt != 0) throw new Error("There should not be any remaining records.");
-}
-
-function hasZeroOrMoreRecords(res) {
-    // If this line executes successfully then we know
-    // that there's no error and that we have an array
-    // of 0 or more currency records.
-    accounts = JSON.parse(res.text).accounts;
-}
-
-function JSONError(res) {
-    jsonResult=JSON.parse(res.text);
-    if(!jsonResult.error)
-        throw new Error("I was expecting an error.  Instead: JSON response  = " + res.text);
-}
-
-function JSONResponseOK(res) {
-    if(res.text != '{"result":"ok"}')
-        throw new Error("JSON response = " + res.text);
-}
