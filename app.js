@@ -18,14 +18,15 @@ app.use(bodyParser.urlencoded())
 app.set("port", process.env.PORT || 3001)
 
 // Connect to the mongo server...
-MongoClient.connect(mongoURL).then(function resolve(mongoDb){
+MongoClient.connect(mongoURL).then(mongoDb=>{
     // And then setup the routes, because the routes need access to the mongodb
     require("./accounts")(app, mongoDb)
+    require("./currencies")(app, mongoDb)
 
-    app.post("/brainwipe", function (req, res) {
-        mongoDb.dropDatabase().then(function(result) {
+    app.post("/brainwipe", (req, res)=> {
+        mongoDb.dropDatabase().then(result=>{
             res.json({"result":"ok"});
-        }).catch(function(error){
+        }).catch(error=>{
             res.json({"error":JSON.stringify(err)});
         })
     })
@@ -35,6 +36,6 @@ MongoClient.connect(mongoURL).then(function resolve(mongoDb){
         console.log("App started on port " + app.get("port"))
     })
 
-}).catch(function reject(error){
+}).catch(error=>{
     console.log(error)
 })

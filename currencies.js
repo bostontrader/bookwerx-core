@@ -1,97 +1,50 @@
-module.exports = function(app, connection) {
+var ObjectId =require('mongodb').ObjectId;
 
-    app.get("/currencies", function (req, res) {
+module.exports=(app,db)=>{
 
-        var rows = connection.query("select id, symbol, title from currencies", function (err, rows, fields) {
-            if (err)
-                res.json({"error":JSON.stringify(err)});
-            else {
-                var j = {"currencies": []};
-                for (let row of rows) {
-                    var newRow = {
-                        "id": row.id,
-                        "symbol": row.symbol,
-                        "title": row.title
-                    };
-                    j.currencies.push(newRow);
-                }
-                res.json(j);
-            }
-        });
-    });
+    app.get("/currencies",(req,res)=>{
+        db.collection('currencies').find({}).toArray().then(function resolve(result){
+            res.json(result)
+        }).catch(error=>{
+            console.log(error)
+            res.json({"error": error})
+        })
+    })
 
-    app.get("/currencies/:id", function (req, res) {
-        var id = parseInt(req.params.id);
-        var query = "select id, symbol, title from currencies where id=? limit 1";
+    app.get("/currencies/:id",(req,res)=>{
+        db.collection('currencies').find({'_id':ObjectId(req.params.id)}).toArray().then(function resolve(result){
+            res.json(result)
+        }).catch(error=>{
+            console.log(error)
+            res.json({"error": error})
+        })
+    })
 
-        var rows = connection.query(query, [connection.escape(id)], function (err, rows, fields) {
-            if (err) {
-                res.json({"error":JSON.stringify(err)});
-            } else {
-                var newRow = {
-                    "id": rows[0].id,
-                    "symbol": rows[0].symbol,
-                    "title": rows[0].title
-                };
-                res.json(newRow);
-            }
-        });
-    });
+    app.post("/currencies",(req,res)=>{
+        db.collection('currencies').insertOne({title: req.body.title})
+            .then(function resolve(result){
+                res.json({"result": result.ops})
+            }).catch(error=>{
+            console.log(error)
+            res.json({"error": error})
+        })
+    })
 
-    // By default, MySQL does not allow null values in fields so all of
-    // the fields of this record are required.
-    app.post("/currencies", function(req, res) {
+    app.put("/currencies/:id",(req,res)=>{
+        db.collection('currencies').findOneAndUpdate({'_id':ObjectId(req.params.id)},{title:req.body.title}).then(function resolve(result){
+            res.json(result)
+        }).catch(error=>{
+            console.log(error)
+            res.json({"error": error})
+        })
+    })
 
-        var title = req.body.title;
-        var symbol = req.body.symbol;
-
-        var query = "INSERT INTO currencies (title, symbol) VALUES (?, ?)";
-
-        // This does the escaping for us
-        var rows = connection.query(query, [title,symbol], function (err, rows, fields) {
-            if (err)
-                res.json({"error": JSON.stringify(err)});
-            else
-                res.json({"result": "ok"});
-        });
-    });
-
-    // By default, MySQL does not allow null values in fields so all of
-    // the fields of this record are required.
-    app.put("/currencies/:id", function(req, res) {
-        var id = parseInt(req.params.id);
-        escape=[];
-
-        var sett = "";
-        var symbol = req.body.symbol;
-        var comma = "";
-        if(symbol) {
-            symbol=connection.escape(symbol);
-            sett = "symbol=" + symbol + sett;
-            escape.unshift(symbol);
-            comma = ",";
-        }
-
-        var title = req.body.title;
-        if(title) {
-            title=connection.escape(title);
-            sett = "title=" + title + comma + sett;
-            escape.unshift(title);
-        }
-
-        // id is already essentially escaped by parseInt ???
-        var query = "UPDATE currencies SET " + sett + " where id="+id;
-
-        // We have to do the escaping manually because otherwise we get
-        // parse errors.
-        //var rows = connection.query(query, [escape], function (err, rows,
-        // fields) {
-        var rows = connection.query(query, function (err, rows, fields) {
-            if (err)
-                res.json({"error": JSON.stringify(err)});
-            else
-                res.json({"result": "ok"});
-        });
-    });
-
+    app.delete("/currencies/:id",(req,res)=>{
+        db.collection('currencies').findOneAndDelete({'_id':ObjectId(req.params.id)}).then(function resolve(result){
+            res.json(result)
+        }).catch(error=>{
+            console.log(error)
+            res.json({"error": error})
+        })
+    })
 }

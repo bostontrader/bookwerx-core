@@ -4,7 +4,7 @@ let assert = require('chai').assert
 let superagent = require('superagent');
 require('superagent-as-promised')(superagent);
 
-describe.only("Test basic CRUD for Accounts", function() {
+describe("Test basic CRUD for Accounts", function() {
 
     it("Test basic CRUD for Accounts", done=> {
 
@@ -61,7 +61,7 @@ describe.only("Test basic CRUD for Accounts", function() {
             }).then(response=>{
                 console.log("6. Delete the record response: " + response.text)
                 done()
-            }).catch( function(error) {
+            }).catch(error=>{
                 console.dir(error);
                 done()
             })
