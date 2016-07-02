@@ -4,9 +4,9 @@ let assert = require('chai').assert
 let superagent = require('superagent');
 require('superagent-as-promised')(superagent);
 
-describe("Test basic CRUD for Transactions", function() {
+describe("Test basic CRUD for Distributions", function() {
 
-    it("Test basic CRUD for Transactions", done=> {
+    it("Test basic CRUD for Distributions", done=> {
 
         let firstNewRecord = {'title':'first new title'}
         let updatedRecord = {'title':'updated title'}
@@ -21,7 +21,7 @@ describe("Test basic CRUD for Transactions", function() {
 
                 // 2. Post a new record.
                 return superagent
-                    .post(urlBase+'/transactions')
+                    .post(urlBase+'/distributions')
                     .send('title='+firstNewRecord.title)
 
             }).then(response=>{
@@ -30,7 +30,7 @@ describe("Test basic CRUD for Transactions", function() {
 
             // 3. Read the record back.
             return superagent
-                .get(urlBase+'/transactions/'+firstNewId)
+                .get(urlBase+'/distributions/'+firstNewId)
 
         }).then(response=>{
             console.log("3. Read the record back response: "+response.text)
@@ -39,7 +39,7 @@ describe("Test basic CRUD for Transactions", function() {
 
             // 4. Update the record.
             return superagent
-                .put(urlBase+'/transactions/'+firstNewId)
+                .put(urlBase+'/distributions/'+firstNewId)
                 .send('title='+JSON.parse(response.text))
 
         }).then(response=>{
@@ -47,7 +47,7 @@ describe("Test basic CRUD for Transactions", function() {
 
             // 5. Read the record back.
             return superagent
-                .get(urlBase+'/transactions/'+firstNewId)
+                .get(urlBase+'/distributions/'+firstNewId)
 
         }).then(response=>{
             console.log("5. Read the record back response: " + response.text)
@@ -56,7 +56,7 @@ describe("Test basic CRUD for Transactions", function() {
 
             // 6. Now delete the record
             return superagent
-                .del(urlBase+'/transactions/'+firstNewId)
+                .del(urlBase+'/distributions/'+firstNewId)
 
         }).then(response=>{
             console.log("6. Delete the record response: " + response.text)

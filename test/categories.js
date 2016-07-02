@@ -1,10 +1,10 @@
-var app = require("../app");
+//var app = require("../app");
 
-var supertest = require("supertest");
+//var supertest = require("supertest");
 
-var categories;
+//var categories;
 
-describe("tests basic CRUD for Categories", function() {
+/*describe("tests basic CRUD for Categories", function() {
 
     describe("tests delete all categories",function() {
         it("gets the collection of all categories", function(done) {
@@ -134,4 +134,4 @@ function JSONError(res) {
 function JSONResponseOK(res) {
     if(res.text != '{"result":"ok"}')
         throw new Error("JSON response = " + res.text);
-}
+}*/

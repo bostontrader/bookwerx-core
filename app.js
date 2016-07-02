@@ -22,6 +22,8 @@ MongoClient.connect(mongoURL).then(mongoDb=>{
     // And then setup the routes, because the routes need access to the mongodb
     require("./accounts")(app, mongoDb)
     require("./currencies")(app, mongoDb)
+    require("./distributions")(app, mongoDb)
+    require("./transactions")(app, mongoDb)
 
     app.post("/brainwipe", (req, res)=> {
         mongoDb.dropDatabase().then(result=>{
