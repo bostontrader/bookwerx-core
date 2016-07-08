@@ -1,12 +1,12 @@
 #Introduction
 
 The purpose of **bookwerx-core** is to provide an API that supports multi-currency
- bookkeeping, using the good-ole double-entry model, slightly adapted to squeeze 
+ bookkeeping, using the double-entry bookkeeping model, slightly adapted to squeeze 
  in multiple currencies.  It uses [node](https://nodejs.org), [express](http://expressjs.com/), and [mongodb](https://www.mongodb.com/).
 
 Any application that deals with "money" (fiat, precious metals, cryptocoins) will
 quickly encounter the need for bookkeeping.  Rolling your own methods are as usual,
- easier said than done, so perhaps  you can save yourself some grief and enjoy **bookwerx-core** instead.
+ easier said than done, so perhaps you can save yourself some grief and enjoy **bookwerx-core** instead.
 
 With this API, the user can:
 
@@ -15,64 +15,70 @@ such as accounts and transactions.
 
 * Perform consistency checks.
 
-* Brainwipe and start over.
+* Brainwipe the db and start over.
 
 This API is the minimum necessary to populate your db with bookkeeping information,
 ensure that it is internally consistent, and nuke it from orbit and start over if necessary.
 
 A package that provides a web-based front-end using Angular 2 can be found at [bookwerx-ui]
-(http://github.com/bostontrader/bookwerx-reporting) and for more sophisticated analysis, 
+(https://github.com/bostontrader/bookwerx-ui) and for more sophisticated analysis, 
 such as the production of financial reports and graphing, please see 
- [bookwerx-reporting](http://github.com/bostontrader/bookwerx-reporting).
-
+ [bookwerx-reporting](https://github.com/bostontrader/bookwerx-reporting).
 
 
 ##Getting Started
 
-1. You will need node and npm.
+### Prerequisites
 
-2. You will need git.
+* You will need node and npm.
 
-3. You will need mongodb.
+* You will need git.
 
-4. git clone https://github.com/bostontrader/bookwerx-core-express.git
+* You will need mongodb.
 
-5. From inside the bookwerx-core-express directory: npm install
+### Next...
+
+* git clone https://github.com/bostontrader/bookwerx-core.git
+
+* From inside the bookwerx-core directory: npm install
 
 
-##Multi-Currencies
+##Multiple Currencies
 
-This package enables the user to maintain a list of currencies relevant to their app.
+**bookwerx-core** enables the user to maintain a list of currencies relevant to their app.
 Fiat, precious metals, and cryptocoins are three obvious examples of currencies that
 this app could easily handle.
 
 The "distributions" of a transaction (the debits and credits part) are all tagged
-with a currency and a single transaction can include one or two different
+with a currency and a single transaction can include either one or two different
 currencies.
 
-Currency exchanges can easily be recorded simply by debiting one currency and
-crediting the other.
+Any transaction which includes only a single currency must satisfy the usual
+sum-of-debits = sum-of-credits constraint.
+
+Any transaction which includes two currencies must still satisfy that constraint.
+[But...](https://www.youtube.com/watch?v=FaVFuX8z26c) We must modify said constraint
+a wee bit to make it fit. As you can readily imagine, the actual numbers involved
+won't add up the way we expect. Instead, **bookwerx-core** will compute an
+implied exchange rate R such that sum-of-debits * R = sum-of-credits.
+
+But be careful with this.  Although simple transactions such as currency exchanges 
+can easily be recorded by debiting one currency and crediting the other, you
+could easily make nonsensical transactions if you're not paying attention when you do this.
 
 ##Data Analysis
 
 As mentioned earlier, this package merely records the basic bookkeeping objects.
 More sophisticated analysis belongs in other packages such as
-[bookwerx-reporting](http://github.com/bostontrader/bookwerx-reporting).  "What actually happened" (the transactions) belong here.
+[bookwerx-reporting](https://github.com/bostontrader/bookwerx-reporting).  "What actually happened" (the transactions) belong here.
 But "what does any of this mean" belongs elsewhere.
 
-The ordinary debits==credits rule applies for any transaction that only deals
- with a single currency.  That is a consistency check that belongs with this package.
-
-A transaction that involves two currencies is considered a currency exchange.
-Although the actual dr and cr numbers will no longer "balance", if we consider
-them to be equivalent amounts then we can compute exchange rate information.
-This however is a job for other packages such as [bookwerx-reporting](http://github.com/bostontrader/bookwerx-reporting).
 
 ##API Notes
-1. All API calls return JSON.
-2. Any call that returns JSON containing a key
+* All API calls return JSON.
+* Any call that returns JSON containing a key
 entitled 'error' did not succeed.  Please scrutinize the
 value of 'error' for clues about the problem.
-3. Any GET that is successful will return what you expect.
-4. Any call that is _not_ GET and _is_ successful will
+* Any GET that is successful will return what you expect.
+* Any call that is _not_ GET and _is_ successful will
 return {"result":"ok"}
