@@ -36,12 +36,15 @@ such as the production of financial reports and graphing, please see
 
 * You will need mongodb.
 
-### Next...
+The care and feeding of these items are beyond the scope of these instructions.
 
-* git clone https://github.com/bostontrader/bookwerx-core.git
+### But assuming they are correctly installed...
 
-* From inside the bookwerx-core directory: npm install
-
+```bash
+git clone https://github.com/bostontrader/bookwerx-core.git
+cd bookwerx-core
+npm install
+```
 
 ##Multiple Currencies
 
