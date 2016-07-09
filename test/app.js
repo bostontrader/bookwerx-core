@@ -7,7 +7,7 @@ describe("Brainwipe", function() {
 
     it("Brainwipe the DB",function(done){
         superagent
-            .post('localhost:3001/brainwipe')
+            .post('localhost:3003/brainwipe')
             .end(function(err, res){
                 if (err || !res.ok) {
                     console.log(err)

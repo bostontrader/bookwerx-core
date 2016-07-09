@@ -11,7 +11,7 @@ describe("Test basic CRUD for Transactions", function() {
         let firstNewRecord = {'title':'first new title'}
         let updatedRecord = {'title':'updated title'}
         let firstNewId
-        let urlBase = "localhost:3001"
+        let urlBase = "localhost:3003"
 
         // 1. Brainwipe.  Tested elsewhere
         superagent
