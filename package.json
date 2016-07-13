@@ -4,7 +4,7 @@
   "description": "A double-entry bookkeeping engine that supports multiple currencies.",
   "main": "app.js",
   "scripts": {
-    "test": "node $NODE_DEBUG_OPTION ./node_modules/mocha/bin/mocha",
+    "test": "jasmine 1st.spec.js",
     "start": "node app.js"
   },
   "keywords": [
@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "chai": "3.5.0",
+    "jasmine": "2.4.1",
     "mocha": "2.5.1",
     "superagent": "2.0.0",
     "superagent-as-promised": "4.0.0"
