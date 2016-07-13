@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/bostontrader/bookwerx-core.svg?branch=master)](https://travis-ci.org/bostontrader/bookwerx-core)
+
 #Introduction
 
 The purpose of **bookwerx-core** is to provide an API that supports multi-currency
