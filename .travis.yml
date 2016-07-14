@@ -4,6 +4,3 @@ node_js:
 
 services:
   - mongodb
-
-install:
-  - npm install jasmine -g
