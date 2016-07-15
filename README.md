@@ -10,7 +10,7 @@ The purpose of **bookwerx-core** is to provide an API that supports multi-curren
  in multiple currencies.  It uses [node](https://nodejs.org), [express](http://expressjs.com/), and [mongodb](https://www.mongodb.com/).
 
 Any application that deals with "money" (fiat, precious metals, cryptocoins) will
-quickly encounter the need for bookkeeping.  Rolling your own methods are as usual,
+quickly encounter the need for bookkeeping.  Rolling your own methods is, as usual,
  easier said than done, so perhaps you can save yourself some grief and enjoy **bookwerx-core** instead.
 
 With this API, the user can:
