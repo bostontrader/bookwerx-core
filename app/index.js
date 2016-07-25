@@ -1,6 +1,3 @@
-/**
- * Created by radloff on 16-7-14.
- */
 var express = require('express')
 
 var app = express()
