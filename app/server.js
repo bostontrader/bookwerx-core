@@ -1,25 +1,33 @@
 #!/usr/bin/env node
-var app = require('./index')
-//var config = require('app/config')
+
+// Express, Jade, routes, db... stuff we need.  Factor this out because
+// test-app uses it also.
+var app    = require('./index')
+
 var config = require('./config')
 
-// Use whichever logging system you prefer.
-// Doesn't have to be bole, I just wanted something more or less realistic
-var bole = require('bole')
+var db     = require('./db')
 
+// Setup logging.
+var bole = require('bole')
 bole.output({level: 'debug', stream: process.stdout})
 var log = bole('server')
 
 log.info('server process starting')
 
-// Note that there's not much logic in this file.
-// The server should be mostly "glue" code to set things up and
-// then start listening
-app.listen(config.express.port, config.express.ip, function (error) {
-  if (error) {
-    log.error('Unable to listen for connections', error)
-    process.exit(10)
+// Connect to Mongo on start.  If successful, then start listening
+db.connect('mongodb://localhost:27017/bookwerx-core', function(err) {
+  if (err) {
+    console.log('Unable to connect to Mongo.')
+    process.exit(1)
+  } else {
+    app.listen(config.express.port, config.express.ip, function (error) {
+      if (error) {
+        log.error('Unable to listen for connections', error)
+        process.exit(10)
+      }
+      log.info('express is listening on http://' +
+          config.express.ip + ':' + config.express.port)
+    })
   }
-  log.info('express is listening on http://' +
-    config.express.ip + ':' + config.express.port)
 })

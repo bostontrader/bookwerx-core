@@ -1,5 +1,4 @@
 var express = require('express')
-
 var app = express()
 app.set('views', __dirname)
 // use whatever templating system(s) you like
