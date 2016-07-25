@@ -12,15 +12,22 @@
   **bole** JSON logger.
   
   **express** This is our application framework.
+
+  **jade**
   
   **mongodb** Need this to connect to our mongodb.
 
+  **morgan** Another logger.  Do we really need two of them?
+
 ###Development/testing dependencies
 
-    "bistre": "1.0.1", Formatter for the bole logger.
+    **bistre** Formatter for the bole logger.
     
-    "standard": "7.1.0",
-    "supertest": "1.2.0",
-    "tap-dot": "1.0.5",
-    "tape": "4.5.1"
+    **standard** JS Linter.
+
+    **supertest**
+
+    **tap-dot** Test output formatter
+
+    **tape** Testing system
   
