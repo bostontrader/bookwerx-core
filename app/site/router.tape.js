@@ -16,7 +16,7 @@ test('app/site/router should serve the home page', function (assert) {
 })
 
 test('app/site/router should serve the team page', function (assert) {
-  app.get('/team')
+  app.get('/about')
     .expect(200)
     .expect('Content-Type', 'text/html; charset=utf-8')
     .end(assert.end)

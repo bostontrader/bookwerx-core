@@ -7,12 +7,12 @@ function home (req, res) {
   res.render('site/home')
 }
 
-function team (req, res) {
-  res.render('site/team')
+function about (req, res) {
+  res.render('site/about')
 }
 
 router.use(express.static(join(__dirname, '../../wwwroot')))
 router.get('/', home)
-router.get('/team', team)
+router.get('/about', about)
 
 module.exports = router
