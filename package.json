@@ -3,7 +3,7 @@
   "version": "0.3.3",
   "description": "A double-entry bookkeeping engine that supports multiple currencies.",
   "scripts": {
-    "test": "node_modules/tape/bin/tape './**/*.tape.js'",
+    "test": "node ./app/server_test.js",
     "start": "node ./app/server.js",
     "lint": "standard"
   },
@@ -22,11 +22,11 @@
     "url": "https://github.com/bostontrader/bookwerx-core.git"
   },
   "dependencies": {
+    "bluebird": "^3.4.1",
     "mongodb": "2.2.4",
     "restify": "4.1.1"
   },
   "devDependencies": {
-    "standard": "7.1.2",
-    "tape": "4.6.0"
+    "standard": "7.1.2"
   }
 }

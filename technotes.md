@@ -9,12 +9,14 @@ npm prune will remove items no longer referenced by package.json
 
 ###Production dependencies
 
-  **restify** This is our server framework.
+  **bluebird** A promise library.
 
   **mongodb** Need this to connect to our mongodb.
+
+  **restify** This is our server framework.
+
 
 ###Development/testing dependencies
 
   **standard** A linter
 
-  **tape** A tester
