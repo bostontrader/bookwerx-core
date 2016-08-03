@@ -41,6 +41,9 @@ such as the production of financial reports and graphing, please see
 
 * You will need mongodb.
 
+* In order to run the example data importer, you will need Python and the requests library.
+(docs.python-requests.org/en/master/user/install)
+
 The care and feeding of these items are beyond the scope of these instructions.
 
 ### But assuming they are correctly installed...
