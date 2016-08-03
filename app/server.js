@@ -1,5 +1,8 @@
 // Common to server and server_test- start
 let restify = require('restify')
+let config = require('config')
+let port = config.get('port')
+
 let MongoClient = require('mongodb').MongoClient
 let mongoDb
 
@@ -26,7 +29,7 @@ MongoClient.connect('mongodb://localhost:27017/bookwerx-core')
       distributionsRouter.defineRoutes(server, mongoDb)
       transactionsRouter.defineRoutes(server, mongoDb)
 
-      server.listen(3003, () => {
+      server.listen(port, () => {
         console.log('%s listening at %s', server.name, server.url)
         resolve(true)
       })
