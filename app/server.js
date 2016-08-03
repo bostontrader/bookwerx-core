@@ -1,34 +1,33 @@
-#!/usr/bin/env node
+let restify = require('restify')
+let MongoClient = require('mongodb').MongoClient
+let mongoDb
+let accountsRouter = require('./accounts/routing')
+let currenciesRouter = require('./currencies/routing')
+let distributionsRouter = require('./distributions/routing')
+let transactionsRouter = require('./transactions/routing')
 
-// Express, Jade, routes... stuff we need.  Factor this out because the main
-// and the test app both need this.
-var app = require('./bootstrap')
+let server = restify.createServer()
+server.use(restify.bodyParser())
 
-// Does test-app not need config or db?
-var config = require('./config')
-var db     = require('./db')
+MongoClient.connect('mongodb://localhost:27017/bookwerx-core')
 
-// Setup logging.
-var bole = require('bole')
-bole.output({level: 'debug', stream: process.stdout})
-var log = bole('server')
+  // Start the server a listening
+  .then(result => {
+    mongoDb = result
+    return new Promise((resolve, reject) => {
+      accountsRouter.defineRoutes(server, mongoDb)
+      mongoDb.collection('accounts').createIndex( { title: 1 }, { unique: true } )
+      distributionsRouter.defineRoutes(server, mongoDb)
+      currenciesRouter.defineRoutes(server, mongoDb)
+      transactionsRouter.defineRoutes(server, mongoDb)
 
-log.info('server process starting')
-
-// Connect to Mongo on start.  If successful, then start listening
-db.connect(`mongodb://${config.mongodb.host}:${config.mongodb.port}/${config.mongodb.dbname}`, err => {
-//db.connect('mongodb://localhost:27017/bookwerx-core', function(err) {
-  if (err) {
-    console.log('Unable to connect to Mongo.')
-    process.exit(1)
-  } else {
-    app.listen(config.express.port, config.express.ip, err => {
-      if (err) {
-        log.error('Unable to listen for connections', err)
-        process.exit(10)
-      }
-      log.info('express is listening on http://' +
-          config.express.ip + ':' + config.express.port)
+      server.listen(3003, () => {
+        console.log('%s listening at %s', server.name, server.url)
+        resolve(true)
+      })
     })
-  }
-})
+  })
+
+  .catch((e) => {
+    console.log(e)
+  })

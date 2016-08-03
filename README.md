@@ -82,11 +82,71 @@ More sophisticated analysis belongs in other packages such as
 But "what does any of this mean" belongs elsewhere.
 
 
-##API Notes
-* All API calls return JSON.
-* Any call that returns JSON containing a key
-entitled 'error' did not succeed.  Please scrutinize the
-value of 'error' for clues about the problem.
-* Any GET that is successful will return what you expect.
-* Any call that is _not_ GET and _is_ successful will
-return {"result":"ok"}
+##API
+
+Any errors returned will be JSON with a schema like {'errors': [{'some error message'}]}
+
+Accounts
+
+GET /accounts
+Returns a JSON array of account documents.
+
+GET /accounts/:id
+Returns a JSON object containing a single account document.
+Possibly error 1.
+
+POST /accounts (add a new account) (errors: 3.1, 3.2)
+PUT /accounts/:id (modify an existing account, no upsert) (errors: 1, 3.1, 3.2)
+DELETE /accounts/:id (errors: 1,2)
+
+Possible errors:
+1.  account n does not exist
+2.  this account cannot be deleted because some distributions refer to it
+3.1 title must be truthy
+3.2 title must be unique
+
+
+
+currencies
+GET /currencies get all of them
+GET /currencies/:id get one of them (errors:1)
+POST /currencies (add a new currency) (errors:3.1, 3.2, 4.1, 4.2)
+PUT /currencies/:id (modify an existing currency, no upsert) (errors:1, 3.1, 3.2, 4.1, 4.2)
+DELETE /currencies/:id (errors:1, 2)
+
+Possible errors:
+1.  currency n does not exist
+2.  this currency cannot be deleted because some distributions refer to it
+3.1 symbol must be truthy
+3.2 symbol must be unique
+4.1 title must be truthy
+4.2 title must be unique
+
+
+transactions
+GET /transactions get all of them
+GET /transactions/:id get one of them (errors:1)
+POST /transactions (add a new transaction) (errors:3)
+PUT /transactions/:id (modify an existing transaction, no upsert) (errors:1, 3)
+DELETE /transactions/:id (errors:1, 2)
+
+Possible errors:
+1.  transaction n does not exist
+2.  this transaction cannot be deleted because some distributions refer to it
+3.  datetime must be a parseable datetime
+
+
+distributions
+GET /distributions get all of them
+GET /distributions/:id get one of them (errors:1)
+POST /distributions (add a new distribution) (errors:3-7)
+PUT /distributions/:id (modify an existing distribution, no upsert) (errors:1, 3-7)
+DELETE /distributions/:id (errors:1)
+
+Possible errors:
+1.  distribution n does not exist
+3.  drcr sb "dr" or "cr"
+4.  amount sb numeric
+5.  transaction_id does not reference an existing transaction
+6.  account_id does not reference an existing account
+7.  currency_id does not reference an existing currency

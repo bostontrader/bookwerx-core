@@ -1,17 +1,16 @@
 {
   "name": "bookwerx-core",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "A double-entry bookkeeping engine that supports multiple currencies.",
-  "main": "app.js",
   "scripts": {
-    "test": "node_modules/tape/bin/tape './**/*.tape.js'",
-    "start": "node ./app/server.js | bistre",
+    "test": "node ./app/server_test.js",
+    "start": "node ./app/server.js",
     "lint": "standard"
   },
   "keywords": [
     "bookkeeping",
     "bookwerx",
-    "express",
+    "restify",
     "mongodb",
     "multi-currency",
     "node"
@@ -23,18 +22,11 @@
     "url": "https://github.com/bostontrader/bookwerx-core.git"
   },
   "dependencies": {
-    "body-parser": "1.15.2",
-    "bole": "3.0.1",
-    "express": "4.14.0",
-    "jade": "1.11.0",
+    "bluebird": "^3.4.1",
     "mongodb": "2.2.4",
-    "morgan": "1.7.0"
+    "restify": "4.1.1"
   },
   "devDependencies": {
-    "bistre": "1.0.1",
-    "standard": "8.0.0-beta.2",
-    "supertest": "1.2.0",
-    "tap-dot": "1.0.5",
-    "tape": "4.6.0"
+    "standard": "7.1.2"
   }
 }
