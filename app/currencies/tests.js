@@ -3,11 +3,11 @@ let client
 let firstNewCurrency = {title: 'first new title'}
 let secondNewCurrency = {title: 'second new title'}
 
-exports.setClient = function (c) {
-  client = c
-}
+exports.setClient = function (c) { client = c }
 
 exports.tests = function () {
+  // 1. GET /currencies and look for the correct operation of returning
+  // an array of zero, one, or > 1 elements.
   return new Promise((resolve, reject) => {
     console.log('GET /currencies, sb empty')
     client.get('/currencies', function (err, req, res, obj) {
@@ -65,25 +65,12 @@ exports.tests = function () {
     })
   })
 
-  // post a bad document (empty title)
-  .then((result) => {
-    console.log('POST /currencies, bad document, empty title')
-    return new Promise((resolve, reject) => {
-      client.post('/currencies', {}, function (err, req, res, obj) {
-        if (err) {
-          console.log(err)
-          reject(err)
-        }
-        if (obj.error === undefined) { reject('this test must generate an error') }
-        console.log('correct result:%j', obj)
-        resolve(true)
-      })
-    })
-  })
+  // 3. POST /currencies
+  // We already know that POST works.
 
-  // put a good document id
+  // 4. PUT /accounts/:id
   .then((result) => {
-    console.log('PUT /currencies, good id, good document')
+    console.log('PUT /currencies, good id')
     return new Promise((resolve, reject) => {
       client.put('/currencies/' + firstNewCurrency._id, {title: 'first amended title'}, function (err, req, res, obj) {
         if (err) {
@@ -96,9 +83,8 @@ exports.tests = function () {
     })
   })
 
-  // put a bad document id
   .then((result) => {
-    console.log('PUT /currencies, bad id, good document')
+    console.log('PUT /currencies, bad id')
     return new Promise((resolve, reject) => {
       client.put('/currencies/666666b816070328224cf098', {}, function (err, req, res, obj) {
         if (err) {
@@ -111,9 +97,7 @@ exports.tests = function () {
     })
   })
 
-  // put a bad document
-
-  // delete a bad document id
+  // 5. DELETE /accounts/:id
   .then((result) => {
     console.log('DELETE /currencies, bad id')
     return new Promise((resolve, reject) => {
@@ -128,7 +112,6 @@ exports.tests = function () {
     })
   })
 
-  // delete a good document id
   .then((result) => {
     console.log('DELETE /currencies, good id')
     return new Promise((resolve, reject) => {
