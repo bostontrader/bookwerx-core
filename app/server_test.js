@@ -5,6 +5,7 @@ let port = config.get('port')
 
 let MongoClient = require('mongodb').MongoClient
 let mongoDb
+let mongoConnectionURL = config.get('mongoConnectionURL')
 
 let accountsRouter = require('./accounts/routing')
 let currenciesRouter = require('./currencies/routing')
@@ -18,7 +19,7 @@ server.use(restify.bodyParser())
 
 // Unique to server_test- start
 let client = restify.createJsonClient({
-  url: 'http://127.0.0.1:'+port
+  url: 'http://127.0.0.1:' + port
 })
 
 let accountsTests = require('./accounts/tests')
@@ -38,7 +39,7 @@ transactionsTests.setClient(client)
 // Unique to server_test- stop
 
 // Common to server and server_test- start
-MongoClient.connect('mongodb://localhost:27017/bookwerx-core')
+MongoClient.connect(mongoConnectionURL)
 
   // Start the server a listening
   .then(result => {
@@ -46,7 +47,6 @@ MongoClient.connect('mongodb://localhost:27017/bookwerx-core')
     console.log('mongo server started')
     return new Promise((resolve, reject) => {
       accountsRouter.defineRoutes(server, mongoDb)
-      //mongoDb.collection('accounts').createIndex( { title: 1 }, { unique: true } )
       currenciesRouter.defineRoutes(server, mongoDb)
       distributionsRouter.defineRoutes(server, mongoDb)
       toolsRouter.defineRoutes(server, mongoDb)
@@ -61,15 +61,15 @@ MongoClient.connect('mongodb://localhost:27017/bookwerx-core')
   // Common to server and server_test- stop
 
   // Unique to server_test- start
-  //.then(toolsTests.tests)
+  // .then(toolsTests.tests)
   .then(result => {
     mongoDb.dropDatabase()
-    mongoDb.collection('accounts').createIndex( { title: 1 }, { unique: true } )
+    // mongoDb.collection('accounts').createIndex({ title: 1 }, { unique: true } )
   })
   .then(accountsTests.tests)
   .then(currenciesTests.tests)
-  //.then(distributionsTests.tests)
-  //.then(transactionsTests.tests)
+  // .then(distributionsTests.tests)
+  // .then(transactionsTests.tests)
   .then(() => {
     return new Promise((resolve, reject) => {
       client.close()

@@ -55,7 +55,17 @@ npm install
 npm test
 npm start
 ```
+##Runtime Configuration
 
+Runtime configuration is managed by [node-config](https://github.com/lorenwest/node-config)
+By default, **bookwerx-core** will start the server using /config/default.json.
+You may create other configurations to suit your fancy. And example to use configuration
+/config/production.json:
+
+```bash
+export NODE_ENV=production
+npm start
+```
 ##Multiple Currencies
 
 **bookwerx-core** enables the user to maintain a list of currencies relevant to their app.
