@@ -1,7 +1,7 @@
 let client
 
-let firstNewCurrency = {title: 'first new title'}
-let secondNewCurrency = {title: 'second new title'}
+let firstNewCurrency = {symbol: 'DLX', title: 'Dilithium Crystals'}
+let secondNewCurrency = {symbol: 'QLO', title: 'Quatloos'}
 
 exports.setClient = function (c) { client = c }
 
