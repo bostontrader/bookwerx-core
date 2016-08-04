@@ -90,53 +90,11 @@ exports.tests = function () {
   })
 
   // 3. POST /accounts
-  // We already know that POST works for good documents.
-  .then((result) => {
-    console.log('POST /accounts, bad document, no title')
-    return new Promise((resolve, reject) => {
-      client.post('/accounts', {}, function (err, req, res, obj) {
-        if (err) {
-          console.log(err)
-          reject(err)
-        }
-        if (obj.error === undefined) { reject('this test must generate an error') }
-        console.log('correct result:%j', obj)
-        resolve(true)
-      })
-    })
-  })
-
-  .then((result) => {
-    console.log('POST /accounts, bad document, empty title')
-    return new Promise((resolve, reject) => {
-      client.post('/accounts', {title:""}, function (err, req, res, obj) {
-        if (err) {
-          console.log(err)
-          reject(err)
-        }
-        if (obj.error === undefined) { reject('this test must generate an error') }
-        console.log('correct result:%j', obj)
-        resolve(true)
-      })
-    })
-  })
-
-  .then((result) => {
-    console.log('POST /accounts, 2nd new document, title must be unique')
-    return new Promise((resolve, reject) => {
-      client.post('/accounts', secondNewAccount, function (err, req, res, obj) {
-        if (err) reject(err)
-        if (obj.error === undefined) { reject('this test must generate an error') }
-
-        console.log('correct result:%j', obj)
-        resolve(true)
-      })
-    })
-  })
+  // We already know that POST works.
 
   // 4. PUT /accounts/:id
   .then((result) => {
-    console.log('PUT /accounts, good id, good document')
+    console.log('PUT /accounts, good id')
     return new Promise((resolve, reject) => {
       client.put('/accounts/' + firstNewAccount._id, {title: 'first amended title'}, function (err, req, res, obj) {
         if (err) {
@@ -150,7 +108,7 @@ exports.tests = function () {
   })
 
   .then((result) => {
-    console.log('PUT /accounts, bad id, good document')
+    console.log('PUT /accounts, bad id')
     return new Promise((resolve, reject) => {
       client.put('/accounts/666666b816070328224cf098', {}, function (err, req, res, obj) {
         if (err) {
@@ -163,39 +121,7 @@ exports.tests = function () {
     })
   })
 
-  // An update can concern fields other than title, so a missing title
-  // is not an error as might be expected.
-
-  // But an empty string title is no good.
-  .then((result) => {
-    console.log('PUT /accounts/:id, bad document, empty title')
-    return new Promise((resolve, reject) => {
-      client.put('/accounts/' + firstNewAccount._id, {title:""}, function (err, req, res, obj) {
-        if (err) {
-          console.log(err)
-          reject(err)
-        }
-        if (obj.error === undefined) { reject('this test must generate an error') }
-        console.log('correct result:%j', obj)
-        resolve(true)
-      })
-    })
-  })
-
-  .then((result) => {
-    console.log('PUT /accounts/:id, title must be unique')
-    return new Promise((resolve, reject) => {
-      client.put('/accounts/' + firstNewAccount._id, secondNewAccount, function (err, req, res, obj) {
-        if (err) reject(err)
-        if (obj.error === undefined) { reject('this test must generate an error') }
-
-        console.log('correct result:%j', obj)
-        resolve(true)
-      })
-    })
-  })
-
-  // delete a bad document id
+  // 5. DELETE /accounts/:id
   .then((result) => {
     console.log('DELETE /accounts, bad id')
     return new Promise((resolve, reject) => {
@@ -210,7 +136,6 @@ exports.tests = function () {
     })
   })
 
-  // delete a good document id
   .then((result) => {
     console.log('DELETE /accounts, good id')
     return new Promise((resolve, reject) => {

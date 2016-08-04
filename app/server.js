@@ -9,6 +9,7 @@ let mongoDb
 let accountsRouter = require('./accounts/routing')
 let currenciesRouter = require('./currencies/routing')
 let distributionsRouter = require('./distributions/routing')
+let toolsRouter = require('./tools/routing')
 let transactionsRouter = require('./transactions/routing')
 
 let server = restify.createServer()
@@ -27,6 +28,7 @@ MongoClient.connect('mongodb://localhost:27017/bookwerx-core')
       mongoDb.collection('accounts').createIndex( { title: 1 }, { unique: true } )
       currenciesRouter.defineRoutes(server, mongoDb)
       distributionsRouter.defineRoutes(server, mongoDb)
+      toolsRouter.defineRoutes(server, mongoDb)
       transactionsRouter.defineRoutes(server, mongoDb)
 
       server.listen(port, () => {

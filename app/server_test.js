@@ -9,6 +9,7 @@ let mongoDb
 let accountsRouter = require('./accounts/routing')
 let currenciesRouter = require('./currencies/routing')
 let distributionsRouter = require('./distributions/routing')
+let toolsRouter = require('./tools/routing')
 let transactionsRouter = require('./transactions/routing')
 
 let server = restify.createServer()
@@ -29,6 +30,9 @@ currenciesTests.setClient(client)
 let distributionsTests = require('./distributions/tests')
 distributionsTests.setClient(client)
 
+let toolsTests = require('./tools/tests')
+toolsTests.setClient(client)
+
 let transactionsTests = require('./transactions/tests')
 transactionsTests.setClient(client)
 // Unique to server_test- stop
@@ -42,9 +46,10 @@ MongoClient.connect('mongodb://localhost:27017/bookwerx-core')
     console.log('mongo server started')
     return new Promise((resolve, reject) => {
       accountsRouter.defineRoutes(server, mongoDb)
-      mongoDb.collection('accounts').createIndex( { title: 1 }, { unique: true } )
+      //mongoDb.collection('accounts').createIndex( { title: 1 }, { unique: true } )
       currenciesRouter.defineRoutes(server, mongoDb)
       distributionsRouter.defineRoutes(server, mongoDb)
+      toolsRouter.defineRoutes(server, mongoDb)
       transactionsRouter.defineRoutes(server, mongoDb)
 
       server.listen(port, () => {
@@ -56,11 +61,11 @@ MongoClient.connect('mongodb://localhost:27017/bookwerx-core')
   // Common to server and server_test- stop
 
   // Unique to server_test- start
+  //.then(toolsTests.tests)
   .then(result => {
     mongoDb.dropDatabase()
     mongoDb.collection('accounts').createIndex( { title: 1 }, { unique: true } )
   })
-  //.then(transform.tests)
   .then(accountsTests.tests)
   .then(currenciesTests.tests)
   //.then(distributionsTests.tests)

@@ -7,7 +7,7 @@
 
 The purpose of **bookwerx-core** is to provide an API that supports multi-currency
  bookkeeping, using the double-entry bookkeeping model, slightly adapted to squeeze 
- in multiple currencies.  It uses [node](https://nodejs.org), [express](http://expressjs.com/), and [mongodb](https://www.mongodb.com/).
+ in multiple currencies.  It uses [node](https://nodejs.org), [restify](http://restify.com/), and [mongodb](https://www.mongodb.com/).
 
 Any application that deals with "money" (fiat, precious metals, cryptocoins) will
 quickly encounter the need for bookkeeping.  Rolling your own methods is, as usual,
@@ -52,6 +52,8 @@ The care and feeding of these items are beyond the scope of these instructions.
 git clone https://github.com/bostontrader/bookwerx-core.git
 cd bookwerx-core
 npm install
+npm test
+npm start
 ```
 
 ##Multiple Currencies
@@ -61,21 +63,29 @@ Fiat, precious metals, and cryptocoins are three obvious examples of currencies 
 this app could easily handle.
 
 The "distributions" of a transaction (the debits and credits part) are all tagged
-with a currency and a single transaction can include either one or two different
+with a currency and a single transaction can include any number of different
 currencies.
 
-Any transaction which includes only a single currency must satisfy the usual
+Any transaction which includes only a single currency should satisfy the usual
 sum-of-debits = sum-of-credits constraint.
 
-Any transaction which includes two currencies must still satisfy that constraint.
-[But...](https://www.youtube.com/watch?v=FaVFuX8z26c) We must modify said constraint
+Any transaction which includes two currencies should still satisfy that constraint.
+[But...](https://www.youtube.com/watch?v=FaVFuX8z26c) We can modify said constraint
 a wee bit to make it fit. As you can readily imagine, the actual numbers involved
-won't add up the way we expect. Instead, **bookwerx-core** will compute an
+won't add up the way we ordinarily expect. Instead, you can compute an
 implied exchange rate R such that sum-of-debits * R = sum-of-credits.
 
 But be careful with this.  Although simple transactions such as currency exchanges 
 can easily be recorded by debiting one currency and crediting the other, you
 could easily make nonsensical transactions if you're not paying attention when you do this.
+
+##Validation
+
+Notice I say "you" can do this or that, not **bookwerx-core**. This is intentional and keeping
+with the principal that this core is a minimalist thing.  Although there is a core of necessary 
+referential integrity constaints that **bookwerx-core** enforces,
+extra fancy features, such as validation belong elsewhere.  You may easily use this API to make
+ non-sensensical entries into your records.  GIGO.
 
 ##Data Analysis
 
@@ -87,7 +97,10 @@ But "what does any of this mean" belongs elsewhere.
 
 ##API
 
-Any errors returned will be JSON with a schema like {'errors': [{'some error message'}]}
+Any errors returned will be JSON with a schema like {'error': {'some error message'}}
+In the event that more than one error could apply, only the first error found
+is returned.
+Recall the earlier discussion of validation and its absence here.
 
 Accounts
 
@@ -98,16 +111,22 @@ GET /accounts/:id
 Returns a JSON object containing a single account document.
 Possibly error 1.
 
-POST /accounts (add a new account) (errors: 3.1, 3.2)
-PUT /accounts/:id (modify an existing account, no upsert) (errors: 1, 3.1, 3.2)
-DELETE /accounts/:id (errors: 1,2)
+POST /accounts
+Add a new account document. Returns what was just written, plus the newly assigned
+_id.
 
+PUT /accounts/:id
+Modify an existing account, no upsert.
+Possibly error 1.
+
+DELETE /accounts/:id
+Guess what this does?
+Possibly return errors 1 or 2.
+
+ 
 Possible errors:
 1.  account n does not exist
 2.  this account cannot be deleted because some distributions refer to it
-3.1 title must be truthy
-3.2 title must be unique
-
 
 
 currencies
