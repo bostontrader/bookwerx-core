@@ -12,7 +12,7 @@ exports.defineRoutes = function (server, mongoDb) {
 
   server.get('/accounts/:id', (req, res, next) => {
     mongoDb.collection('accounts').find({'_id': ObjectId(req.params.id)}).toArray().then(result => {
-      if (result.length === 0) result = {error:'account '+req.params.id+' does not exist'}
+      if (result.length === 0) result = {error: 'account ' + req.params.id + ' does not exist'}
       res.json(result)
       next()
     }).catch(error => {
@@ -38,10 +38,10 @@ exports.defineRoutes = function (server, mongoDb) {
         {'_id': ObjectId(req.params.id)},
         {title: req.body.title},
         {returnOriginal: false}).then(function resolve (result) {
-      res.json(result)
-    }).catch(error => {
-      res.json({'error': error})
-    })
+          res.json(result)
+        }).catch(error => {
+          res.json({'error': error})
+        })
   })
 
   server.del('/accounts/:id', (req, res, next) => {

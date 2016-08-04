@@ -3,7 +3,7 @@ let client
 let firstNewAccount = {title: 'first new title'}
 let secondNewAccount = {title: 'second new title'}
 
-exports.setClient = function (c) {client = c}
+exports.setClient = function (c) { client = c }
 
 exports.tests = function () {
   // 1. GET /accounts and look for the correct operation of returning
@@ -81,7 +81,7 @@ exports.tests = function () {
   .then((result) => {
     console.log('GET /accounts/:id, good id')
     return new Promise((resolve, reject) => {
-      client.get('/accounts/'+firstNewAccount._id, function (err, req, res, obj) {
+      client.get('/accounts/' + firstNewAccount._id, function (err, req, res, obj) {
         if (err) reject(err)
         console.log('correct result:%j', obj)
         resolve(true)
