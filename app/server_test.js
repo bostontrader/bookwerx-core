@@ -69,7 +69,7 @@ MongoClient.connect(mongoConnectionURL)
   .then(accountsTests.tests)
   .then(currenciesTests.tests)
   // .then(distributionsTests.tests)
-  // .then(transactionsTests.tests)
+  .then(transactionsTests.tests)
   .then(() => {
     return new Promise((resolve, reject) => {
       client.close()

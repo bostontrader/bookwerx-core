@@ -1,13 +1,13 @@
 let client
 
-let firstNewAccount = {title: 'first new title'}
-let secondNewAccount = {title: 'second new title'}
+let firstNewTransaction = {datetime: '2016-08-04 12:00:00', note: 'first new note'}
+let secondNewTransaction = {datetime: '2016-08-05 13:00:00', note: 'second new note'}
 
-exports.setClient = function (c) {
-  client = c
-}
+exports.setClient = function (c) { client = c }
 
 exports.tests = function () {
+  // 1. GET /transactions and look for the correct operation of returning
+  // an array of zero, one, or > 1 elements.
   return new Promise((resolve, reject) => {
     console.log('GET /transactions, sb empty')
     client.get('/transactions', function (err, req, res, obj) {
@@ -21,10 +21,10 @@ exports.tests = function () {
   .then((result) => {
     console.log('POST /transactions, 1st new document')
     return new Promise((resolve, reject) => {
-      client.post('/transactions', firstNewAccount, function (err, req, res, obj) {
+      client.post('/transactions', firstNewTransaction, function (err, req, res, obj) {
         if (err) reject(err)
-        firstNewAccount = obj
-        console.log('%j', firstNewAccount)
+        firstNewTransaction = obj
+        console.log('%j', firstNewTransaction)
         resolve(true)
       })
     })
@@ -45,7 +45,7 @@ exports.tests = function () {
   .then((result) => {
     console.log('POST /transactions, 2nd new document')
     return new Promise((resolve, reject) => {
-      client.post('/transactions', secondNewAccount, function (err, req, res, obj) {
+      client.post('/transactions', secondNewTransaction, function (err, req, res, obj) {
         if (err) reject(err)
         console.log('%j', obj)
         resolve(true)
@@ -65,27 +65,38 @@ exports.tests = function () {
     })
   })
 
-  // post a bad document (empty title)
+  // 2. GET /accounts/:id
   .then((result) => {
-    console.log('POST /transactions, bad document, empty title')
+    console.log('GET /transactions/:id, bad id')
     return new Promise((resolve, reject) => {
-      client.post('/transactions', {}, function (err, req, res, obj) {
-        if (err) {
-          console.log(err)
-          reject(err)
-        }
-        if (obj.error === undefined) { reject('this test must generate an error') }
+      client.get('/transactions/666666b816070328224cf098', function (err, req, res, obj) {
+        if (err) reject(err)
+        if (!obj.error) reject('this test must generate an error')
         console.log('correct result:%j', obj)
         resolve(true)
       })
     })
   })
 
-  // put a good document id
   .then((result) => {
-    console.log('PUT /transactions, good id, good document')
+    console.log('GET /transactions/:id, good id')
     return new Promise((resolve, reject) => {
-      client.put('/transactions/' + firstNewAccount._id, {title: 'first amended title'}, function (err, req, res, obj) {
+      client.get('/transactions/' + firstNewTransaction._id, function (err, req, res, obj) {
+        if (err) reject(err)
+        console.log('correct result:%j', obj)
+        resolve(true)
+      })
+    })
+  })
+
+  // 3. POST /transactions
+  // We already know that POST works.
+
+  // 4. PUT /accounts/:id
+  .then((result) => {
+    console.log('PUT /transactions, good id')
+    return new Promise((resolve, reject) => {
+      client.put('/transactions/' + firstNewTransaction._id, {title: 'first amended title'}, function (err, req, res, obj) {
         if (err) {
           console.log(err)
           reject(err)
@@ -96,7 +107,6 @@ exports.tests = function () {
     })
   })
 
-  // put a bad document id
   .then((result) => {
     console.log('PUT /transactions, bad id, good document')
     return new Promise((resolve, reject) => {
@@ -111,9 +121,7 @@ exports.tests = function () {
     })
   })
 
-  // put a bad document
-
-  // delete a bad document id
+  // 5. DELETE /accounts/:id
   .then((result) => {
     console.log('DELETE /transactions, bad id')
     return new Promise((resolve, reject) => {
@@ -132,7 +140,7 @@ exports.tests = function () {
   .then((result) => {
     console.log('DELETE /transactions, good id')
     return new Promise((resolve, reject) => {
-      client.del('/transactions/' + firstNewAccount._id, function (err, req, res, obj) {
+      client.del('/transactions/' + firstNewTransaction._id, function (err, req, res, obj) {
         if (err) {
           console.log(err)
           reject(err)
