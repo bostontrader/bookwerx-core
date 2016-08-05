@@ -106,7 +106,7 @@ def getTransactionId(old_transaction_id, tran_datetime, note):
 
 
 
-with open('olddata.json') as json_data:
+with open('acctwerx-prod-08-04-2016.json') as json_data:
   d = json.load(json_data)
   json_data.close()
 
@@ -131,9 +131,8 @@ for old_record in d['olddata']:
     data=json.dumps({
       "account_id": new_account_id,
       "currency_id": new_currency_id,
-      "transactions_id": new_transaction_id,
-      "amount": old_record['amount'],
-      "drcr": old_record['drcr']
+      "transaction_id": new_transaction_id,
+      "amount": old_record['amount']*old_record['drcr']
     })
   )
 
