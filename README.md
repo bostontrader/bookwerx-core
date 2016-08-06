@@ -22,10 +22,10 @@ such as accounts and transactions.
 
 * Brainwipe the db and start over.
 
-This API is the minimum necessary to populate your db with bookkeeping information,
-ensure that it is internally consistent, and nuke it from orbit and start over if necessary.
+This API is the minimum necessary to accomplish the above goals. Extra fancy
+features can be found elsewhere.  For example:
 
-A package that provides a web-based front-end using Angular 2 can be found at [bookwerx-ui]
+A package that provides a web-based user interface can be found at [bookwerx-ui]
 (https://github.com/bostontrader/bookwerx-ui) and for more sophisticated analysis, 
 such as the production of financial reports and graphing, please see 
  [bookwerx-reporting](https://github.com/bostontrader/bookwerx-reporting).
@@ -133,26 +133,34 @@ DELETE /accounts/:id
 Guess what this does?
 Possibly return errors 1 or 2.
 
- 
+Currencies
+
+GET /currencies
+Returns a JSON array of account documents.
+
+GET /currencies/:id
+Returns a JSON object containing a single account document.
+Possibly error 1.
+
+POST /currencies
+Add a new account document. Returns what was just written, plus the newly assigned
+_id.
+
+PUT /currencies/:id
+Modify an existing account, no upsert.
+Possibly error 1.
+
+DELETE /currencies/:id
+Guess what this does?
+Possibly return errors 1 or 2.
+
 Possible errors:
-1.  account n does not exist
-2.  this account cannot be deleted because some distributions refer to it
+1.  Document n does not exist
+2.  This document cannot be deleted because some distributions refer to it
 
 
-currencies
-GET /currencies get all of them
-GET /currencies/:id get one of them (errors:1)
-POST /currencies (add a new currency) (errors:3.1, 3.2, 4.1, 4.2)
-PUT /currencies/:id (modify an existing currency, no upsert) (errors:1, 3.1, 3.2, 4.1, 4.2)
-DELETE /currencies/:id (errors:1, 2)
 
-Possible errors:
-1.  currency n does not exist
-2.  this currency cannot be deleted because some distributions refer to it
-3.1 symbol must be truthy
-3.2 symbol must be unique
-4.1 title must be truthy
-4.2 title must be unique
+
 
 
 transactions
