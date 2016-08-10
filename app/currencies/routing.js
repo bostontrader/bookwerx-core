@@ -39,10 +39,10 @@ exports.defineRoutes = function (server, mongoDb) {
       {symbol: req.body.symbol, title: req.body.title},
       {returnOriginal: false})
     .then(function resolve (result) {
-        res.json(result)
-      }).catch(error => {
-        res.json({'error': error})
-      })
+      res.json(result)
+    }).catch(error => {
+      res.json({'error': error})
+    })
   })
 
   server.del('/currencies/:id', (req, res, next) => {
