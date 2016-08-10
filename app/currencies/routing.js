@@ -36,8 +36,9 @@ exports.defineRoutes = function (server, mongoDb) {
   server.put('/currencies/:id', (req, res, next) => {
     mongoDb.collection('currencies').findOneAndUpdate(
       {'_id': ObjectId(req.params.id)},
-      {title: req.body.title},
-      {returnOriginal: false}).then(function resolve (result) {
+      {symbol: req.body.symbol, title: req.body.title},
+      {returnOriginal: false})
+    .then(function resolve (result) {
         res.json(result)
       }).catch(error => {
         res.json({'error': error})
