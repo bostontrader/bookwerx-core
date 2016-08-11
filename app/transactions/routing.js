@@ -36,7 +36,7 @@ exports.defineRoutes = function (server, mongoDb) {
   server.put('/transactions/:id', (req, res, next) => {
     mongoDb.collection('transactions').findOneAndUpdate(
       {'_id': ObjectId(req.params.id)},
-      {title: req.body.title},
+      {datetime: req.body.datetime, note: req.body.note},
       {returnOriginal: false}).then(function resolve (result) {
         res.json(result)
       }).catch(error => {
