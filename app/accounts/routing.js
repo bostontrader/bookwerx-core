@@ -1,8 +1,15 @@
+let genericRoutes = require('../generic_routes')
+
 let ObjectId = require('mongodb').ObjectId
+let collectionSingular = 'account'
+let collectionPlural = 'accounts'
 
 exports.defineRoutes = function (server, mongoDb) {
-  server.get('/accounts', (req, res, next) => {
-    mongoDb.collection('accounts').find({}).toArray().then(result => {
+  genericRoutes.get(server, mongoDb, collectionSingular, collectionPlural)
+
+  server.get('/' + collectionPlural + '/:id', (req, res, next) => {
+    mongoDb.collection(collectionPlural).findOne({'_id': ObjectId(req.params.id)}).then(result => {
+      if (result === null) result = {error: collectionSingular + ' ' + req.params.id + ' does not exist'}
       res.json(result)
       next()
     }).catch(error => {
@@ -10,22 +17,12 @@ exports.defineRoutes = function (server, mongoDb) {
     })
   })
 
-  server.get('/accounts/:id', (req, res, next) => {
-    mongoDb.collection('accounts').findOne({'_id': ObjectId(req.params.id)}).then(result => {
-      if (result === null) result = {error: 'account ' + req.params.id + ' does not exist'}
-      res.json(result)
-      next()
-    }).catch(error => {
-      res.json({error: error})
-    })
-  })
-
-  server.post('/accounts', (req, res, next) => {
+  server.post('/' + collectionPlural, (req, res, next) => {
     // insertOne only returns the new _id.  We want to return complete
     // new document, which is what we originally requested to store
     // with the new _id added to this.
     let retVal = req.body
-    mongoDb.collection('accounts').insertOne(req.body).then(result => {
+    mongoDb.collection(collectionPlural).insertOne(req.body).then(result => {
       retVal._id = result.insertedId.toString()
       res.json(retVal)
     }).catch(error => {
@@ -33,21 +30,21 @@ exports.defineRoutes = function (server, mongoDb) {
     })
   })
 
-  server.put('/accounts/:id', (req, res, next) => {
-    mongoDb.collection('accounts').findOneAndUpdate(
+  server.put('/' + collectionPlural + '/:id', (req, res, next) => {
+    mongoDb.collection(collectionPlural).findOneAndUpdate(
         {'_id': ObjectId(req.params.id)},
         {title: req.body.title},
         {returnOriginal: false}).then(function resolve (result) {
-          if (result.value === null) result.value = {error: 'account ' + req.params.id + ' does not exist'}
+          if (result.value === null) result.value = {error: collectionSingular + ' ' + req.params.id + ' does not exist'}
           res.json(result.value)
         }).catch(error => {
           res.json({'error': error})
         })
   })
 
-  server.del('/accounts/:id', (req, res, next) => {
-    mongoDb.collection('accounts').findOneAndDelete({'_id': ObjectId(req.params.id)}).then(function resolve (result) {
-      if (result.value === null) result.value = {error: 'account ' + req.params.id + ' does not exist'}
+  server.del('/' + collectionPlural + '/:id', (req, res, next) => {
+    mongoDb.collection(collectionPlural).findOneAndDelete({'_id': ObjectId(req.params.id)}).then(function resolve (result) {
+      if (result.value === null) result.value = {error: collectionSingular + ' ' + req.params.id + ' does not exist'}
       res.json(result.value)
     }).catch(error => {
       res.json({'error': error})
