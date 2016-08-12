@@ -25,8 +25,7 @@ such as accounts and transactions.
 This API is the minimum necessary to accomplish the above goals. Extra fancy
 features can be found elsewhere.  For example:
 
-A package that provides a web-based user interface can be found at [bookwerx-ui]
-(https://github.com/bostontrader/bookwerx-ui) and for more sophisticated analysis, 
+A package that provides a web-based user interface can be found at [bookwerx-ui](https://github.com/bostontrader/bookwerx-ui) and for more sophisticated analysis, 
 such as the production of financial reports and graphing, please see 
  [bookwerx-reporting](https://github.com/bostontrader/bookwerx-reporting).
 
@@ -41,8 +40,7 @@ such as the production of financial reports and graphing, please see
 
 * You will need mongodb.
 
-* In order to run the example data importer, you will need Python and the requests library.
-(docs.python-requests.org/en/master/user/install)
+* In order to run the example data importer, you will need Python and the [requests library](docs.python-requests.org/en/master/user/install).
 
 The care and feeding of these items are beyond the scope of these instructions.
 
@@ -59,7 +57,7 @@ npm start
 
 Runtime configuration is managed by [node-config](https://github.com/lorenwest/node-config)
 By default, **bookwerx-core** will start the server using /config/default.json.
-You may create other configurations to suit your fancy. And example to use configuration
+You may create other configurations to suit your fancy. For example: To use configuration
 /config/production.json:
 
 ```bash

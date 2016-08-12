@@ -8,6 +8,7 @@ let mongoDb
 let mongoConnectionURL = config.get('mongoConnectionURL')
 
 let accountsRouter = require('./accounts/routing')
+let categoriesRouter = require('./categories/routing')
 let currenciesRouter = require('./currencies/routing')
 let distributionsRouter = require('./distributions/routing')
 let toolsRouter = require('./tools/routing')
@@ -26,13 +27,14 @@ MongoClient.connect(mongoConnectionURL)
     console.log('mongo server started')
     return new Promise((resolve, reject) => {
       accountsRouter.defineRoutes(server, mongoDb)
+      categoriesRouter.defineRoutes(server, mongoDb)
       currenciesRouter.defineRoutes(server, mongoDb)
       distributionsRouter.defineRoutes(server, mongoDb)
       toolsRouter.defineRoutes(server, mongoDb)
       transactionsRouter.defineRoutes(server, mongoDb)
 
       server.listen(port, () => {
-        console.log('Using configuration: %s',config.get('configName'))
+        console.log('Using configuration: %s', config.get('configName'))
         console.log('%s listening at %s', server.name, server.url)
         resolve(true)
       })

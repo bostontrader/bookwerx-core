@@ -8,6 +8,7 @@ let mongoDb
 let mongoConnectionURL = config.get('mongoConnectionURL')
 
 let accountsRouter = require('./accounts/routing')
+let categoriesRouter = require('./categories/routing')
 let currenciesRouter = require('./currencies/routing')
 let distributionsRouter = require('./distributions/routing')
 let toolsRouter = require('./tools/routing')
@@ -24,6 +25,9 @@ let client = restify.createJsonClient({
 
 let accountsTests = require('./accounts/tests')
 accountsTests.setClient(client)
+
+let categoriesTests = require('./categories/tests')
+categoriesTests.setClient(client)
 
 let currenciesTests = require('./currencies/tests')
 currenciesTests.setClient(client)
@@ -47,6 +51,7 @@ MongoClient.connect(mongoConnectionURL)
     console.log('mongo server started')
     return new Promise((resolve, reject) => {
       accountsRouter.defineRoutes(server, mongoDb)
+      categoriesRouter.defineRoutes(server, mongoDb)
       currenciesRouter.defineRoutes(server, mongoDb)
       distributionsRouter.defineRoutes(server, mongoDb)
       toolsRouter.defineRoutes(server, mongoDb)
@@ -67,6 +72,7 @@ MongoClient.connect(mongoConnectionURL)
     // mongoDb.collection('accounts').createIndex({ title: 1 }, { unique: true } )
   })
   .then(accountsTests.tests)
+  .then(categoriesTests.tests)
   .then(currenciesTests.tests)
   // .then(distributionsTests.tests)
   .then(transactionsTests.tests)
