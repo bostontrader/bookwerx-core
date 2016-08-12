@@ -95,6 +95,45 @@ referential integrity constaints that **bookwerx-core** enforces,
 extra fancy features, such as validation belong elsewhere.  You may easily use this API to make
  non-sensensical entries into your records.  GIGO.
 
+##On Categories and Ordering
+
+There are several places where we might want to "categorize" the various accounts. Not only
+do we want to categorize them, but we also want to deal with them in a particular order.
+
+Some examples:
+
+1. Each account might be one of [Assets, Liabilities, Equity, Revenue, Expenses] and these broad categories have a customary position in financial statements.
+
+2. Asset categorization might be further subdivided into Current, Equipment, and Building with them
+appearing on a report in that order.
+
+3. "Liquid" accounts such as cash-in-mattress, bank deposits, and perhaps short-term notes, might be tagged so that 
+they could all appear on a graph.
+
+I will spare you the hand-wringing, agonization, and derivation that led to our final solution, and cut to the chase.
+The bottom line is that, considering how broad and diverse this problem is, attempting to build a robust system that can
+ manage these groupings is far beyond the scope of this app.  So in keeping with the minimalist philosophy, **bookwerx-core**
+ provides the following minimal solution. It:
+
+1. Maintains a collection of categories.
+
+2. Maintains a collection of "accounts_categories".  Each account_category points to exactly one account and one
+category.  In this way, an account can be tagged with zero or more categories, and a category may
+apply to zero or more accounts.
+
+This is the essential minimal foundation required.  In light of this let's revisit the prior 
+ examples and see how they could be implemented.
+
+1. Create categories for "Assets","Liabilities","Equity","Revenue", and "Expenses."  Every account gets tagged with exactly one of these.  The Balance Sheet and Income Statements verify this and display their information in a hardwired customary order.  The report decides how to order individual accounts, perhaps alphabetically by their titles.
+
+2. Create categories for "Current" and "Long-term" (for example.)  Assets deemed "current" or "long-term" get tagged thus.  The financial reports will display current assets before long-term because it's hardwired to look for these categories and display them in said order.  We can use the same same tags for liabilities. The financial reports should include an implicit category for "uncategorized" to include accounts that are not otherwise categorized.
+
+3. Create categories for "cash", "bank", and "short-term note".  Tag certain accounts as one or the other of these.  A graph can operate only on these specific accounts and seperately display each category.  No individual accounts need apply.
+
+In each case it is the reponsibility of the report or graph to understand the available categories, present 
+them in the proper order, and to ensure that the categorization is plausible. For example, nothing should be tagged as an 
+asset _and_ a liability.
+
 ##Data Analysis
 
 As mentioned earlier, this package merely records the basic bookkeeping objects.
