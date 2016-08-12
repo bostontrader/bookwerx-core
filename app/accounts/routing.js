@@ -11,8 +11,8 @@ exports.defineRoutes = function (server, mongoDb) {
   })
 
   server.get('/accounts/:id', (req, res, next) => {
-    mongoDb.collection('accounts').find({'_id': ObjectId(req.params.id)}).toArray().then(result => {
-      if (result.length === 0) result = {error: 'account ' + req.params.id + ' does not exist'}
+    mongoDb.collection('accounts').findOne({'_id': ObjectId(req.params.id)}).then(result => {
+      if (result === null) result = {error: 'account ' + req.params.id + ' does not exist'}
       res.json(result)
       next()
     }).catch(error => {
@@ -38,7 +38,8 @@ exports.defineRoutes = function (server, mongoDb) {
         {'_id': ObjectId(req.params.id)},
         {title: req.body.title},
         {returnOriginal: false}).then(function resolve (result) {
-          res.json(result)
+          if (result.value === null) result.value = {error: 'account ' + req.params.id + ' does not exist'}
+          res.json(result.value)
         }).catch(error => {
           res.json({'error': error})
         })
@@ -46,7 +47,8 @@ exports.defineRoutes = function (server, mongoDb) {
 
   server.del('/accounts/:id', (req, res, next) => {
     mongoDb.collection('accounts').findOneAndDelete({'_id': ObjectId(req.params.id)}).then(function resolve (result) {
-      res.json(result)
+      if (result.value === null) result.value = {error: 'account ' + req.params.id + ' does not exist'}
+      res.json(result.value)
     }).catch(error => {
       res.json({'error': error})
     })
