@@ -3,11 +3,11 @@ let client
 let firstNewDistribution = {title: 'first new title'}
 let secondNewDistribution = {title: 'second new title'}
 
-exports.setClient = function (c) {
-  client = c
-}
+exports.setClient = function (c) { client = c }
 
 exports.tests = function () {
+  // 1. GET /distributions and look for the correct operation of returning
+  // an array of zero, one, or > 1 elements.
   return new Promise((resolve, reject) => {
     console.log('GET /distributions, sb empty')
     client.get('/distributions', function (err, req, res, obj) {
@@ -65,25 +65,36 @@ exports.tests = function () {
     })
   })
 
-  // post a bad document (empty title)
+  // 2. GET /distributions/:id
   .then((result) => {
-    console.log('POST /distributions, bad document, empty title')
+    console.log('GET /distributions/:id, bad id')
     return new Promise((resolve, reject) => {
-      client.post('/distributions', {}, function (err, req, res, obj) {
-        if (err) {
-          console.log(err)
-          reject(err)
-        }
-        if (obj.error === undefined) { reject('this test must generate an error') }
+      client.get('/distributions/666666b816070328224cf098', function (err, req, res, obj) {
+        if (err) reject(err)
+        if (!obj.error) reject('this test must generate an error')
         console.log('correct result:%j', obj)
         resolve(true)
       })
     })
   })
 
-  // put a good document id
   .then((result) => {
-    console.log('PUT /distributions, good id, good document')
+    console.log('GET /distributions/:id, good id')
+    return new Promise((resolve, reject) => {
+      client.get('/distributions/' + firstNewDistribution._id, function (err, req, res, obj) {
+        if (err) reject(err)
+        console.log('correct result:%j', obj)
+        resolve(true)
+      })
+    })
+  })
+
+  // 3. POST /distributions
+  // We already know that POST works.
+
+  // 4. PUT /distributions/:id
+  .then((result) => {
+    console.log('PUT /distributions, good id')
     return new Promise((resolve, reject) => {
       client.put('/distributions/' + firstNewDistribution._id, {title: 'first amended title'}, function (err, req, res, obj) {
         if (err) {
@@ -96,9 +107,8 @@ exports.tests = function () {
     })
   })
 
-  // put a bad document id
   .then((result) => {
-    console.log('PUT /distributions, bad id, good document')
+    console.log('PUT /distributions, bad id')
     return new Promise((resolve, reject) => {
       client.put('/distributions/666666b816070328224cf098', {}, function (err, req, res, obj) {
         if (err) {
@@ -111,9 +121,7 @@ exports.tests = function () {
     })
   })
 
-  // put a bad document
-
-  // delete a bad document id
+  // 5. DELETE /distributions/:id
   .then((result) => {
     console.log('DELETE /distributions, bad id')
     return new Promise((resolve, reject) => {
@@ -128,7 +136,6 @@ exports.tests = function () {
     })
   })
 
-  // delete a good document id
   .then((result) => {
     console.log('DELETE /distributions, good id')
     return new Promise((resolve, reject) => {

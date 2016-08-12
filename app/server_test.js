@@ -76,10 +76,11 @@ MongoClient.connect(mongoConnectionURL)
     mongoDb.dropDatabase()
     // mongoDb.collection('accounts').createIndex({ title: 1 }, { unique: true } )
   })
+  .then(accountsCategoriesTests.tests)
   .then(accountsTests.tests)
   .then(categoriesTests.tests)
   .then(currenciesTests.tests)
-  // .then(distributionsTests.tests)
+  .then(distributionsTests.tests)
   .then(transactionsTests.tests)
   .then(() => {
     return new Promise((resolve, reject) => {
