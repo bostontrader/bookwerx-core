@@ -42,7 +42,7 @@ exports.put = function (server, mongoDb, collectionSingular, collectionPlural) {
   server.put('/' + collectionPlural + '/:id', (req, res, next) => {
     mongoDb.collection(collectionPlural).findOneAndUpdate(
         {'_id': ObjectId(req.params.id)},
-        {title: req.body.title},
+        req.body,
         {returnOriginal: false}).then(function resolve (result) {
           if (result.value === null) result.value = {error: collectionSingular + ' ' + req.params.id + ' does not exist'}
           res.json(result.value)
