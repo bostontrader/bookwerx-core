@@ -62,4 +62,3 @@ exports.delete = function (server, mongoDb, collectionSingular, collectionPlural
     })
   })
 }
-
