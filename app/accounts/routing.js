@@ -111,7 +111,7 @@ exports.defineRoutes = function (server, mongoDb) {
 
    */
 
-  server.get('/dashboard/:account_id', (req, res, next) => {
+  server.get('/accounts/dashboard/:account_id', (req, res, next) => {
     let distributions
     return mongoDb.collection('distributions')
         .aggregate([
