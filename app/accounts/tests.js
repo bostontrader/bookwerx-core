@@ -126,7 +126,7 @@ exports.tests = function () {
       })
     })
   })
-      
+
   // 4. POST /accounts
   // We already know that POST works.
 
