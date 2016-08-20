@@ -105,18 +105,16 @@ exports.tests = function () {
   .then((result) => {
     console.log('GET /accounts, sorted by title desc')
     return new Promise((resolve, reject) => {
-      filter = {}
-      sort = {}
       client.get('/accounts?sort={"title":-1}', function (err, req, res, obj) {
         if (err) reject(err)
         if (obj.length !== 3) reject('accounts should have three documents')
 
         // Now ensure that the documents are sorted correctly.
         let priorTitle
-        for(let idx = 0; idx < obj.length; idx++) {
+        for (let idx = 0; idx < obj.length; idx++) {
           let account = obj[idx]
-          if(priorTitle) {
-            if(priorTitle < account.title) {
+          if (priorTitle) {
+            if (priorTitle < account.title) {
               reject('the accounts are out of order')
             }
           }
@@ -128,8 +126,7 @@ exports.tests = function () {
       })
     })
   })
-
-
+      
   // 4. POST /accounts
   // We already know that POST works.
 
