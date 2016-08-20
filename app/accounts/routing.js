@@ -9,25 +9,35 @@ exports.defineRoutes = function (server, mongoDb) {
 
   //genericRoutes.post(server, mongoDb, collectionPlural)
   // This differs from genericRoutes in that it must update accounts_categories
-  //exports.post = function (server, mongoDb, collectionPlural) {
-    server.post('/' + collectionPlural, (req, res, next) => {
-      // insertOne only returns the new _id.  We want to return complete
-      // new document, which is what we originally requested to store
-      // with the new _id added to this.
-      let retVal = req.body
-      mongoDb.collection(collectionPlural).insertOne(req.body).then(result => {
-        retVal._id = result.insertedId.toString()
-        res.json(retVal)
-      }).catch(error => {
-        res.json({error: error})
-      })
-    })
+  // WARNING! This should all be in a transaction!
+  server.post('/' + collectionPlural, (req, res, next) => {
+    // insertOne only returns the new _id.  We want to return complete
+    // new document, which is what we originally requested to store
+    // with the new _id added to this.
+    let retVal = req.body
+    mongoDb.collection(collectionPlural).insertOne(req.body)
+    .then(result => {
+      retVal._id = result.insertedId.toString()
 
-    // This has a brand-new _id so assume there are no entries in accounts_categories
-    // therefore just make new entries
-
-    // for each category...
+      // This has a brand-new _id so assume there are no entries in accounts_categories
+      // therefore just make new entries
+      // for each category...
       // make new account_category
+      let n = []
+      var categories = retVal.categories
+      for(let category_idx in categories) {
+        n.push({'accounts_id':retVal._id,'categories_id':categories[category_idx]})
+      }
+      mongoDb.collection(collectionPlural).insertMany(n)
+    })
+    .then(result => {
+      res.json(retVal)
+    }).catch(error => {
+      res.json({error: error})
+    })
+  })
+
+
 
 
   //}

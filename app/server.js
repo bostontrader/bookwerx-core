@@ -17,6 +17,7 @@ let transactionsRouter = require('./transactions/routing')
 
 let server = restify.createServer()
 server.use(restify.bodyParser())
+server.use(restify.queryParser())
 // Common to server and server_test- stop
 
 // Common to server and server_test- start

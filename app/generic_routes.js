@@ -1,8 +1,10 @@
 let ObjectId = require('mongodb').ObjectId
 
-exports.get = function (server, mongoDb, collectionPlural) {
+exports.get = function (server, mongoDb, collectionPlural, sort={}) {
   server.get('/' + collectionPlural, (req, res, next) => {
-    mongoDb.collection(collectionPlural).find({}).toArray().then(result => {
+    if(req.query.sort)
+      sort = JSON.parse(req.query.sort)
+    mongoDb.collection(collectionPlural).find().sort(sort).toArray().then(result => {
       res.json(result)
       next()
     }).catch(error => {

@@ -1,7 +1,8 @@
 let client
 
-let firstNewAccount = {title: 'first new title'}
-let secondNewAccount = {title: 'second new title'}
+let newAccount1 = {title: 'Apples'}
+let newAccount2 = {title: 'Bananas'}
+let newAccount3 = {title: 'Carrots'}
 
 exports.setClient = function (c) { client = c }
 
@@ -21,10 +22,10 @@ exports.tests = function () {
   .then((result) => {
     console.log('POST /accounts, 1st new document')
     return new Promise((resolve, reject) => {
-      client.post('/accounts', firstNewAccount, function (err, req, res, obj) {
+      client.post('/accounts', newAccount1, function (err, req, res, obj) {
         if (err) reject(err)
-        firstNewAccount = obj
-        console.log('%j', firstNewAccount)
+        newAccount1 = obj
+        console.log('%j', newAccount1)
         resolve(true)
       })
     })
@@ -45,7 +46,7 @@ exports.tests = function () {
   .then((result) => {
     console.log('POST /accounts, 2nd new document')
     return new Promise((resolve, reject) => {
-      client.post('/accounts', secondNewAccount, function (err, req, res, obj) {
+      client.post('/accounts', newAccount2, function (err, req, res, obj) {
         if (err) reject(err)
         console.log('%j', obj)
         resolve(true)
@@ -60,6 +61,17 @@ exports.tests = function () {
         if (err) reject(err)
         if (obj.length !== 2) reject('accounts should only have two documents')
         console.log('accounts=%j', obj)
+        resolve(true)
+      })
+    })
+  })
+
+  .then((result) => {
+    console.log('POST /accounts, 3rd new document')
+    return new Promise((resolve, reject) => {
+      client.post('/accounts', newAccount3, function (err, req, res, obj) {
+        if (err) reject(err)
+        console.log('%j', obj)
         resolve(true)
       })
     })
@@ -81,7 +93,7 @@ exports.tests = function () {
   .then((result) => {
     console.log('GET /accounts/:id, good id')
     return new Promise((resolve, reject) => {
-      client.get('/accounts/' + firstNewAccount._id, function (err, req, res, obj) {
+      client.get('/accounts/' + newAccount1._id, function (err, req, res, obj) {
         if (err) reject(err)
         console.log('correct result:%j', obj)
         resolve(true)
@@ -89,14 +101,43 @@ exports.tests = function () {
     })
   })
 
-  // 3. POST /accounts
+  // 3. GET /accounts, filter and sort
+  .then((result) => {
+    console.log('GET /accounts, sorted by title desc')
+    return new Promise((resolve, reject) => {
+      filter = {}
+      sort = {}
+      client.get('/accounts?sort={"title":-1}', function (err, req, res, obj) {
+        if (err) reject(err)
+        if (obj.length !== 3) reject('accounts should have three documents')
+
+        // Now ensure that the documents are sorted correctly.
+        let priorTitle
+        for(let idx = 0; idx < obj.length; idx++) {
+          let account = obj[idx]
+          if(priorTitle) {
+            if(priorTitle < account.title) {
+              reject('the accounts are out of order')
+            }
+          }
+          priorTitle = account.title
+        }
+
+        console.log('accounts=%j', obj)
+        resolve(true)
+      })
+    })
+  })
+
+
+  // 4. POST /accounts
   // We already know that POST works.
 
-  // 4. PUT /accounts/:id
+  // 5. PUT /accounts/:id
   .then((result) => {
     console.log('PUT /accounts, good id')
     return new Promise((resolve, reject) => {
-      client.put('/accounts/' + firstNewAccount._id, {title: 'first amended title'}, function (err, req, res, obj) {
+      client.put('/accounts/' + newAccount1._id, {title: 'first amended title'}, function (err, req, res, obj) {
         if (err) {
           console.log(err)
           reject(err)
@@ -121,7 +162,7 @@ exports.tests = function () {
     })
   })
 
-  // 5. DELETE /accounts/:id
+  // 6. DELETE /accounts/:id
   .then((result) => {
     console.log('DELETE /accounts, bad id')
     return new Promise((resolve, reject) => {
@@ -139,7 +180,7 @@ exports.tests = function () {
   .then((result) => {
     console.log('DELETE /accounts, good id')
     return new Promise((resolve, reject) => {
-      client.del('/accounts/' + firstNewAccount._id, function (err, req, res, obj) {
+      client.del('/accounts/' + newAccount1._id, function (err, req, res, obj) {
         if (err) {
           console.log(err)
           reject(err)
