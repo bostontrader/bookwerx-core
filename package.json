@@ -1,12 +1,23 @@
 {
-  "name": "bookwerx-core",
-  "version": "0.3.3",
-  "description": "A double-entry bookkeeping engine that supports multiple currencies.",
-  "scripts": {
-    "test": "node ./app/server_test.js",
-    "start": "node ./app/server.js",
-    "lint": "standard"
+  "author": {
+    "name" : "Thomas Radloff",
+    "email" : "bostontrader@gmail.com",
+    "url" : "https://github.com/bostontrader"
   },
+  "bugs": {
+    "url": "https://github.com/bostontrader/bookwerx-core/issues"
+  },
+  "dependencies": {
+    "bookwerx-testdata": "https://github.com/bostontrader/bookwerx-testdata",
+    "config": "1.21.0",
+    "mongodb": "2.2.4",
+    "restify": "4.1.1"
+  },
+  "devDependencies": {
+    "standard": "7.1.2"
+  },
+  "description": "A double-entry bookkeeping engine that supports multiple currencies.",
+  "homepage": "https://github.com/bostontrader/bookwerx-core#readme",
   "keywords": [
     "bookkeeping",
     "bookwerx",
@@ -15,18 +26,16 @@
     "multi-currency",
     "node"
   ],
-  "author": "http://github.com/bostontrader",
   "license": "MIT",
+  "name": "bookwerx-core",
   "repository": {
     "type": "git",
     "url": "https://github.com/bostontrader/bookwerx-core.git"
   },
-  "dependencies": {
-    "config": "1.21.0",
-    "mongodb": "2.2.4",
-    "restify": "4.1.1"
+  "scripts": {
+    "test": "node ./app/server_test.js",
+    "start": "node ./app/server.js",
+    "lint": "standard"
   },
-  "devDependencies": {
-    "standard": "7.1.2"
-  }
+  "version": "0.4.0"
 }
