@@ -1,8 +1,16 @@
 let client
 
-let newAccount1 = {title: 'Apples'}
-let newAccount2 = {title: 'Bananas'}
-let newAccount3 = {title: 'Carrots'}
+// 1. Create one account
+// 2. Create one category
+// 3. Create one accounts_category using account and category
+// 4. Create one currency
+// 5. Create one transaction
+// 6. Create one distribution using transaction, account, and currency
+
+let testdata = require('bookwerx-testdata')
+let newAccount1 = testdata.accountBank
+let newAccount2 = testdata.accountExpense
+let newAccount3 = testdata.accountRevenue
 
 exports.setClient = function (c) { client = c }
 
