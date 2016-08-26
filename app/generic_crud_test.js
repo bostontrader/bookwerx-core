@@ -1,11 +1,9 @@
 /*
-Several collections, such as accounts, categories, and currencies need identical
+Most collections, such as accounts, categories, currencies, and transactions need identical
 CRUD testing.  This class provides that capability.
 
-Other collections such as transactions, distributions, and accounts_categories,
-although also needing a fair amount of CRUD testing, are so encrusted with unique
-operations, such as contraints of referential integrity, that they don't use this
-class
+Distributions and accounts_categories have unique referential contraints and are not
+so interested in CRUD. Hence, test them elsewhere.
  */
 
 let CRUDTest = function () {
@@ -59,85 +57,6 @@ let CRUDTest = function () {
       .then(priorResults => {
         return this.delete('666666666666666666666666', pn, false, priorResults) // don't expect success
       })
-  }
-
-  /*
-    1. Generic crud for transactions is ok because we can have tx
-    w/o other foreign references. So it is tested elsewhere.
-
-    CRUD for distributions is more complex because distributions must have
-    certain foreign references such as to accounts, currencies, and transactions.
-
-    2. We therefore must first establish two of each (so that we can test changing
-     references to them.)
-
-    3. Then we try to POST and PUT, using good and bad references for each.
-
-    4. Finally, we have a good distribution that references accounts, currencies, and transactions.
-    So now we can try to delete these items to test that referential integrity is preserved.
-
-   */
-  CRUDTest.prototype.testDistributionsCRUD = function (pn, testdata, priorResults) {
-    this.collectionSingular = 'account'
-    this.collectionPlural = 'accounts'
-    this.newDocument1 = testdata.accountBank
-    this.newDocument2 = testdata.accountCash
-
-    // 1. POST two documents to accounts
-    return this.post(this.newDocument1, pn, true, priorResults) // expect success
-        .then(priorResults => {
-          return this.post(this.newDocument2, pn, true, priorResults) // expect success
-        })
-
-        // POST two documents to currencies
-        .then(priorResults => {
-          this.collectionSingular = 'currency'
-          this.collectionPlural = 'currencies'
-          return this.post(testdata.currencyCNY, pn, true, priorResults) // expect success
-        })
-        .then(priorResults => {
-          return this.post(testdata.currencyRUB, pn, true, priorResults) // expect success
-        })
-
-        // POST two documents to transactions
-        .then(priorResults => {
-          this.collectionSingular = 'transaction'
-          this.collectionPlural = 'transactions'
-          return this.post(testdata.transaction1, pn, true, priorResults) // expect success
-        })
-        .then(priorResults => {
-          return this.post(testdata.transaction2, pn, true, priorResults) // expect success
-        })
-
-        // POST a distribution that would ordinarily be good, except...
-        //   ... missing an account_id
-        // .then(priorResults => {
-          // this.collectionSingular = 'distribution'
-          // this.collectionPlural = 'distributions'
-          // let dist = {'drcr': 1, 'amount': 0, 'currency_id': '666666666666666666666666', 'transaction_id': '666666666666666666666666'}
-          // return this.post(dist, pn, false, priorResults) // expect fail
-        // })
-
-        // ... using a bad account_id
-        // .then(priorResults => {
-          // this.collectionSingular = 'distribution'
-          // this.collectionPlural = 'distributions'
-          // let dist = {'drcr': 1, 'account_id': '666666666666666666666666', 'amount': 0, 'currency_id': '666666666666666666666666', 'transaction_id': '666666666666666666666666'}
-          // return this.post(dist, pn, false, priorResults) // expect fail
-        // })
-
-        // POST a distribution that would ordinarily be good, except missing a currency_id
-        // POST a distribution that would ordinarily be good, except missing a transaction_id
-        // POST a good distribution
-
-        // PUT a distribution that would ordinarily be good, except missing an account_id
-        // PUT a distribution that would ordinarily be good, except missing a currency_id
-        // PUT a distribution that would ordinarily be good, except missing a transaction_id
-        // PUT a good distribution
-
-        // Try to delete the account, watch it fail.
-        // Try to delete the currency, watch it fail.
-        // Try to delete the transaction, watch it fail.
   }
 
   // GET /{collectionPlural} and look for the correct operation of returning

@@ -28,35 +28,23 @@ let client = restify.createJsonClient({
 // let accountsCategoriesTests = require('./accounts_categories/tests')
 // accountsCategoriesTests.setClient(client)
 
-// let accountsTests = require('./accounts/tests')
-// accountsTests.setClient(client)
-
 let testdata = require('bookwerx-testdata')
-var CRUDTest = require('./generic_crud_test')
-var u1 = new CRUDTest(client, 'account', 'accounts', testdata.accountBank, testdata.accountCash)
-var u2 = new CRUDTest(client, 'category', 'categories', testdata.categoryAsset, testdata.categoryExpense)
-var u3 = new CRUDTest(client, 'currency', 'currencies', testdata.currencyCNY, testdata.currencyRUB)
+let CRUDTest = require('./generic_crud_test')
+let accountsCRUDTest = new CRUDTest(client, 'account', 'accounts', testdata.accountBank, testdata.accountCash)
+let categoriesCRUDTest = new CRUDTest(client, 'category', 'categories', testdata.categoryAsset, testdata.categoryExpense)
+let currenciesCRUDTest = new CRUDTest(client, 'currency', 'currencies', testdata.currencyCNY, testdata.currencyRUB)
 
 // Generic crud for transactions is ok because we can have tx w/o other foreign references.
-var u4 = new CRUDTest(client, 'transaction', 'transactions', testdata.transaction1, testdata.transaction1)
+let transactionsCRUDTest = new CRUDTest(client, 'transaction', 'transactions', testdata.transaction1, testdata.transaction1)
 
-// Testing for distributions is way different because of all the foreign references.
-var u5 = new CRUDTest(client)
-
-// let categoriesTests = require('./categories/tests')
-// categoriesTests.setClient(client)
-
-// let currenciesTests = require('./currencies/tests')
-// currenciesTests.setClient(client)
-
-// let distributionsTests = require('./distributions/tests')
-// distributionsTests.setClient(client)
+// Testing for distributions is way different because of all the foreign references,
+// and because ordinary CRUD testing is not so relevant.
+let DistributionsTest = require('./distributions_test')
+var distributionsTest = new DistributionsTest(client, testdata)
 
 // let toolsTests = require('./tools/tests')
 // toolsTests.setClient(client)
 
-// let transactionsTests = require('./transactions/tests')
-// transactionsTests.setClient(client)
 // Unique to server_test- stop
 
 // Common to server and server_test- start
@@ -92,25 +80,26 @@ MongoClient.connect(mongoConnectionURL)
 // generic crud for accounts, categories, and currencies
 .then(result => {
   let priorResults = {}
-  return u1.testRunner(4, priorResults)
+  return accountsCRUDTest.testRunner(4, priorResults)
 })
 .then(result => {
   let priorResults = {}
-  return u2.testRunner(5, priorResults)
+  return categoriesCRUDTest.testRunner(5, priorResults)
 })
 .then(result => {
   let priorResults = {}
-  return u3.testRunner(6, priorResults)
+  return currenciesCRUDTest.testRunner(6, priorResults)
 })
 .then(result => {
   let priorResults = {}
-  return u4.testRunner(7, priorResults)
+  return transactionsCRUDTest.testRunner(7, priorResults)
 })
 
-// distributions are handled differently. Lot of integrity constraints.
+// distribution testing is handled differently. Lot of integrity constraints, not
+// so much CRUD
 .then(result => {
   let priorResults = {}
-  return u5.testDistributionsCRUD(8, testdata, priorResults)
+  return distributionsTest.testRunner(8, testdata, priorResults)
 })
 .then(result => {
   console.log('P9 tests passed')
