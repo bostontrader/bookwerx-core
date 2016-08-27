@@ -106,7 +106,7 @@ def getTransactionId(old_transaction_id, tran_datetime, note):
 
 
 
-with open('acctwerx-prod-08-04-2016.json') as json_data:
+with open('acctwerx-prod-08-26-2016.json') as json_data:
   d = json.load(json_data)
   json_data.close()
 

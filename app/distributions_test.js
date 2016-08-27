@@ -1,10 +1,7 @@
 let DistributionsTest = function () {
-  function DistributionsTest (c, cs, cp, nd1, nd2) {
-    this.client = c
-    this.collectionSingular = cs
-    this.collectionPlural = cp
-    this.newDocument1 = nd1
-    this.newDocument2 = nd2
+  function DistributionsTest (client, testdata) {
+    this.client = client
+    this.testdata = testdata
   }
 
   /*
@@ -24,66 +21,89 @@ let DistributionsTest = function () {
 
    */
   DistributionsTest.prototype.testRunner = function (pn, testdata, priorResults) {
-    this.collectionSingular = 'account'
-    this.collectionPlural = 'accounts'
-    this.newDocument1 = testdata.accountBank
-    this.newDocument2 = testdata.accountCash
+    let buildDist = function (defectiveField, defectiveValue) {
+      // Start with a valid distribution
+      let dist = {'drcr': 1, 'amount': 0, 'account_id': priorResults.accounts[0]._id, 'currency_id': priorResults.currencies[0]._id, 'transaction_id': priorResults.transactions[0]._id}
+      // And remove a defectiveField or change it to a defectiveValue
+      if (!defectiveValue) {
+        delete dist[defectiveField]
+      } else {
+        dist[defectiveField] = defectiveValue
+      }
+      return dist
+    }
 
     // 1. POST two documents to accounts
-    return this.post(this.newDocument1, pn, true, priorResults) // expect success
+    let collectionPlural = 'accounts'
+    priorResults[collectionPlural] = []
+    return this.post(testdata.accountBank, collectionPlural, pn, true, priorResults) // expect success
       .then(priorResults => {
-        return this.post(this.newDocument2, pn, true, priorResults) // expect success
+        return this.post(testdata.accountCash, collectionPlural, pn, true, priorResults) // expect success
       })
 
       // POST two documents to currencies
       .then(priorResults => {
-        this.collectionSingular = 'currency'
-        this.collectionPlural = 'currencies'
-        return this.post(testdata.currencyCNY, pn, true, priorResults) // expect success
+        collectionPlural = 'currencies'
+        priorResults[collectionPlural] = []
+        return this.post(testdata.currencyCNY, collectionPlural, pn, true, priorResults) // expect success
       })
       .then(priorResults => {
-        return this.post(testdata.currencyRUB, pn, true, priorResults) // expect success
+        return this.post(testdata.currencyRUB, collectionPlural, pn, true, priorResults) // expect success
       })
 
       // POST two documents to transactions
       .then(priorResults => {
-        this.collectionSingular = 'transaction'
-        this.collectionPlural = 'transactions'
-        return this.post(testdata.transaction1, pn, true, priorResults) // expect success
+        collectionPlural = 'transactions'
+        priorResults[collectionPlural] = []
+        return this.post(testdata.transaction1, collectionPlural, pn, true, priorResults) // expect success
       })
       .then(priorResults => {
-        return this.post(testdata.transaction2, pn, true, priorResults) // expect success
+        return this.post(testdata.transaction2, collectionPlural, pn, true, priorResults) // expect success
       })
 
       // POST a distribution that would ordinarily be good, except...
+
       // ... missing an account_id
       .then(priorResults => {
-        this.collectionSingular = 'distribution'
-        this.collectionPlural = 'distributions'
-        // let dist = {'drcr': 1, 'amount': 0, 'currency_id': '666666666666666666666666', 'transaction_id': '666666666666666666666666'}
-        // return this.post(dist, pn, false, priorResults) // expect fail
+        collectionPlural = 'distributions'
+        priorResults[collectionPlural] = []
+        return this.post(buildDist('account_id'), collectionPlural, pn, false, priorResults) // expect fail
       })
 
-        // ... using a bad account_id
-        // .then(priorResults => {
-          // this.collectionSingular = 'distribution'
-          // this.collectionPlural = 'distributions'
-          // let dist = {'drcr': 1, 'account_id': '666666666666666666666666', 'amount': 0, 'currency_id': '666666666666666666666666', 'transaction_id': '666666666666666666666666'}
-          // return this.post(dist, pn, false, priorResults) // expect fail
-        // })
+      // ... missing a currency_id
+      .then(priorResults => {
+        return this.post(buildDist('currency_id'), collectionPlural, pn, false, priorResults) // expect fail
+      })
 
-        // POST a distribution that would ordinarily be good, except missing a currency_id
-        // POST a distribution that would ordinarily be good, except missing a transaction_id
-        // POST a good distribution
+      // ... missing a transaction_id
+      .then(priorResults => {
+        return this.post(buildDist('transaction_id'), collectionPlural, pn, false, priorResults) // expect fail
+      })
 
-        // PUT a distribution that would ordinarily be good, except missing an account_id
-        // PUT a distribution that would ordinarily be good, except missing a currency_id
-        // PUT a distribution that would ordinarily be good, except missing a transaction_id
-        // PUT a good distribution
+      // ... using a bad account_id
+      .then(priorResults => {
+        return this.post(buildDist('account_id', '666666666666666666666666'), collectionPlural, pn, false, priorResults) // expect fail
+      })
 
-        // Try to delete the account, watch it fail.
-        // Try to delete the currency, watch it fail.
-        // Try to delete the transaction, watch it fail.
+      // ... using a bad currency_id
+      .then(priorResults => {
+        return this.post(buildDist('currency_id', '666666666666666666666666'), collectionPlural, pn, false, priorResults) // expect fail
+      })
+      // ... using a bad transaction_id
+      .then(priorResults => {
+        return this.post(buildDist('transaction_id', '666666666666666666666666'), collectionPlural, pn, false, priorResults) // expect fail
+      })
+
+      // POST a good distribution
+
+      // PUT a distribution that would ordinarily be good, except missing an account_id
+      // PUT a distribution that would ordinarily be good, except missing a currency_id
+      // PUT a distribution that would ordinarily be good, except missing a transaction_id
+      // PUT a good distribution
+
+      // Try to delete the account, watch it fail.
+      // Try to delete the currency, watch it fail.
+      // Try to delete the transaction, watch it fail.
   }
 
   // GET /{collectionPlural} and look for the correct operation of returning
@@ -117,14 +137,16 @@ let DistributionsTest = function () {
   }*/
 
   // POST /{collectionPlural}
-  DistributionsTest.prototype.post = function (document, pn, fExpectSuccess, priorResults) {
+  DistributionsTest.prototype.post = function (document, collectionPlural, pn, fExpectSuccess, priorResults) {
     return new Promise((resolve, reject) => {
-      let url = '/' + this.collectionPlural
+      let url = '/' + collectionPlural
       console.log('P%s.2 POST %s %j', pn, url, document)
       this.client.post(url, document, function (err, req, res, obj) {
         if (err) reject(err)
-        if (!obj._id) reject('this test must generate an _id')
+        if (!fExpectSuccess && !obj.error) reject('this test must generate an error')
+        if (fExpectSuccess && !obj._id) reject('this test must generate an _id')
         console.log('P%s.2 %j', pn, obj)
+        priorResults[collectionPlural].push(obj)
         resolve(priorResults)
       })
     })

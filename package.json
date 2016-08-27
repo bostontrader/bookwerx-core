@@ -1,13 +1,14 @@
 {
   "author": {
-    "name" : "Thomas Radloff",
-    "email" : "bostontrader@gmail.com",
-    "url" : "https://github.com/bostontrader"
+    "name": "Thomas Radloff",
+    "email": "bostontrader@gmail.com",
+    "url": "https://github.com/bostontrader"
   },
   "bugs": {
     "url": "https://github.com/bostontrader/bookwerx-core/issues"
   },
   "dependencies": {
+    "bluebird": "3.4.3",
     "bookwerx-testdata": "https://github.com/bostontrader/bookwerx-testdata",
     "config": "1.21.0",
     "mongodb": "2.2.4",
@@ -37,5 +38,5 @@
     "start": "node ./app/server.js",
     "lint": "standard"
   },
-  "version": "0.4.0"
+  "version": "0.4.1"
 }
