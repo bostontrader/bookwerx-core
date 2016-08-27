@@ -21,14 +21,20 @@ let DistributionsTest = function () {
 
    */
   DistributionsTest.prototype.testRunner = function (pn, testdata, priorResults) {
+
+    // If invoked with no args, then return a valid distribution example.
+    // If invoked with only a defectiveField, then remove that field from the otherwise
+    // valid document.
+    // If invoked with a defectiveField and a defectiveValue, replace said field with the value.
     let buildDist = function (defectiveField, defectiveValue) {
       // Start with a valid distribution
       let dist = {'drcr': 1, 'amount': 0, 'account_id': priorResults.accounts[0]._id, 'currency_id': priorResults.currencies[0]._id, 'transaction_id': priorResults.transactions[0]._id}
-      // And remove a defectiveField or change it to a defectiveValue
-      if (!defectiveValue) {
-        delete dist[defectiveField]
-      } else {
-        dist[defectiveField] = defectiveValue
+      if(defectiveField) {
+        if (defectiveValue) {
+          dist[defectiveField] = defectiveValue
+        } else {
+          delete dist[defectiveField]
+        }
       }
       return dist
     }
@@ -94,7 +100,10 @@ let DistributionsTest = function () {
         return this.post(buildDist('transaction_id', '666666666666666666666666'), collectionPlural, pn, false, priorResults) // expect fail
       })
 
-      // POST a good distribution
+      // now POST a good distribution
+      .then(priorResults => {
+        return this.post(buildDist(), collectionPlural, pn, true, priorResults) // expect success
+      })
 
       // PUT a distribution that would ordinarily be good, except missing an account_id
       // PUT a distribution that would ordinarily be good, except missing a currency_id

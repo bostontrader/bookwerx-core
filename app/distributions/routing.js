@@ -50,16 +50,14 @@ exports.defineRoutes = function (server, mongoDb) {
       })
     ])
     .then((result) => {
-        // insertOne only returns the new _id.  We want to return the complete
-        // new document, which is what we originally requested to store
-        // with the new _id added to this.
-        // let retVal = req.body
-        // .then((result) => {
-        // mongoDb.collection(collectionPlural).insertOne(req.body).then(result => {
-          // retVal._id = result.insertedId.toString()
-          // res.json(retVal)
-          // })
-        // })
+      // insertOne only returns the new _id.  We want to return the complete
+      // new document, which is what we originally requested to store
+      // with the new _id added to this.
+      let retVal = req.body
+      mongoDb.collection(collectionPlural).insertOne(req.body).then(result => {
+        retVal._id = result.insertedId.toString()
+        res.json(retVal)
+      })
     })
     .catch(error => {
       res.json({error: error})
