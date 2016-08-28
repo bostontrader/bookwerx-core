@@ -21,7 +21,6 @@ let DistributionsTest = function () {
 
    */
   DistributionsTest.prototype.testRunner = function (pn, testdata, priorResults) {
-
     // If invoked with no args, then return a valid distribution example.
     // If invoked with only a defectiveField, then remove that field from the otherwise
     // valid document.
@@ -29,7 +28,7 @@ let DistributionsTest = function () {
     let buildDist = function (defectiveField, defectiveValue) {
       // Start with a valid distribution
       let dist = {'drcr': 1, 'amount': 0, 'account_id': priorResults.accounts[0]._id, 'currency_id': priorResults.currencies[0]._id, 'transaction_id': priorResults.transactions[0]._id}
-      if(defectiveField) {
+      if (defectiveField) {
         if (defectiveValue) {
           dist[defectiveField] = defectiveValue
         } else {
@@ -105,10 +104,38 @@ let DistributionsTest = function () {
         return this.post(buildDist(), collectionPlural, pn, true, priorResults) // expect success
       })
 
-      // PUT a distribution that would ordinarily be good, except missing an account_id
-      // PUT a distribution that would ordinarily be good, except missing a currency_id
-      // PUT a distribution that would ordinarily be good, except missing a transaction_id
-      // PUT a good distribution
+      // Now PUT a distribution that would ordinarily be good, except...
+
+      // ... missing an account_id
+      // ... missing a currency_id
+      // ... missing a transaction_id
+
+      // We don't care about the above because if the key is missing then no change is being made.
+      // But we _do_ care if we change one of those keys to an invalid key.
+      .then(priorResults => {
+        let dist = buildDist('account_id', '666666666666666666666666')
+        let distributionId = priorResults.distributions[0]._id.toString()
+        return this.put(distributionId, dist, collectionPlural, pn, false, priorResults) // expect fail
+      })
+
+      .then(priorResults => {
+        let dist = buildDist('currency_id', '666666666666666666666666')
+        let distributionId = priorResults.distributions[0]._id.toString()
+        return this.put(distributionId, dist, collectionPlural, pn, false, priorResults) // expect fail
+      })
+
+      .then(priorResults => {
+        let dist = buildDist('transaction_id', '666666666666666666666666')
+        let distributionId = priorResults.distributions[0]._id.toString()
+        return this.put(distributionId, dist, collectionPlural, pn, false, priorResults) // expect fail
+      })
+
+      // now PUT a good distribution
+      .then(priorResults => {
+        let dist = buildDist()
+        let distributionId = priorResults.distributions[0]._id.toString()
+        return this.put(distributionId, dist, collectionPlural, pn, true, priorResults) // expect success
+      })
 
       // Try to delete the account, watch it fail.
       // Try to delete the currency, watch it fail.
@@ -155,25 +182,28 @@ let DistributionsTest = function () {
         if (!fExpectSuccess && !obj.error) reject('this test must generate an error')
         if (fExpectSuccess && !obj._id) reject('this test must generate an _id')
         console.log('P%s.2 %j', pn, obj)
-        priorResults[collectionPlural].push(obj)
+        if (fExpectSuccess) priorResults[collectionPlural].push(obj)
         resolve(priorResults)
       })
     })
   }
 
-  // PUT /{collectionPlural}/:id
-  /* DistributionsTest.prototype.put = function (id, document, pn, fExpectSuccess, priorResults) {
+  // PUT /{collectionPlural}/:distribution_id
+  // We cannot rely on the document to contain the distribution_id.  So therefore send the id seperately.
+  DistributionsTest.prototype.put = function (distributionId, document, collectionPlural, pn, fExpectSuccess, priorResults) {
     return new Promise((resolve, reject) => {
-      let url = '/' + this.collectionPlural + '/' + id
+      let url = '/' + collectionPlural + '/' + distributionId
       console.log('P%s.4 PUT %s %j', pn, url, document)
       this.client.put(url, document, function (err, req, res, obj) {
         if (err) reject(err)
         if (!fExpectSuccess && !obj.error) reject('this test must generate an error')
+        if (fExpectSuccess && !obj._id) reject('this test must generate an _id')
         console.log('P%s.4 %j', pn, obj)
+        priorResults[collectionPlural].push(obj)
         resolve(priorResults)
       })
     })
-  }*/
+  }
 
   // DELETE /{collectionPlural}/:id
   /* DistributionsTest.prototype.delete = function (id, pn, fExpectSuccess, priorResults) {
