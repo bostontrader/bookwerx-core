@@ -21,6 +21,7 @@ let DistributionsTest = function () {
 
    */
   DistributionsTest.prototype.testRunner = function (pn, testdata, priorResults) {
+    // buildDist will build a suitable distribution for use in testing.
     // If invoked with no args, then return a valid distribution example.
     // If invoked with only a defectiveField, then remove that field from the otherwise
     // valid document.
@@ -94,6 +95,7 @@ let DistributionsTest = function () {
       .then(priorResults => {
         return this.post(buildDist('currency_id', '666666666666666666666666'), collectionPlural, pn, false, priorResults) // expect fail
       })
+
       // ... using a bad transaction_id
       .then(priorResults => {
         return this.post(buildDist('transaction_id', '666666666666666666666666'), collectionPlural, pn, false, priorResults) // expect fail
@@ -109,8 +111,8 @@ let DistributionsTest = function () {
       // ... missing an account_id
       // ... missing a currency_id
       // ... missing a transaction_id
-
       // We don't care about the above because if the key is missing then no change is being made.
+
       // But we _do_ care if we change one of those keys to an invalid key.
       .then(priorResults => {
         let dist = buildDist('account_id', '666666666666666666666666')
@@ -137,6 +139,11 @@ let DistributionsTest = function () {
         return this.put(distributionId, dist, collectionPlural, pn, true, priorResults) // expect success
       })
 
+      // now GET an existing distribution
+      .then(priorResults => {
+        let distributionId = priorResults.distributions[0]._id.toString()
+        return this.getOne(distributionId, collectionPlural, pn, true, priorResults) // expect success
+      })
       // Try to delete the account, watch it fail.
       // Try to delete the currency, watch it fail.
       // Try to delete the transaction, watch it fail.
@@ -158,19 +165,20 @@ let DistributionsTest = function () {
     })
   }*/
 
-  // GET /{collectionPlural}/:id
-  /* DistributionsTest.prototype.getOne = function (id, pn, fExpectSuccess, priorResults) {
+  // GET /{collectionPlural}/:distribution_id
+  DistributionsTest.prototype.getOne = function (distributionId, collectionPlural, pn, fExpectSuccess, priorResults) {
     return new Promise((resolve, reject) => {
-      let url = '/' + this.collectionPlural + '/' + id
+      let url = '/' + collectionPlural + '/' + distributionId
       console.log('P%s.3 GET %s', pn, url)
       this.client.get(url, function (err, req, res, obj) {
         if (err) reject(err)
         if (!fExpectSuccess && !obj.error) reject('this test must generate an error')
+        if (fExpectSuccess && !obj._id) reject('this test must return an _id')
         console.log('P%s.3 %j', pn, obj)
         resolve(priorResults)
       })
     })
-  }*/
+  }
 
   // POST /{collectionPlural}
   DistributionsTest.prototype.post = function (document, collectionPlural, pn, fExpectSuccess, priorResults) {

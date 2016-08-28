@@ -1,11 +1,11 @@
-// let genericRoutes = require('../generic_routes')
+let genericRoutes = require('../generic_routes')
 let ObjectId = require('mongodb').ObjectId
-// let collectionSingular = 'distribution'
+let collectionSingular = 'distribution'
 let collectionPlural = 'distributions'
 
 exports.defineRoutes = function (server, mongoDb) {
   // genericRoutes.get(server, mongoDb, collectionPlural)
-  // genericRoutes.getOne(server, mongoDb, collectionSingular, collectionPlural)
+  genericRoutes.getOne(server, mongoDb, collectionSingular, collectionPlural)
 
   // Override genericRoutes because of special integrity constraint checking
   // genericRoutes.post(server, mongoDb, collectionPlural)

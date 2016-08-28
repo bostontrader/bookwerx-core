@@ -44,7 +44,7 @@ let transactionsCRUDTest = new CRUDTest(client, 'transaction', 'transactions', t
 
 // Testing for distributions is way different because of all the foreign references,
 // and because ordinary CRUD testing is not so relevant.
-let DistributionsTest = require('./distributions_test')
+let DistributionsTest = require('./distributions/distributions_test')
 var distributionsTest = new DistributionsTest(client, testdata)
 
 // let toolsTests = require('./tools/tests')
