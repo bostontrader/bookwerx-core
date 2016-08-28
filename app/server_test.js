@@ -21,6 +21,11 @@ server.use(restify.queryParser())
 // Common to server and server_test- stop
 
 // Unique to server_test- start
+if (!config.get('enableTest')) {
+  let msg = 'Configuration ' + config.get('configName') + ' does not allow testing.'
+  throw new Error(msg)
+}
+
 let client = restify.createJsonClient({
   url: 'http://127.0.0.1:' + port
 })
