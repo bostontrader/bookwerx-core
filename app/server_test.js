@@ -7,7 +7,7 @@ let MongoClient = require('mongodb').MongoClient
 let mongoDb
 let mongoConnectionURL = config.get('mongoConnectionURL')
 
-// let accountsCategoriesRouter = require('./accounts_categories/routing')
+let accountsCategoriesRouter = require('./accounts_categories/routing')
 let accountsRouter = require('./accounts/routing')
 let categoriesRouter = require('./categories/routing')
 let currenciesRouter = require('./currencies/routing')
@@ -30,9 +30,6 @@ let client = restify.createJsonClient({
   url: 'http://127.0.0.1:' + port
 })
 
-// let accountsCategoriesTests = require('./accounts_categories/tests')
-// accountsCategoriesTests.setClient(client)
-
 let testdata = require('bookwerx-testdata')
 let CRUDTest = require('./generic_crud_test')
 let accountsCRUDTest = new CRUDTest(client, 'account', 'accounts', testdata.accountBank, testdata.accountCash)
@@ -42,10 +39,13 @@ let currenciesCRUDTest = new CRUDTest(client, 'currency', 'currencies', testdata
 // Generic crud for transactions is ok because we can have tx w/o other foreign references.
 let transactionsCRUDTest = new CRUDTest(client, 'transaction', 'transactions', testdata.transaction1, testdata.transaction1)
 
-// Testing for distributions is way different because of all the foreign references,
-// and because ordinary CRUD testing is not so relevant.
+// Testing for distributions and accounts_categories is way different because of all the foreign references,
+// and because ordinary CRUD operations are not so relevant.
 let DistributionsTest = require('./distributions/distributions_test')
-var distributionsTest = new DistributionsTest(client, testdata)
+let distributionsTest = new DistributionsTest(client, testdata)
+
+let AccountsCategoriesTest = require('./accounts_categories/accounts_categories_test')
+let accountsCategoriesTest = new AccountsCategoriesTest(client, testdata)
 
 // let toolsTests = require('./tools/tests')
 // toolsTests.setClient(client)
@@ -60,7 +60,7 @@ MongoClient.connect(mongoConnectionURL)
   mongoDb = result
   return new Promise((resolve, reject) => {
     console.log('P1 mongo server started')
-    // accountsCategoriesRouter.defineRoutes(server, mongoDb)
+    accountsCategoriesRouter.defineRoutes(server, mongoDb)
     accountsRouter.defineRoutes(server, mongoDb)
     categoriesRouter.defineRoutes(server, mongoDb)
     currenciesRouter.defineRoutes(server, mongoDb)
@@ -100,14 +100,18 @@ MongoClient.connect(mongoConnectionURL)
   return transactionsCRUDTest.testRunner(7, priorResults)
 })
 
-// distribution testing is handled differently. Lot of integrity constraints, not
+// distribution and account_category testing is handled differently. Lots of integrity constraints, not
 // so much CRUD
 .then(result => {
   let priorResults = {}
   return distributionsTest.testRunner(8, testdata, priorResults)
 })
 .then(result => {
-  console.log('P9 tests passed')
+  let priorResults = {}
+  return accountsCategoriesTest.testRunner(9, testdata, priorResults)
+})
+.then(result => {
+  console.log('P10 tests passed')
   process.exit()
 })
 .catch((e) => {

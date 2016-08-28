@@ -61,9 +61,9 @@ exports.defineRoutes = function (server, mongoDb) {
   // foreign keys refer to it.  Presently, only distributions and accounts_categories.
   // Note: DELETE does not have a body, so find the account_id in req.params
   server.del('/' + collectionPlural + '/:account_id', (req, res, next) => {
+    let accountId = ObjectId(req.params.account_id)
     Promise.all([
       new Promise((resolve, reject) => {
-        let accountId = ObjectId(req.params.account_id)
         mongoDb.collection('distributions').findOne({'account_id': accountId}).then(result => {
           if (result === null) {
             resolve(true)
@@ -74,18 +74,18 @@ exports.defineRoutes = function (server, mongoDb) {
         })
       }),
       new Promise((resolve, reject) => {
-        // if (!req.body.account_id) resolve(true)
-        // mongoDb.collection('accounts_categories').findOne({'account_id': req.body.account_id}).then(result => {
-          // if (result === null) {
-            // let msg = 'Cannot delete this account because accounts_categories ' + result[0]._id.toString() + ' refers to it'
-            // reject(msg)
-          // }
-        resolve(true)
-        // })
+        mongoDb.collection('accounts_categories').findOne({'account_id': accountId}).then(result => {
+          if (result === null) {
+            resolve(true)
+          } else {
+            let msg = 'Cannot delete this account because accounts_categories ' + result._id.toString() + ' refers to it'
+            reject(msg)
+          }
+        })
       })
     ])
     .then((result) => {
-      mongoDb.collection(collectionPlural).findOneAndDelete({'_id': ObjectId(req.params.account_id)})
+      mongoDb.collection(collectionPlural).findOneAndDelete({'_id': accountId})
       .then(function resolve (result) {
         if (result.value === null) result.value = {error: collectionSingular + ' ' + req.params.id + ' does not exist'}
         res.json(result.value)
