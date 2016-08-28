@@ -110,5 +110,5 @@ exports.defineRoutes = function (server, mongoDb) {
     })
   })
 
-  // genericRoutes.delete(server, mongoDb, collectionSingular, collectionPlural)
+  genericRoutes.delete(server, mongoDb, collectionSingular, collectionPlural)
 }

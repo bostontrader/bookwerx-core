@@ -144,26 +144,25 @@ let DistributionsTest = function () {
         let distributionId = priorResults.distributions[0]._id.toString()
         return this.getOne(distributionId, collectionPlural, pn, true, priorResults) // expect success
       })
-      // Try to delete the account, watch it fail.
-      // Try to delete the currency, watch it fail.
-      // Try to delete the transaction, watch it fail.
-  }
 
-  // GET /{collectionPlural} and look for the correct operation of returning
-  // the correct number of array elements.
-  /* DistributionsTest.prototype.getMany = function (expectedCnt, pn, priorResults) {
-    return new Promise((resolve, reject) => {
-      let url = '/' + this.collectionPlural
-      console.log('P%s.1 GET %s', pn, url)
-      this.client.get(url, function (err, req, res, obj) {
-        if (err) reject(err)
-        if (obj.length !== expectedCnt) reject('Expecting ' + expectedCnt + ' documents, found ' + obj.length + ' documents')
-        console.log('P%s.1 %j', pn, obj)
-        if (obj.length > 0) priorResults['goodId'] = obj[0]['_id']
-        resolve(priorResults)
+      // Try to delete the account, watch it fail because a distribution references it.
+      .then(priorResults => {
+        let accountId = priorResults.distributions[0].account_id.toString()
+        return this.delete(accountId, 'accounts', pn, false, priorResults) // expect fail
       })
-    })
-  }*/
+
+      // Try to delete the currency, watch it fail because a distribution references it.
+      .then(priorResults => {
+        let currencyId = priorResults.distributions[0].currency_id.toString()
+        return this.delete(currencyId, 'currencies', pn, false, priorResults) // expect fail
+      })
+
+      // Try to delete the transaction, watch it fail because a distribution references it.
+      .then(priorResults => {
+        let transactionId = priorResults.distributions[0].transaction_id.toString()
+        return this.delete(transactionId, 'transactions', pn, false, priorResults) // expect fail
+      })
+  }
 
   // GET /{collectionPlural}/:distribution_id
   DistributionsTest.prototype.getOne = function (distributionId, collectionPlural, pn, fExpectSuccess, priorResults) {
@@ -214,9 +213,9 @@ let DistributionsTest = function () {
   }
 
   // DELETE /{collectionPlural}/:id
-  /* DistributionsTest.prototype.delete = function (id, pn, fExpectSuccess, priorResults) {
+  DistributionsTest.prototype.delete = function (id, collectionPlural, pn, fExpectSuccess, priorResults) {
     return new Promise((resolve, reject) => {
-      let url = '/' + this.collectionPlural + '/' + id
+      let url = '/' + collectionPlural + '/' + id
       console.log('P%s.5 DELETE %s', pn, url)
       this.client.del(url, function (err, req, res, obj) {
         if (err) reject(err)
@@ -226,7 +225,6 @@ let DistributionsTest = function () {
       })
     })
   }
-   */
 
   return DistributionsTest
 }

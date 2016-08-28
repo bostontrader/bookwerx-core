@@ -57,23 +57,44 @@ exports.defineRoutes = function (server, mongoDb) {
   // Now make new entries, like in post
 
   // genericRoutes.delete(server, mongoDb, collectionSingular, collectionPlural)
-  // This differs from genericRoutes in that it must update accounts_categories.
-  // Also, cannot delete if we have integrity constraints.
-  // exports.delete = function (server, mongoDb, collectionSingular, collectionPlural) {
-  server.del('/' + collectionPlural + '/:id', (req, res, next) => {
-    // Look for distributions that point here.  Then...
-
-    mongoDb.collection(collectionPlural).findOneAndDelete({'_id': ObjectId(req.params.id)}).then(function resolve (result) {
-      if (result.value === null) result.value = {error: collectionSingular + ' ' + req.params.id + ' does not exist'}
-      res.json(result.value)
-    }).catch(error => {
-      res.json({'error': error})
+  // This differs from genericRoutes in that it must not delete if other
+  // foreign keys refer to it.  Presently, only distributions and accounts_categories.
+  // Note: DELETE does not have a body, so find the account_id in req.params
+  server.del('/' + collectionPlural + '/:account_id', (req, res, next) => {
+    Promise.all([
+      new Promise((resolve, reject) => {
+        let accountId = ObjectId(req.params.account_id)
+        mongoDb.collection('distributions').findOne({'account_id': accountId}).then(result => {
+          if (result === null) {
+            resolve(true)
+          } else {
+            let msg = 'Cannot delete this account because distributions ' + result._id.toString() + ' refers to it'
+            reject(msg)
+          }
+        })
+      }),
+      new Promise((resolve, reject) => {
+        // if (!req.body.account_id) resolve(true)
+        // mongoDb.collection('accounts_categories').findOne({'account_id': req.body.account_id}).then(result => {
+          // if (result === null) {
+            // let msg = 'Cannot delete this account because accounts_categories ' + result[0]._id.toString() + ' refers to it'
+            // reject(msg)
+          // }
+        resolve(true)
+        // })
+      })
+    ])
+    .then((result) => {
+      mongoDb.collection(collectionPlural).findOneAndDelete({'_id': ObjectId(req.params.account_id)})
+      .then(function resolve (result) {
+        if (result.value === null) result.value = {error: collectionSingular + ' ' + req.params.id + ' does not exist'}
+        res.json(result.value)
+      })
     })
-  }) // then
-
-    // Delete all accounts_records with account_id = this one
-  // }
-  // This is an existing _id.  Delete all of them from accounts_categories.
+    .catch(error => {
+      res.json({error: error})
+    })
+  })
 
   /*
    The account dashboard requires a list of all distributions for a particular account,
