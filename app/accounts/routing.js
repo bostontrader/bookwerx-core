@@ -5,7 +5,76 @@ let collectionPlural = 'accounts'
 
 exports.defineRoutes = function (server, mongoDb) {
   genericRoutes.get(server, mongoDb, collectionPlural)
-  genericRoutes.getOne(server, mongoDb, collectionSingular, collectionPlural)
+
+  // genericRoutes.getOne(server, mongoDb, collectionSingular, collectionPlural)
+
+  // This differs from genericRoutes in that it must retrieve related account_category records.
+  server.get('/' + collectionPlural + '/:id', (req, res, next) => {
+    mongoDb.collection('accounts')
+      .aggregate([
+        {$match: {_id: ObjectId(req.params.id)}},
+        {
+          $lookup: {
+            from: 'accounts_categories',
+            localField: '_id',
+            foreignField: 'account_id',
+            as: 'accounts_categories'
+          }
+        }
+      ]).toArray()
+
+    .then(priorResults => {
+      return new Promise((resolve, reject) => {
+        if (priorResults.length > 0) {
+          let account = priorResults[0]
+          priorResults = {account: account}
+        }
+        resolve(priorResults)
+      })
+    })
+
+    .then(priorResults => {
+      return new Promise((resolve, reject) => {
+        if (priorResults.account) {
+          let n = []
+          let accountCategories = priorResults.account.accounts_categories
+          for (let idx in accountCategories) {
+            let accountCategory = accountCategories[idx]
+            n.push(accountCategory.category_id)
+          }
+          priorResults.categories = n
+        }
+        resolve(priorResults)
+      })
+    })
+
+    .then(priorResults => {
+      if (priorResults.account) {
+        let n = priorResults
+        return new Promise((resolve, reject) => {
+          mongoDb.collection('categories').find().toArray().then(results => {
+            n.account.accounts_categories = results
+            resolve(n)
+          }).catch(error => {
+            reject({error: error})
+          })
+        })
+      }
+    })
+
+    .then(result => {
+      if (!result.account) {
+        result = {error: collectionSingular + ' ' + req.params.id + ' does not exist'}
+      } else {
+        result = result.account
+      }
+      res.json(result)
+      // next()
+    })
+    .catch(error => {
+      res.json({error: error})
+    })
+  })
 
   // genericRoutes.post(server, mongoDb, collectionPlural)
   // This differs from genericRoutes in that it must update accounts_categories
