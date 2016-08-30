@@ -52,7 +52,7 @@ exports.defineRoutes = function (server, mongoDb) {
       if (priorResults.account) {
         let n = priorResults
         return new Promise((resolve, reject) => {
-          mongoDb.collection('categories').find().toArray().then(results => {
+          mongoDb.collection('categories').find({_id: {$in: n.categories}}).toArray().then(results => {
             n.account.accounts_categories = results
             resolve(n)
           }).catch(error => {
