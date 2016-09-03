@@ -7,7 +7,6 @@ exports.defineRoutes = function (server, mongoDb) {
   genericRoutes.get(server, mongoDb, collectionPlural)
 
   // genericRoutes.getOne(server, mongoDb, collectionSingular, collectionPlural)
-
   // This differs from genericRoutes in that it must retrieve related account_category records.
   server.get('/' + collectionPlural + '/:id', (req, res, next) => {
     mongoDb.collection('accounts')
@@ -28,8 +27,9 @@ exports.defineRoutes = function (server, mongoDb) {
         if (priorResults.length > 0) {
           let account = priorResults[0]
           priorResults = {account: account}
+          resolve(priorResults)
         }
-        resolve(priorResults)
+        reject(collectionSingular + ' ' + req.params.id + ' does not exist')
       })
     })
 
@@ -37,39 +37,32 @@ exports.defineRoutes = function (server, mongoDb) {
       return new Promise((resolve, reject) => {
         if (priorResults.account) {
           let n = []
-          let accountCategories = priorResults.account.accounts_categories
-          for (let idx in accountCategories) {
-            let accountCategory = accountCategories[idx]
-            n.push(accountCategory.category_id)
+          let categories = priorResults.account.categories
+          for (let idx in categories) {
+            let category = categories[idx]
+            n.push(ObjectId(category))
           }
-          priorResults.categories = n
+          priorResults.account.categories = n
+          delete priorResults.account.accounts_categories
         }
         resolve(priorResults)
       })
     })
 
     .then(priorResults => {
-      if (priorResults.account) {
-        let n = priorResults
-        return new Promise((resolve, reject) => {
-          mongoDb.collection('categories').find({_id: {$in: n.categories}}).toArray().then(results => {
-            n.account.accounts_categories = results
-            resolve(n)
-          }).catch(error => {
-            reject({error: error})
-          })
+      let n = priorResults.account
+      return new Promise((resolve, reject) => {
+        mongoDb.collection('categories').find({_id: {$in: n.categories}}).toArray().then(results => {
+          n.categories = results
+          resolve(n)
+        }).catch(error => {
+          reject({error: error})
         })
-      }
+      })
     })
 
     .then(result => {
-      if (!result.account) {
-        result = {error: collectionSingular + ' ' + req.params.id + ' does not exist'}
-      } else {
-        result = result.account
-      }
       res.json(result)
-      // next()
     })
     .catch(error => {
       res.json({error: error})
@@ -83,24 +76,25 @@ exports.defineRoutes = function (server, mongoDb) {
     // insertOne only returns the new _id.  We want to return complete
     // new document, which is what we originally requested to store
     // with the new _id added to this.
-    let retVal = req.body
+    let postResult
     mongoDb.collection(collectionPlural).insertOne(req.body)
     .then(result => {
-      retVal._id = result.insertedId.toString()
+      postResult = req.body
+      postResult._id = result.insertedId.toString()
 
-      // This has a brand-new _id so assume there are no entries in accounts_categories
+      // This has a brand-new _id so assume there are no entries in categories
       // therefore just make new entries
       // for each category...
       // make new account_category
       let n = []
-      var categories = retVal.categories
+      var categories = postResult.categories
       for (let categoryIdx in categories) {
-        n.push({'accounts_id': retVal._id, 'categories_id': categories[categoryIdx]})
+        n.push({'account_id': ObjectId(postResult._id), 'category_id': categories[categoryIdx]})
       }
-      mongoDb.collection(collectionPlural).insertMany(n)
+      mongoDb.collection('accounts_categories').insertMany(n)
     })
     .then(result => {
-      res.json(retVal)
+      res.json(postResult)
     }).catch(error => {
       res.json({error: error})
     })
@@ -110,20 +104,39 @@ exports.defineRoutes = function (server, mongoDb) {
   // This differs from genericRoutes in that it must update accounts_categories
   // exports.put = function (server, mongoDb, collectionSingular, collectionPlural) {
   server.put('/' + collectionPlural + '/:id', (req, res, next) => {
+    let putResult
     mongoDb.collection(collectionPlural).findOneAndUpdate(
       {'_id': ObjectId(req.params.id)},
       req.body,
-      {returnOriginal: false}).then(function resolve (result) {
-        if (result.value === null) result.value = {error: collectionSingular + ' ' + req.params.id + ' does not exist'}
-        res.json(result.value)
-      }).catch(error => {
-        res.json({'error': error})
+      {returnOriginal: false})
+      .then(result => {
+        putResult = result
+        if (result.value === null) {
+          return new Promise((resolve, reject) => {
+            reject(collectionSingular + ' ' + req.params.id + ' does not exist')
+          })
+        }
+        // delete all accounts_categories that refer to this account
+        mongoDb.collection('accounts_categories').deleteMany({account_id: putResult.value._id})
       })
-  }) // then
-    //
-  // }
-  // This is an existing _id.  Delete all of them from accounts_categories first.
-  // Now make new entries, like in post
+      .then(result => {
+        // Now make new entries
+        // for each category...
+        // make new account_category
+        let n = []
+        let categories = putResult.value.categories
+        for (let categoryIdx in categories) {
+          n.push({'account_id': putResult.value._id, 'category_id': ObjectId(categories[categoryIdx])})
+        }
+        mongoDb.collection('accounts_categories').insertMany(n)
+      })
+      .then(result => {
+        res.json(putResult.value)
+      })
+      .catch(error => {
+        res.json({error: error})
+      })
+  })
 
   // genericRoutes.delete(server, mongoDb, collectionSingular, collectionPlural)
   // This differs from genericRoutes in that it must not delete if other
@@ -156,7 +169,7 @@ exports.defineRoutes = function (server, mongoDb) {
     .then((result) => {
       mongoDb.collection(collectionPlural).findOneAndDelete({'_id': accountId})
       .then(function resolve (result) {
-        if (result.value === null) result.value = {error: collectionSingular + ' ' + req.params.id + ' does not exist'}
+        if (result.value === null) result.value = {error: collectionSingular + ' ' + req.params.account_id + ' does not exist'}
         res.json(result.value)
       })
     })

@@ -28,7 +28,7 @@ exports.defineRoutes = function (server, mongoDb) {
     .then((result) => {
       mongoDb.collection(collectionPlural).findOneAndDelete({'_id': categoryId})
       .then(function resolve (result) {
-        if (result.value === null) result.value = {error: collectionSingular + ' ' + req.params.id + ' does not exist'}
+        if (result.value === null) result.value = {error: collectionSingular + ' ' + req.params.category_id + ' does not exist'}
         res.json(result.value)
       })
     })

@@ -28,7 +28,7 @@ exports.defineRoutes = function (server, mongoDb) {
     .then((result) => {
       mongoDb.collection(collectionPlural).findOneAndDelete({'_id': ObjectId(req.params.currency_id)})
       .then(function resolve (result) {
-        if (result.value === null) result.value = {error: collectionSingular + ' ' + req.params.id + ' does not exist'}
+        if (result.value === null) result.value = {error: collectionSingular + ' ' + req.params.currency_id + ' does not exist'}
         res.json(result.value)
       })
     })

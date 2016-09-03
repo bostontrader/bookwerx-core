@@ -7,7 +7,6 @@ let MongoClient = require('mongodb').MongoClient
 let mongoDb
 let mongoConnectionURL = config.get('mongoConnectionURL')
 
-let accountsCategoriesRouter = require('./accounts_categories/routing')
 let accountsRouter = require('./accounts/routing')
 let categoriesRouter = require('./categories/routing')
 let currenciesRouter = require('./currencies/routing')
@@ -28,7 +27,6 @@ MongoClient.connect(mongoConnectionURL)
     mongoDb = result
     console.log('mongo server started')
     return new Promise((resolve, reject) => {
-      accountsCategoriesRouter.defineRoutes(server, mongoDb)
       accountsRouter.defineRoutes(server, mongoDb)
       categoriesRouter.defineRoutes(server, mongoDb)
       currenciesRouter.defineRoutes(server, mongoDb)

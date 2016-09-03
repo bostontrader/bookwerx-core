@@ -7,12 +7,11 @@ let MongoClient = require('mongodb').MongoClient
 let mongoDb
 let mongoConnectionURL = config.get('mongoConnectionURL')
 
-let accountsCategoriesRouter = require('./accounts_categories/routing')
 let accountsRouter = require('./accounts/routing')
 let categoriesRouter = require('./categories/routing')
 let currenciesRouter = require('./currencies/routing')
 let distributionsRouter = require('./distributions/routing')
-// let toolsRouter = require('./tools/routing')
+let toolsRouter = require('./tools/routing')
 let transactionsRouter = require('./transactions/routing')
 
 let server = restify.createServer()
@@ -32,7 +31,11 @@ let client = restify.createJsonClient({
 
 let testdata = require('bookwerx-testdata')
 let CRUDTest = require('./generic_crud_test')
+
+// This test _only_ tests the basic CRUD operations for accounts.  Although CRUD operations on accounts
+// will reveal or change the state of accounts_categories, said testing is done elsewhere.
 let accountsCRUDTest = new CRUDTest(client, 'account', 'accounts', testdata.accountBank, testdata.accountCash)
+
 let categoriesCRUDTest = new CRUDTest(client, 'category', 'categories', testdata.categoryAsset, testdata.categoryExpense)
 let currenciesCRUDTest = new CRUDTest(client, 'currency', 'currencies', testdata.currencyCNY, testdata.currencyRUB)
 
@@ -44,7 +47,7 @@ let transactionsCRUDTest = new CRUDTest(client, 'transaction', 'transactions', t
 let DistributionsTest = require('./distributions/distributions_test')
 let distributionsTest = new DistributionsTest(client, testdata)
 
-let AccountsCategoriesTest = require('./accounts_categories/accounts_categories_test')
+let AccountsCategoriesTest = require('./accounts_categories_test')
 let accountsCategoriesTest = new AccountsCategoriesTest(client, testdata)
 
 // let toolsTests = require('./tools/tests')
@@ -60,12 +63,11 @@ MongoClient.connect(mongoConnectionURL)
   mongoDb = result
   return new Promise((resolve, reject) => {
     console.log('P1 mongo server started')
-    accountsCategoriesRouter.defineRoutes(server, mongoDb)
     accountsRouter.defineRoutes(server, mongoDb)
     categoriesRouter.defineRoutes(server, mongoDb)
     currenciesRouter.defineRoutes(server, mongoDb)
     distributionsRouter.defineRoutes(server, mongoDb)
-    // toolsRouter.defineRoutes(server, mongoDb)
+    toolsRouter.defineRoutes(server, mongoDb)
     transactionsRouter.defineRoutes(server, mongoDb)
 
     server.listen(port, () => {
@@ -106,14 +108,19 @@ MongoClient.connect(mongoConnectionURL)
   let priorResults = {}
   return distributionsTest.testRunner(8, testdata, priorResults)
 })
+
+// accounts_categories are not manipulated via a public API, so there's no direct testing
+// of CRUD or other operations.  Instead, the CRUD operations of accounts should reveal
+// or change the state of accounts_categories.  Test that here.
 .then(result => {
-  let priorResults = {}
-  return accountsCategoriesTest.testRunner(9, testdata, priorResults)
+  return accountsCategoriesTest.testRunner(9, testdata)
 })
+
 .then(result => {
   console.log('P10 tests passed')
   process.exit()
 })
+
 .catch((e) => {
   console.log('error=%j', e)
 })
