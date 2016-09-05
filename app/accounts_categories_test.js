@@ -104,26 +104,25 @@ let AccountsCategoriesTest = function () {
     })
 
     // 3.4 GET /accounts/:accountsBank. Verify that the account points to categoryExpense.
-      .then(priorResults => {
-        let accountId = priorResults.accounts.accountBank._id
-        return this.getOne(accountId, collectionPlural, pn, true, priorResults, 'accountBank') // expect success
-      })
-      .then(priorResults => {
-        return new Promise((resolve, reject) => {
-          let account = priorResults.accounts.accountBank
-          if (account.categories) {
-            if (account.categories.length !== 1) {
-              reject('account should only have one category')
-            } else {
-              resolve(priorResults)
-            }
-          } else {
-            reject('account should have one category')
-          }
-        })
-      })
+    .then(priorResults => {
+      let accountId = priorResults.accounts.accountBank._id
+      return this.getOne(accountId, collectionPlural, pn, true, priorResults, 'accountBank') // expect success
+    })
 
-    // 3.2 GET /accounts/:accountsBank. Verify that the account points to categoryExpense.
+    .then(priorResults => {
+      return new Promise((resolve, reject) => {
+        let account = priorResults.accounts.accountBank
+        if (account.categories) {
+          if (account.categories.length !== 1) {
+            reject('account should only have one category')
+          } else {
+            resolve(priorResults)
+          }
+        } else {
+          reject('account should have one category')
+        }
+      })
+    })
 
     // 4.1 PUT /accounts accountsBank, pointing to categoryAsset and categoryLiquid.
     // 4.2 GET /accounts/:accountsBank. Verify that the account points to categoryAsset and categoryLiquid.
