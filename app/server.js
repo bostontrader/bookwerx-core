@@ -17,6 +17,12 @@ let transactionsRouter = require('./transactions/routing')
 let server = restify.createServer()
 server.use(restify.bodyParser())
 server.use(restify.queryParser())
+server.use(restify.CORS({
+  // origins: ['https://foo.com', 'http://bar.com', 'http://baz.com:8081'],   // defaults to ['*']
+  credentials: true,                 // defaults to false
+  headers: ['x-foo']                 // sets expose-headers
+}))
+
 // Common to server and server_test- stop
 
 // Common to server and server_test- start
