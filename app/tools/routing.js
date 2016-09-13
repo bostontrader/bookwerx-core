@@ -104,4 +104,27 @@ exports.defineRoutes = function (server, mongoDb) {
       res.json({error: error})
     })
   })
+
+  // Look for transactions that have no distributions
+  server.get('/lint1', (req, res, next) => {
+    mongoDb.collection('transactions').aggregate([
+      {$lookup: {
+        from: 'distributions',
+        localField: '_id',
+        foreignField: 'transaction_id',
+        as: 'distributions'
+      }}
+    ]).toArray()
+
+    .then(result => {
+      res.setHeader('Access-Control-Allow-Origin', '*')
+      res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With')
+      res.json(result.filter(value => {
+        return value.distributions.length == 0
+      }))
+    })
+    .catch(error => {
+      reject({error: error})
+    })
+  })
 }
