@@ -4,24 +4,43 @@
     "email": "bostontrader@gmail.com",
     "url": "https://github.com/bostontrader"
   },
+  "ava": {
+    "require": "babel-register",
+    "babel": "inherit"
+  },
   "bugs": {
     "url": "https://github.com/bostontrader/bookwerx-core/issues"
   },
   "dependencies": {
-    "bluebird": "3.4.3",
-    "bookwerx-testdata": "https://github.com/bostontrader/bookwerx-testdata",
-    "config": "1.21.0",
-    "mongodb": "2.2.4",
-    "restify": "4.1.1"
+    "colors": "^1.1.2",
+    "config": "^1.26.2",
+    "crypto-random-string": "^1.0.0",
+    "mongodb": "^2.2.31",
+    "restify": "^5.2.0",
+    "restify-clients": "^1.5.0",
+    "restify-cors-middleware": "^1.0.1",
+    "restify-plugins": "^1.6.0"
   },
   "devDependencies": {
-    "standard": "7.1.2"
+    "ava": "^0.21.0",
+    "babel-cli": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-register": "^6.24.1",
+    "bookwerx-testdata": "https://github.com/bostontrader/bookwerx-testdata",
+    "coveralls": "^2.13.1",
+    "nyc": "^11.1.0",
+    "sinon": "^3.2.0",
+    "standard": "^7.1.2"
   },
-  "description": "A double-entry bookkeeping engine that supports multiple currencies.",
+  "description": "A double-entry bookkeeping engine that supports multiple currencies and multiple tenants.",
   "homepage": "https://github.com/bostontrader/bookwerx-core#readme",
   "keywords": [
     "bookkeeping",
     "bookwerx",
+    "bitcoin",
+    "cryptocoin",
+    "ethereum",
+    "litecoin",
     "restify",
     "mongodb",
     "multi-currency",
@@ -34,9 +53,10 @@
     "url": "https://github.com/bostontrader/bookwerx-core.git"
   },
   "scripts": {
-    "test": "node ./app/server_test.js",
-    "start": "node ./app/server.js",
+    "test": "nyc ava '**/*.test.js'",
+    "integrationTest": "node_modules/.bin/babel-node integrationTest.js",
+    "start": "node_modules/.bin/babel-node startServer.js",
     "lint": "standard"
   },
-  "version": "0.8.0"
+  "version": "1.0.1"
 }
