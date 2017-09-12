@@ -1,5 +1,5 @@
 // We need to use require for this
-const colors = require('colors/safe')
+//const colors = require('colors/safe')
 
 import config         from 'config'
 import restify        from 'restify'

@@ -6,7 +6,7 @@
 
 # Introduction
 
-The purpose of **bookwerx-core** is to provide an API that supports multi-currency, multi-tenant,
+The purpose of **bookwerx-core** is to provide an http API that supports multi-currency, multi-tenant,
  bookkeeping, using the double-entry bookkeeping model, slightly adapted to squeeze
  in multiple currencies.  It uses [node](https://nodejs.org), [restify](http://restify.com/), and [mongodb](https://www.mongodb.com/).
 
@@ -16,11 +16,11 @@ quickly encounter the need for bookkeeping.  Rolling your own methods is, as usu
 
 With this API, the user can:
 
+* Obtain an API key and secret in order to use the other endpoints.
 * Perform ordinary CRUD operations on the various bookkeeping objects,
 such as accounts and transactions.
-* Perform user management chores such as assigning API access keys and deleting users.
-* Perform consistency checks.
-* Brainwipe the db and start over.
+* Perform a variety functions that return aggregated data.
+* Perform general "linting" of the db.
 
 This API is the minimum necessary to accomplish the above goals. Extra fancy
 features can be found elsewhere.  For example:
@@ -40,14 +40,12 @@ such as the production of financial reports and graphing, please see
 
 * You will need mongodb.
 
-* In order to run the example data importer, you will need Python and the [requests library](docs.python-requests.org/en/master/user/install).
-
 The care and feeding of these items are beyond the scope of these instructions.
 
 **But assuming they are correctly installed...**
 
 ```bash
-git clone https://github.com/bostontrader/bookwerx-core.git
+git clone https://github.com/bostontrader/bookwerx-core
 cd bookwerx-core
 npm install
 npm test
@@ -73,18 +71,34 @@ npm start
 
 # A Few Words About Testing
 
-This is a difficult app to test.  Much of the code of this app deals with sending queries to the db and interpreting the result.  There's a lot of complicated configuration for the queries, but not much actual code that needs to be unit-tested.
+This app has no code of its own that we might reasonably want to unit test.  It starts a server and listens for http requests.  When it gets one, the app talks queries a mongo db and sends back the results. Perhaps I'm just [abby normal](https://www.youtube.com/watch?v=yH97lImrr0Q) but I just don't see any value to be had in trying to unit test any of this.  Hence, I do not.
 
-That said, we must still do testing, so we have:
+Next I'm tempted to do some integration testing, but I don't do that either.  As mentioned earlier **bookwerx-ui** uses this app. In contemplating testing for both apps, I realized that the test data and sequence of operations should be shared by both apps.  But trying to make this identical test work on both sides proved to be needlessly complicated.  Why am I wasting my time with this!? If UI has thorough integration testing, then indirectly so does this app.  So I rely upon UI to do the testing.  If it works, then so does this app.
 
-```bash
-npm run unitTest
-npm run integrationTest
-```
+Finally, I also don't care about test coverage.  Obviously some of these paths get covered.  And I'm fairly certain that most of the code does indeed get covered.  If there are other bits that are neglected the consequences will eventually manifest themeselves and I can then rectify. Perhaps this divine insight will enable Wintermute to get that key that's been lost in the wardrobe all these years, but probably not.  In any event, I'm going to live dangerously and just take my chances. Until and unless I discover otherwise, agonizing over code coverage just doesn't earn its keep.
 
-We unit test what we can.
+That said, I do have basically a test stub for **npm test**.  I want to placate Travis CI and I might also eventually find some useful things that are worthy of testing.
 
-The integration test starts with an empty db and sends a long series of carefully crafted queries in order to demonstrate correct operation and to hopefully smoke out a few bugs as well.
+# Dependencies
+
+* config - Manage different configurations.
+
+* crypto-random-string - Generate random strings for the API keys.
+
+* mongodb - This is our db.
+
+* restify - This is the http server.
+
+* restify-cors-middleware - Need this in order to deal with CORS
+
+* restify-plugins - Need this in order to see the request query string and the body.
+
+# devDependencies
+
+* babel-cli
+
+* babel-preset-es2015
+
 
 # Working with Multiple Currencies
 
