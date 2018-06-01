@@ -1,0 +1,7 @@
+{
+  "configName": "test",
+  "mongoConnectionURL": "mongodb://127.0.0.1:27017",
+  "mongoDBName": "bookwerx-mongo-test",
+  "port": 3003,
+  "enableTest": true
+}

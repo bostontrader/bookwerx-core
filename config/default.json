@@ -1,6 +1,0 @@
-{
-  "configName": "default",
-  "mongoConnectionURL": "mongodb://localhost:27017/bookwerx-core-test",
-  "port": 3003,
-  "enableTest": true
-}

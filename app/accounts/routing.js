@@ -121,33 +121,33 @@ exports.defineRoutes = function (server, mongoDb) {
   // WARNING! This should all be in a transaction!
   server.post('/' + collectionPlural, (req, res, next) => {
     // convert req.body.categories from strings to ObjectId
-    if (req.body.categories) {
-      for (let i = 0; i < req.body.categories.length; i++) {
-        req.body.categories[i] = ObjectId(req.body.categories[i])
-      }
-    }
+    //if (req.body.categories) {
+      //for (let i = 0; i < req.body.categories.length; i++) {
+        //req.body.categories[i] = ObjectId(req.body.categories[i])
+      //}
+    //}
 
     // insertOne only returns the new _id.  We want to return complete
     // new document, which is what we originally requested to store
     // with the new _id added to this.
-    let postResult
+    //let postResult
     mongoDb.collection(collectionPlural).insertOne(req.body)
     .then(result => {
-      postResult = req.body
-      postResult._id = result.insertedId.toString()
+      let postResult = req.body
+      //postResult._id = result.insertedId.toString()
 
       // This has a brand-new _id so assume there are no entries in categories
       // therefore just make new entries
       // for each category...
       // make new account_category
-      let n = []
-      var categories = postResult.categories
-      for (let categoryIdx in categories) {
-        n.push({'account_id': ObjectId(postResult._id), 'category_id': categories[categoryIdx]})
-      }
-      mongoDb.collection('accounts_categories').insertMany(n)
-    })
-    .then(result => {
+      //let n = []
+      //var categories = postResult.categories
+      //for (let categoryIdx in categories) {
+        //n.push({'account_id': ObjectId(postResult._id), 'category_id': categories[categoryIdx]})
+      //}
+      //mongoDb.collection('accounts_categories').insertMany(n)
+    //})
+    //.then(result => {
       res.json(postResult)
     }).catch(error => {
       res.json({error: error})
@@ -159,11 +159,11 @@ exports.defineRoutes = function (server, mongoDb) {
   // exports.put = function (server, mongoDb, collectionSingular, collectionPlural) {
   server.put('/' + collectionPlural + '/:id', (req, res, next) => {
     // convert req.body.categories from strings to ObjectId
-    if (req.body.categories) {
-      for (let i = 0; i < req.body.categories.length; i++) {
-        req.body.categories[i] = ObjectId(req.body.categories[i])
-      }
-    }
+    //if (req.body.categories) {
+      //for (let i = 0; i < req.body.categories.length; i++) {
+        //req.body.categories[i] = ObjectId(req.body.categories[i])
+      //}
+    //}
 
     let putResult
     mongoDb.collection(collectionPlural).findOneAndUpdate(
@@ -178,19 +178,19 @@ exports.defineRoutes = function (server, mongoDb) {
           })
         }
         // delete all accounts_categories that refer to this account
-        mongoDb.collection('accounts_categories').deleteMany({account_id: putResult.value._id})
+        // mongoDb.collection('accounts_categories').deleteMany({account_id: putResult.value._id})
       })
-      .then(result => {
+      //.then(result => {
         // Now make new entries
         // for each category...
         // make new account_category
-        let n = []
-        let categories = putResult.value.categories
-        for (let categoryIdx in categories) {
-          n.push({'account_id': putResult.value._id, 'category_id': ObjectId(categories[categoryIdx])})
-        }
-        mongoDb.collection('accounts_categories').insertMany(n)
-      })
+        //let n = []
+        //let categories = putResult.value.categories
+        //for (let categoryIdx in categories) {
+          //n.push({'account_id': putResult.value._id, 'category_id': ObjectId(categories[categoryIdx])})
+        //}
+        //mongoDb.collection('accounts_categories').insertMany(n)
+      //})
       .then(result => {
         res.json(putResult.value)
       })

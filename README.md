@@ -1,4 +1,4 @@
-#Introduction
+# Introduction
 
 [![Build Status](https://travis-ci.org/bostontrader/bookwerx-core.svg?branch=master)](https://travis-ci.org/bostontrader/bookwerx-core)
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
@@ -30,21 +30,48 @@ such as the production of financial reports and graphing, please see
  [bookwerx-reporting](https://github.com/bostontrader/bookwerx-reporting).
 
 
-##Getting Started
+## Getting Started
 
 ### Prerequisites
 
-* You will need node and npm.
+* You will need node 8.5 and npm.
 
 * You will need git.
 
 * You will need mongodb.
 
-* In order to run the example data importer, you will need Python and the [requests library](docs.python-requests.org/en/master/user/install).
-
 The care and feeding of these items are beyond the scope of these instructions.
 
 ### But assuming they are correctly installed...
+
+```bash
+docker pull mongo:3.6.3-jessie
+docker run  --name bookwerx-mongo-test -p27017:27017 -d mongo:3.6.3-jessie
+```
+
+This will create a docker container named bookwerx-mongo-test, and start it, from the image named mongo, tagged as 3.6.3-jessie, connects the default docker port 27017 to port 27017 on the host, and using the container's writeable volume capability for the test data.  The particular tag is not real important, but it happens to be a tag that I have tested with.
+
+Thereafter, you can start and stop the container using
+```bash
+docker start bookwerx-mongo-test
+docker stop bookwerx-mongo-test
+```
+
+The port and container name are **bookwerx-core** configuration options as documented supra.
+
+These instructions help you get started to establish a testable installation. In order to configure **bookwerx-core** for production use, you'll need to do the following:
+
+```bash
+docker run  --name bookwerx-mongo-production -p27017:27017 -d mongo:3.6.3-jessie -v /path/to/whereiwant/thedata:/data/db
+docker start bookwerx-mongo-production
+docker stop bookwerx-mongo-production
+```
+
+Again, the port and the container name are configurable options.  In addition, the production use example attaches an external volume to the container.
+
+
+After mongo is eating out of your hand...
+
 
 ```bash
 git clone https://github.com/bostontrader/bookwerx-core.git
@@ -53,18 +80,25 @@ npm install
 npm test
 npm start
 ```
-##Runtime Configuration
+
+## Runtime Configuration
 
 Runtime configuration is managed by [node-config](https://github.com/lorenwest/node-config)
-By default, **bookwerx-core** will start the server using /config/default.json.
-You may create other configurations to suit your fancy. For example: To use configuration
-/config/production.json:
+
+We need to specifically set the NODE_ENV environmental variable in order to implicitly select the desired configuration.  If no matching configuration if found, the server won't do anything, either useful or harmful.
+
+Warning: One oddity is that if you **do not** set NODE_ENV and you happen to have a config file named development.json, then that file will be used by default.
+
+Any config that you use for testing should contain the key/value "enableTest": true.  If not, the testing will not tamper with the db.  The production.json config should not contain this.
+
+For example: To use configuration /config/production.json:
 
 ```bash
 export NODE_ENV=production
 npm start
 ```
-##Multiple Currencies
+
+## Multiple Currencies
 
 **bookwerx-core** enables the user to maintain a list of currencies relevant to their app.
 Fiat, precious metals, and cryptocoins are three obvious examples of currencies that

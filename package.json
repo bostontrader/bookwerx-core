@@ -8,13 +8,14 @@
     "url": "https://github.com/bostontrader/bookwerx-core/issues"
   },
   "dependencies": {
-    "bluebird": "3.4.3",
-    "bookwerx-testdata": "https://github.com/bostontrader/bookwerx-testdata",
     "config": "1.21.0",
-    "mongodb": "2.2.4",
-    "restify": "4.1.1"
+    "longjohn": "^0.2.12",
+    "mongodb": "3.0.6",
+    "restify": "7.1.1"
   },
   "devDependencies": {
+    "bookwerx-testdata": "git+https://github.com/bostontrader/bookwerx-testdata.git",
+    "restify-clients": "^2.0.1",
     "standard": "7.1.2"
   },
   "description": "A double-entry bookkeeping engine that supports multiple currencies.",
@@ -22,10 +23,12 @@
   "keywords": [
     "bookkeeping",
     "bookwerx",
-    "restify",
+    "cryptocoins",
+    "de-dollarization",
     "mongodb",
     "multi-currency",
-    "node"
+    "node",
+    "restify"
   ],
   "license": "MIT",
   "name": "bookwerx-core",
@@ -34,9 +37,9 @@
     "url": "https://github.com/bostontrader/bookwerx-core.git"
   },
   "scripts": {
-    "test": "node ./app/server_test.js",
-    "start": "node ./app/server.js",
+    "test": "NODE_ENV=test node ./app/server_test.js",
+    "start": "NODE_ENV=development node ./app/server.js",
     "lint": "standard"
   },
-  "version": "0.8.0"
+  "version": "0.8.1"
 }

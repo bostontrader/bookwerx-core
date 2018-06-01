@@ -15,8 +15,8 @@ let toolsRouter = require('./tools/routing')
 let transactionsRouter = require('./transactions/routing')
 
 let server = restify.createServer()
-server.use(restify.bodyParser())
-server.use(restify.queryParser())
+server.use(restify.plugins.bodyParser())
+server.use(restify.plugins.queryParser())
 server.use(restify.CORS({
   // origins: ['https://foo.com', 'http://bar.com', 'http://baz.com:8081'],   // defaults to ['*']
   credentials: true,                 // defaults to false
