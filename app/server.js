@@ -1,54 +1,113 @@
-// Common to server and server_test- start
-let restify = require('restify')
-let config = require('config')
-let port = config.get('port')
+// We need to use require for this
+//const colors = require('colors/safe')
 
-let MongoClient = require('mongodb').MongoClient
-let mongoDb
-let mongoConnectionURL = config.get('mongoConnectionURL')
+import config         from 'config'
+import restify        from 'restify'
+//import restifyClients from 'restify-clients'
+import restifyPlugins from 'restify-plugins'
 
-let accountsRouter = require('./accounts/routing')
-let categoriesRouter = require('./categories/routing')
-let currenciesRouter = require('./currencies/routing')
-let distributionsRouter = require('./distributions/routing')
-let toolsRouter = require('./tools/routing')
-let transactionsRouter = require('./transactions/routing')
+import accountsRouter      from './accounts/routing'
+//import categoriesRouter    from './categories/routing'
+import bookWerxConstants from './constants'
 
-let server = restify.createServer()
-server.use(restify.bodyParser())
-server.use(restify.queryParser())
-server.use(restify.CORS({
+//import currenciesRouter    from './currencies/routing'
+//import distributionsRouter from './distributions/routing'
+import keysRouter          from './keys/routing'
+//import toolsRouter         from './tools/routing'
+//import transactionsRouter  from './transactions/routing'
+
+const port = config.get('port')
+
+// Mongo is special.  Do it this way.
+const MongoClient = require('mongodb').MongoClient
+const mongoConnectionURL = config.get('mongoConnectionURL')
+
+
+const restifyCore = restify.createServer()
+
+const corsMiddleware = require('restify-cors-middleware')
+const cors = corsMiddleware({
+  //preflightMaxAge: 5, //Optional
+  origins: ['*'],
+  allowHeaders: ['API-Token'],
+  exposeHeaders: ['API-Token-Expiry']
+})
+
+//server.pre(cors.preflight)
+restifyCore.use(cors.actual)
+
+
+
+
+restifyCore.use(restifyPlugins.queryParser())
+restifyCore.use(restifyPlugins.bodyParser())
+
+restifyCore.use( (req, res, next) => {
+  console.log('server.31', req.path(), req.query, req.body)
+  if (req.path() === '/keys') return next()
+
+  // This request must be authorized
+  if('apiKey' in req.query) {
+    if('requestSig' in req.query) {
+      if(req.query.requestSig === 'goodsecret') { // if the signature is correct
+        // The signature is good so continue
+        next()
+      } else {
+        res.json({error: bookWerxConstants.API_SIG_NOT_CORRECT})
+        next(false)
+      }
+    } else {
+      res.json({error: bookWerxConstants.API_SIG_NOT_CORRECT})
+      next(false)
+    }
+    return next()
+  } else {
+    res.json({error: bookWerxConstants.MISSING_API_KEY})
+    next(false)
+  }
+})
+
+//restifyCore.use(restify.CORS({
   // origins: ['https://foo.com', 'http://bar.com', 'http://baz.com:8081'],   // defaults to ['*']
-  credentials: true,                 // defaults to false
-  headers: ['x-foo']                 // sets expose-headers
-}))
+  //credentials: true,                 // defaults to false
+  //headers: ['x-foo']                 // sets expose-headers
+//}))
 
-// Common to server and server_test- stop
+restifyCore.on('uncaughtException', (req, res, route, err) => {
+  console.log(colors.red('server.35', err))
+  res.send({ success: false, error: err.message });
+})
 
-// Common to server and server_test- start
-MongoClient.connect(mongoConnectionURL)
+//restifyCore.on('NotFound', function (request, response, cb) {console.log(34,'NotFound')});
+//restifyCore.on('MethodNotAllowed', function (request, response, cb) {35,'MethoNotAllowed'})
+//const bail = (error, location) => {console.error(colors.red(location,error.stack)); process.exit()}
 
-  // Start the server a listening
-  .then(result => {
-    mongoDb = result
-    console.log('mongo server started')
-    return new Promise((resolve, reject) => {
-      accountsRouter.defineRoutes(server, mongoDb)
-      categoriesRouter.defineRoutes(server, mongoDb)
-      currenciesRouter.defineRoutes(server, mongoDb)
-      distributionsRouter.defineRoutes(server, mongoDb)
-      toolsRouter.defineRoutes(server, mongoDb)
-      transactionsRouter.defineRoutes(server, mongoDb)
+const server = {
 
-      server.listen(port, () => {
-        console.log('Using configuration: %s', config.get('configName'))
-        console.log('%s listening at %s', server.name, server.url)
-        resolve(true)
+  start: () => {
+
+    return MongoClient.connect(mongoConnectionURL)
+
+    .then(mongoDb => {
+      console.log('mongo server started')
+
+      keysRouter(restifyCore, mongoDb)
+      accountsRouter(restifyCore, mongoDb)
+      //categoriesRouter(restifyCore, mongoDb)
+      //currenciesRouter(restifyCore, mongoDb)
+      //distributionsRouter(restifyCore, mongoDb)
+      //toolsRouter(restifyCore, mongoDb)
+      //transactionsRouter(restifyCore, mongoDb)
+
+      return new Promise( (resolve, reject) => {
+        restifyCore.listen(port, () => {
+          console.log('Using configuration: %s', config.get('configName'))
+          console.log('%s listening at %s', restifyCore.name, restifyCore.url)
+          resolve(mongoDb)
+        })
       })
     })
-  })
-  // Common to server and server_test- stop
+  }
+}
 
-  .catch((e) => {
-    console.log(e)
-  })
+export default server
