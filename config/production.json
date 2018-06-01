@@ -1,0 +1,7 @@
+{
+  "configName": "production",
+  //"mongoConnectionURL": "mongodb://172.17.0.3:27017/bookwerx-core-production",
+  "mongoConnectionURL": "mongodb://127.0.0.1:27017/bookwerx-core-production",
+
+  "port":3003
+}

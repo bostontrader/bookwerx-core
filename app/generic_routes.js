@@ -1,65 +1,94 @@
-let ObjectId = require('mongodb').ObjectId
+import bookWerxConstants from './constants'
 
-exports.get = function (server, mongoDb, collectionPlural, sort = {}) {
-  server.get('/' + collectionPlural, (req, res, next) => {
-    if (req.query.sort) sort = JSON.parse(req.query.sort)
-    mongoDb.collection(collectionPlural).find().sort(sort).toArray().then(result => {
-      res.json(result)
-      next()
-    }).catch(error => {
-      res.json({error: error})
+const ObjectId = require('mongodb').ObjectId
+
+// Assume proper auth has been done already.  We shouldn't have to authenticate this
+// a 2nd time here.  But _be sure_ it's getting done.
+const generic_routes = {
+
+  del: (server, mongoDb, collectionSingular, collectionPlural) => {
+    server.del('/' + collectionPlural + '/:id', (req, res, next) => {
+      const p = mongoDb.collection(collectionPlural).findOneAndDelete({'_id': ObjectId(req.params.id)})
+      .then(function resolve(result) {
+        console.log('generic_routes.13',result)
+        if (result.value === null) result.value = {error: collectionSingular + ' ' + req.params.id + ' does not exist'}
+        res.json(result.value)
+        next()
+      })
+      p.catch(error => {
+        console.log('generic_routes.19',result)
+        res.json({'error': error})
+        next()
+      })
     })
-  })
-}
+  },
 
-exports.getOne = function (server, mongoDb, collectionSingular, collectionPlural) {
-  server.get('/' + collectionPlural + '/:id', (req, res, next) => {
-    mongoDb.collection(collectionPlural).findOne({'_id': ObjectId(req.params.id)}).then(result => {
-      if (result === null) result = {error: collectionSingular + ' ' + req.params.id + ' does not exist'}
-      res.json(result)
-      next()
-    }).catch(error => {
-      res.json({error: error})
+  get: (server, mongoDb, collectionPlural, sort = {} ) => {
+    server.get('/' + collectionPlural, (req, res, next) => {
+      //if (req.query.sort) sort = JSON.parse(req.query.sort)
+      const p = mongoDb.collection(collectionPlural).find({apiKey:req.query.apiKey}) /*.sort(sort)*/.toArray()
+      .then(result => {
+        res.json(result)
+        next()
+      })
+      p.catch(error => {
+        res.json({error: error})
+        next()
+      })
     })
-  })
-}
+  },
 
-exports.post = function (server, mongoDb, collectionPlural) {
-  server.post('/' + collectionPlural, (req, res, next) => {
-    // insertOne only returns the new _id.  We want to return complete
-    // new document, which is what we originally requested to store
-    // with the new _id added to this.
-    let retVal = req.body
-    mongoDb.collection(collectionPlural).insertOne(req.body).then(result => {
-      retVal._id = result.insertedId.toString()
-      res.json(retVal)
-    }).catch(error => {
-      res.json({error: error})
+  getOne: (server, mongoDb, collectionSingular, collectionPlural) => {
+    server.get('/' + collectionPlural + '/:id', (req, res, next) => {
+      const p = mongoDb.collection(collectionPlural).findOne({'_id': ObjectId(req.params.id)})
+      .then(result => {
+        if (result === null) result = {error: collectionSingular + ' ' + req.params.id + ' does not exist'}
+        res.json(result)
+        next()
+      })
+      p.catch(error => {
+        res.json({error: error})
+        next()
+      })
     })
-  })
-}
+  },
 
-exports.put = function (server, mongoDb, collectionSingular, collectionPlural) {
-  server.put('/' + collectionPlural + '/:id', (req, res, next) => {
-    mongoDb.collection(collectionPlural).findOneAndUpdate(
+  // post will enable the creation of new documents but will not update or replace existing documents.  Custom _id is prohibited for new documents.
+  post: function (server, mongoDb, collectionPlural) {
+    server.post('/' + collectionPlural, (req, res, next) => {
+      req.body.apiKey=req.query.apiKey
+      mongoDb.collection(collectionPlural).insertOne(req.body)
+      .then(result => {
+        res.json(result)
+        next()
+      }).catch(error => {
+        res.json({error: error})
+        next()
+      })
+    })
+  },
+
+  // put will enable the total replacement (not update) of existing documents
+  put: function (server, mongoDb, collectionSingular, collectionPlural) {
+    server.put('/' + collectionPlural + '/:id', (req, res, next) => {
+      req.body.apiKey = req.query.apiKey
+      const p = mongoDb.collection(collectionPlural).findOneAndReplace(
         {'_id': ObjectId(req.params.id)},
         req.body,
-        {returnOriginal: false}).then(function resolve (result) {
-          if (result.value === null) result.value = {error: collectionSingular + ' ' + req.params.id + ' does not exist'}
-          res.json(result.value)
-        }).catch(error => {
-          res.json({'error': error})
-        })
-  })
+        {returnOriginal: false}
+      )
+      .then(function resolve(result) {
+        res.json((result.value === null) ? {error: bookWerxConstants.ATTEMPTED_IMPLICIT_CREATE} : result.value)
+        next()
+      })
+      p.catch(error => {
+        console.log('generic_routes.190', result)
+        res.json({'error': error})
+        next()
+      })
+     })
+  }
+
 }
 
-exports.delete = function (server, mongoDb, collectionSingular, collectionPlural) {
-  server.del('/' + collectionPlural + '/:id', (req, res, next) => {
-    mongoDb.collection(collectionPlural).findOneAndDelete({'_id': ObjectId(req.params.id)}).then(function resolve (result) {
-      if (result.value === null) result.value = {error: collectionSingular + ' ' + req.params.id + ' does not exist'}
-      res.json(result.value)
-    }).catch(error => {
-      res.json({'error': error})
-    })
-  })
-}
+export default generic_routes
