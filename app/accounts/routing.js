@@ -289,14 +289,14 @@ exports.defineRoutes = function (server, mongoDb) {
               as: 'transaction_info'
             }
           },
-          {
-            $lookup: {
-              from: 'currencies',
-              localField: 'currency_id',
-              foreignField: '_id',
-              as: 'currency_info'
-            }
-          },
+          //{
+            //$lookup: {
+              //from: 'currencies',
+              //localField: 'currency_id',
+              //foreignField: '_id',
+              //as: 'currency_info'
+            //}
+          //},
           {$sort: {'currency_info.symbol': 1, 'transaction_info.datetime': 1}}
         ]).toArray()
         .then(result => {

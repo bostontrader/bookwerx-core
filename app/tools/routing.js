@@ -33,8 +33,19 @@ exports.defineRoutes = function (server, mongoDb) {
    except for two distributions in November 2015, which used currency "bbb".  There were no transactions during
    Nov 2015 that used currency "aaa".  The currency "aaa" bank balances increased by 10000 during Sep 2015,
    and decreased by 8000 in Oct 2015.
-   The bank balances at the end of November 2015, or currency "aaa" were 2000 and were overdrawn by 2000 at the
+   The bank balances at the end of November 2015, for currency "aaa" were 2000 and were overdrawn by 2000 at the
    end of Dec 2015.
+
+   Sometimes we want to expand the above output to include specific details about which specific
+   accounts, as well as their associated balances, were used.
+
+   GET /distribution_summary?category=Bank&accounts=true
+   Returns something like...
+   [
+     {"_id":{"y":2015,"m":9, "currency_id":"aaa" , "account_id":"Bank A"},"t":10000","c":1},
+     {"_id":{"y":2015,"m":10, "currency_id":"aaa" , "account_id":"Bank B"}},"t":-8000,"c":2},
+     {"_id":{"y":2015,"m":11, "currency_id":"aaa" , "account_id":"Bank C"}},"t":0,"c":0}
+   ]
 
    Roadmap:
 
@@ -84,9 +95,21 @@ exports.defineRoutes = function (server, mongoDb) {
             as: 'transaction_info'
           }},
           {$unwind: '$transaction_info'},
-          {$project: {_id: false, amount: true, currency_id: true, yy: {$year: '$transaction_info.datetime'}, mm: {$month: '$transaction_info.datetime'}}},
-          {$group: {_id: {y: '$yy', m: '$mm', currency_id:'$currency_id'}, t: {$sum: '$amount'}, c: {$sum: 1}}},
-          {$sort: {_id: 1}}
+          {$project: {_id: false, amount: true, currency_id: true, account_id:true, yy: {$year: '$transaction_info.datetime'}, mm: {$month: '$transaction_info.datetime'}}},
+          {$group: {_id: {y: '$yy', m: '$mm', account_id:'$account_id', currency_id:'$currency_id'}, t: {$sum: '$amount'}, c: {$sum: 1}}},
+          {$sort: {_id: 1}},
+          {$lookup: {
+            from: 'accounts',
+            localField: '_id.account_id',
+            foreignField: '_id',
+            as: 'account_info'
+          }},
+          {$lookup: {
+            from: 'currencies',
+            localField: '_id.currency_id',
+            foreignField: '_id',
+            as: 'currency_info'
+          }}
         ]).toArray()
 
         .then(result => {
