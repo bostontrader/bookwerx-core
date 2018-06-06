@@ -11,6 +11,7 @@
     "crypto-random-string": "1.0.0",
     "mongodb": "2.2.31",
     "restify": "7.2.0",
+    "restify-cors-middleware": "1.1.0",
     "restify-plugins": "1.6.0"
   },
   "devDependencies": {
@@ -46,5 +47,5 @@
     "start": "BW_PORT=3002 BW_MONGO=mongodb://127.0.0.1:27017/bookwerx-core-development node startServer.js",
     "lint": "standard"
   },
-  "version": "1.0.3"
+  "version": "1.0.4"
 }

@@ -41,19 +41,18 @@ const restifyCore = restify.createServer()
   graphiql: true
 })) */
 
-// const corsMiddleware = require('restify-cors-middleware')
-// const cors = corsMiddleware({
-// preflightMaxAge: 5, //Optional
-// origins: ['*'],
-// allowHeaders: ['API-Token'],
-// allowHeaders: ['Access-Control-Allow-Origin'],
-//  exposeHeaders: ['API-Token-Expiry']
-// expose: ['Access-Control-Allow-Origin']
-
-// })
+const corsMiddleware = require('restify-cors-middleware')
+const cors = corsMiddleware({
+  // preflightMaxAge: 5, //Optional
+  // origins: ['*'],
+  // allowHeaders: ['API-Token'],
+  // allowHeaders: ['Access-Control-Allow-Origin'],
+  // exposeHeaders: ['API-Token-Expiry']
+  expose: ['Access-Control-Allow-Origin']
+})
 
 // server.pre(cors.preflight)
-// restifyCore.use(cors.actual)
+restifyCore.use(cors.actual)
 
 // restifyCore.use(restifyPlugins.queryParser())
 restifyCore.use(restifyPlugins.bodyParser())
