@@ -83,10 +83,6 @@ The following env variables are used by **bookwerx-core**:
 * BW_TEST=false - Nobody looks at this except testing.  Testing will not work unless this is set to true.  Don't fubar thy production data!
 
 
-# On require vs import
-
-There exists a giant can of worms re: using the 'require' statement vs the 'import' statement.  The bottom line, IMHO, is that the 'import' statement, although shiny, new, and modern, just doesn't earn its keep.  Everybody else in the world already uses 'require' and that works well enough, especially in this particular context. At this time, the 'import' statement is not very well supported and requires too many contortions to use.  All this and for what benefit?  So we can load modules asynchonously? Homey don't play that.
-
 # A Few Words About Testing
 
 This app has no code of its own that we might reasonably want to unit test.  It starts a server and listens for http requests.  When it gets one, the app queries a mongo db and sends back the results. Perhaps I'm just [abby normal](https://www.youtube.com/watch?v=yH97lImrr0Q&t=65) but I just don't see any value to be had in trying to unit test any of this.  Hence, I do not.
@@ -95,6 +91,18 @@ Using similar logic I'm also tempted to ditch integration testing.  But I can't 
 
 Finally, I don't care much about code coverage.  Obviously some of these paths get covered.  And I'm fairly certain that most of the code does indeed get covered.  If there are other bits of code that are neglected the consequences will eventually manifest themeselves and I can then rectify. Perhaps this divine insight will enable Wintermute to get that key that's been lost in the wardrobe all these years, but probably not.  In any event, I'm going to live dangerously and just take my chances. Until and unless I discover otherwise, agonizing over code coverage, in this context, is just another way to [fritter and waste the hours in an off-hand way](https://www.youtube.com/watch?v=JwYX52BP2Sk&t=140)
 
+
+# Brainwipe
+
+In testing I need to be able to start with a fresh slate.  How shall I do that?
+
+* Maybe directly build this capacity into the API.
+
+* Maybe use the API to enumerate the existing objects and delete them in a suitable order.
+
+* Maybe simply invoke dropDatabase on the mongodb driver.
+
+None of these choices are obviously good.  I think the first choice is obviously bad, and the second is a lot of work for not much benefit.  Choice the last, dropDatabase, is easy to implement and is a good enough solution for now.
 
 # Dependencies
 
@@ -116,6 +124,9 @@ Finally, I don't care much about code coverage.  Obviously some of these paths g
 
 * standard - Code linter
 
+# On require vs import
+
+There exists a giant can of worms re: using the 'require' statement vs the 'import' statement.  The bottom line, IMHO, is that the 'import' statement, although shiny, new, and modern, just doesn't earn its keep.  Everybody else in the world already uses 'require' and that works well enough, especially in this particular context. At this time, the 'import' statement is not very well supported and requires too many contortions to use.  All this and for what benefit?  So we can load modules asynchonously? Homey don't play that.
 
 # Working with Multiple Currencies
 
