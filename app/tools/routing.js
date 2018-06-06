@@ -1,14 +1,14 @@
-exports.defineRoutes = function (server, mongoDb) {
-  server.put('/brainwipe', (req, res, next) => {
-    mongoDb.dropDatabase().then(result => {
-      res.json(result)
-    })
-    .catch(error => {
-      res.json({'error': error})
-    })
-  })
+// exports.defineRoutes = function (server, mongoDb) {
+//  server.put('/brainwipe', (req, res, next) => {
+//    mongoDb.dropDatabase().then(result => {
+//      res.json(result)
+//    })
+//    .catch(error => {
+//      res.json({'error': error})
+//    })
+//  })
 
-  /*
+/*
    Financial reports typically want account balances at the end of certain periods or the quantity
    of activity during a particular period.  This can be generally implemented by calculating a
    sum of account activity during all time periods and then using these sums as the input to subsequent
@@ -58,96 +58,96 @@ exports.defineRoutes = function (server, mongoDb) {
 
   */
 
-  server.get('/distribution_summary', (req, res, next) => {
-    let targetCategory = req.query.category
-    mongoDb.collection('categories').aggregate([
-      {$match: {symbol: targetCategory}},
-      {$lookup: {
-        from: 'accounts_categories',
-        localField: '_id',
-        foreignField: 'category_id',
-        as: 'accounts_categories'
-      }}
-    ]).toArray()
+//  server.get('/distribution_summary', (req, res, next) => {
+//    let targetCategory = req.query.category
+//    mongoDb.collection('categories').aggregate([
+//      {$match: {symbol: targetCategory}},
+//      {$lookup: {
+//        from: 'accounts_categories',
+//        localField: '_id',
+//        foreignField: 'category_id',
+//        as: 'accounts_categories'
+//      }}
+//    ]).toArray()
 
-    // 2. From that, produce an array of all account_ids that are thus tagged by said category.
-    .then(result => {
-      let accountCategories = result[0].accounts_categories
-      return new Promise((resolve, reject) => {
-        let n = []
-        for (let idx in accountCategories) {
-          let accountCategory = accountCategories[idx]
-          n.push(accountCategory.account_id)
-        }
-        resolve(n)
-      })
-    })
+// 2. From that, produce an array of all account_ids that are thus tagged by said category.
+//    .then(result => {
+//      let accountCategories = result[0].accounts_categories
+//      return new Promise((resolve, reject) => {
+//        let n = []
+//        for (let idx in accountCategories) {
+//          let accountCategory = accountCategories[idx]
+//          n.push(accountCategory.account_id)
+//        }
+//        resolve(n)
+//      })
+//    })
 
-    // 3-5. Find distributions and summarize them.
-    .then(result => {
-      return new Promise((resolve, reject) => {
-        mongoDb.collection('distributions').aggregate([
-          {$match: {account_id: {$in: result}}},
-          {$lookup: {
-            from: 'transactions',
-            localField: 'transaction_id',
-            foreignField: '_id',
-            as: 'transaction_info'
-          }},
-          {$unwind: '$transaction_info'},
-          {$project: {_id: false, amount: true, currency_id: true, account_id:true, yy: {$year: '$transaction_info.datetime'}, mm: {$month: '$transaction_info.datetime'}}},
-          {$group: {_id: {y: '$yy', m: '$mm', account_id:'$account_id', currency_id:'$currency_id'}, t: {$sum: '$amount'}, c: {$sum: 1}}},
-          {$sort: {_id: 1}},
-          {$lookup: {
-            from: 'accounts',
-            localField: '_id.account_id',
-            foreignField: '_id',
-            as: 'account_info'
-          }},
-          {$lookup: {
-            from: 'currencies',
-            localField: '_id.currency_id',
-            foreignField: '_id',
-            as: 'currency_info'
-          }}
-        ]).toArray()
+// 3-5. Find distributions and summarize them.
+//    .then(result => {
+//      return new Promise((resolve, reject) => {
+//        mongoDb.collection('distributions').aggregate([
+//          {$match: {account_id: {$in: result}}},
+//          {$lookup: {
+//            from: 'transactions',
+//            localField: 'transaction_id',
+//            foreignField: '_id',
+//            as: 'transaction_info'
+//          }},
+//          {$unwind: '$transaction_info'},
+//          {$project: {_id: false, amount: true, currency_id: true, account_id:true, yy: {$year: '$transaction_info.datetime'}, mm: {$month: '$transaction_info.datetime'}}},
+//          {$group: {_id: {y: '$yy', m: '$mm', account_id:'$account_id', currency_id:'$currency_id'}, t: {$sum: '$amount'}, c: {$sum: 1}}},
+//          {$sort: {_id: 1}},
+//          {$lookup: {
+//            from: 'accounts',
+//            localField: '_id.account_id',
+//            foreignField: '_id',
+//            as: 'account_info'
+//          }},
+//          {$lookup: {
+//            from: 'currencies',
+//            localField: '_id.currency_id',
+//            foreignField: '_id',
+//            as: 'currency_info'
+//          }}
+//        ]).toArray()
 
-        .then(result => {
-          res.setHeader('Access-Control-Allow-Origin', '*')
-          res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With')
-          res.json(result)
-        })
-        .catch(error => {
-          reject({error: error})
-        })
-      })
-    })
+//        .then(result => {
+//          res.setHeader('Access-Control-Allow-Origin', '*')
+//          res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With')
+//          res.json(result)
+//        })
+//        .catch(error => {
+//          reject({error: error})
+//        })
+//      })
+//    })
 
-    .catch(error => {
-      res.json({error: error})
-    })
-  })
+//    .catch(error => {
+//      res.json({error: error})
+//    })
+//  })
 
-  // Look for transactions that have no distributions
-  server.get('/lint1', (req, res, next) => {
-    mongoDb.collection('transactions').aggregate([
-      {$lookup: {
-        from: 'distributions',
-        localField: '_id',
-        foreignField: 'transaction_id',
-        as: 'distributions'
-      }}
-    ]).toArray()
+// Look for transactions that have no distributions
+//  server.get('/lint1', (req, res, next) => {
+//    mongoDb.collection('transactions').aggregate([
+//      {$lookup: {
+//        from: 'distributions',
+//        localField: '_id',
+//        foreignField: 'transaction_id',
+//        as: 'distributions'
+//      }}
+//    ]).toArray()
 
-    .then(result => {
-      res.setHeader('Access-Control-Allow-Origin', '*')
-      res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With')
-      res.json(result.filter(value => {
-        return value.distributions.length == 0
-      }))
-    })
-    .catch(error => {
-      reject({error: error})
-    })
-  })
-}
+//    .then(result => {
+//      res.setHeader('Access-Control-Allow-Origin', '*')
+//      res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With')
+//      res.json(result.filter(value => {
+//        return value.distributions.length == 0
+//      }))
+//    })
+//    .catch(error => {
+//      reject({error: error})
+//    })
+//  })
+// }

@@ -6,8 +6,7 @@
 
 # Introduction
 
-The purpose of **bookwerx-core** is to provide an http API that supports multi-currency, multi-tenant,
- bookkeeping, using the double-entry bookkeeping model, slightly adapted to squeeze
+The purpose of **bookwerx-core** is to provide an HTTP API that supports multi-currency, multi-tenant, bookkeeping, using the double-entry bookkeeping model, slightly adapted to squeeze
  in multiple currencies.  It uses [node](https://nodejs.org), [restify](http://restify.com/), and [mongodb](https://www.mongodb.com/).
 
 Any application that deals with "money" (fiat, precious metals, cryptocoins) will
@@ -19,8 +18,9 @@ With this API, the user can:
 * Obtain an API key and secret in order to use the other endpoints.
 * Perform ordinary CRUD operations on the various bookkeeping objects,
 such as accounts and transactions.
-* Perform a variety functions that return aggregated data.
+* Perform a variety of functions that return aggregated data.
 * Perform general "linting" of the db.
+* Brainwipe and start over.
 
 This API is the minimum necessary to accomplish the above goals. Extra fancy
 features can be found elsewhere.  For example:
@@ -29,18 +29,21 @@ A package that provides a web-based user interface can be found at [bookwerx-ui]
 such as the production of financial reports and graphing, please see
  [bookwerx-reporting](https://github.com/bostontrader/bookwerx-reporting).
 
+# NOTICE:
+
+This code is presently very sloppy.  It's a commented-out re-do of an earlier effort.  It's in git at all just to get the DevOps cycle going. Please bless this mess.
 
 # Getting Started
 
 ## Prerequisites
 
-* You will need node and npm.
+* You will need node >= 8.5.0 and approx npm 6.0.1.
 
 * You will need git.
 
 * You will need mongodb.
 
-The care and feeding of these items are beyond the scope of these instructions.
+The care and feeding of these beasts are beyond the scope of these instructions.
 
 **But assuming they are correctly installed...**
 
@@ -48,93 +51,95 @@ The care and feeding of these items are beyond the scope of these instructions.
 git clone https://github.com/bostontrader/bookwerx-core
 cd bookwerx-core
 npm install
+```
+
+Next, study the section on **runtime configuration** so that you are properly in control of your configurations.  Using this new found knowledge, tweak package.json scripts.test, if necessary, to point to an active mongodb server.  And then:
+
+```bash
 npm test
+```
+
+Next, tweak package.json scripts.start, if necessary, to point to an active mongodb server that you can use for development purposes. And then:
+
+```bash
 npm start
 ```
-Watch the console and you'll see a message telling you what port the server is listening to.
 
-Next, study the section on **runtime configuration** so that you are properly in control of your configurations.
+Watch the console and you'll see a message telling you what port the server is listening to.
 
 Finally, you'll need a set of API Keys in order to use the API.  Please review the **API** section for this.
 
+
 ## Runtime Configuration
 
-Runtime configuration is managed by [node-config](https://github.com/lorenwest/node-config)
-By default, **bookwerx-core** will start the server using /config/default.json.
-You may create other configurations to suit your fancy. For example: To use configuration
-/config/production.json:
+Runtime configuration is provided via environment variables. There are no other defaults and if these variables are not correctly set, then the server will not start.  These parameters can be fed to node on the command line.  See package.json scripts.start for an example to start the server in "development" mode and scripts.test for an example to start the server in "test" mode.
 
-```bash
-export NODE_ENV=production
-npm start
-```
+The following env variables are used by **bookwerx-core**:
+
+* BW_PORT=3000 - Which port shall **bookwerx-core** listen to?
+
+* BW_MONGO=mongodb://127.0.0.1:27017/bookwerx-core-development - A connection string for your Mongodb.
+
+* BW_TEST=false - Nobody looks at this except testing.  Testing will not work unless this is set to true.  Don't fubar thy production data!
+
+
+# On require vs import
+
+There exists a giant can of worms re: using the 'require' statement vs the 'import' statement.  The bottom line, IMHO, is that the 'import' statement, although shiny, new, and modern, just doesn't earn its keep.  Everybody else in the world already uses 'require' and that works well enough, especially in this particular context. At this time, the 'import' statement is not very well supported and requires too many contortions to use.  All this and for what benefit?  So we can load modules asynchonously? Homey don't play that.
 
 # A Few Words About Testing
 
-This app has no code of its own that we might reasonably want to unit test.  It starts a server and listens for http requests.  When it gets one, the app talks queries a mongo db and sends back the results. Perhaps I'm just [abby normal](https://www.youtube.com/watch?v=yH97lImrr0Q) but I just don't see any value to be had in trying to unit test any of this.  Hence, I do not.
+This app has no code of its own that we might reasonably want to unit test.  It starts a server and listens for http requests.  When it gets one, the app queries a mongo db and sends back the results. Perhaps I'm just [abby normal](https://www.youtube.com/watch?v=yH97lImrr0Q&t=65) but I just don't see any value to be had in trying to unit test any of this.  Hence, I do not.
 
-Next I'm tempted to do some integration testing, but I don't do that either.  As mentioned earlier **bookwerx-ui** uses this app. In contemplating testing for both apps, I realized that the test data and sequence of operations should be shared by both apps.  But trying to make this identical test work on both sides proved to be needlessly complicated.  Why am I wasting my time with this!? If UI has thorough integration testing, then indirectly so does this app.  So I rely upon UI to do the testing.  If it works, then so does this app.
+Using similar logic I'm also tempted to ditch integration testing.  But I can't bring myself to do that.  However, in order to make a decent test, I need to hand-craft a fairly elaborate set of example data and execute a tedious sequence of operations on them.  I make use of example data from **bookwerx-testdata** to do this.
 
-Finally, I also don't care about test coverage.  Obviously some of these paths get covered.  And I'm fairly certain that most of the code does indeed get covered.  If there are other bits that are neglected the consequences will eventually manifest themeselves and I can then rectify. Perhaps this divine insight will enable Wintermute to get that key that's been lost in the wardrobe all these years, but probably not.  In any event, I'm going to live dangerously and just take my chances. Until and unless I discover otherwise, agonizing over code coverage just doesn't earn its keep.
+Finally, I don't care much about code coverage.  Obviously some of these paths get covered.  And I'm fairly certain that most of the code does indeed get covered.  If there are other bits of code that are neglected the consequences will eventually manifest themeselves and I can then rectify. Perhaps this divine insight will enable Wintermute to get that key that's been lost in the wardrobe all these years, but probably not.  In any event, I'm going to live dangerously and just take my chances. Until and unless I discover otherwise, agonizing over code coverage, in this context, is just another way to [fritter and waste the hours in an off-hand way](https://www.youtube.com/watch?v=JwYX52BP2Sk&t=140)
 
-That said, I do have basically a test stub for **npm test**.  I want to placate Travis CI and I might also eventually find some useful things that are worthy of testing.
 
 # Dependencies
 
-* config - Manage different configurations.
+* crypto-random-string - I need to be able to generate randoms string for the keys.
 
-* crypto-random-string - Generate random strings for the API keys.
+* restify - I need an HTTP server.
 
-* mongodb - This is our db.
+* restify-plugins - I need to be able to access the query parameters and response body.
 
-* restify - This is the http server.
-
-* restify-cors-middleware - Need this in order to deal with CORS
-
-* restify-plugins - Need this in order to see the request query string and the body.
+* mongodb - No party is complete without mongo.
 
 # devDependencies
 
-* babel-cli
+* bookwerx-testdata
 
-* babel-preset-es2015
+* colors - I want to be able to print pretty colors on the console
+
+* restify-clients - The tester will need a json client to do its thing.
+
+* standard - Code linter
 
 
 # Working with Multiple Currencies
 
-**bookwerx-core** enables the user to maintain a list of currencies relevant to their app.
-Fiat, precious metals, and cryptocoins are three obvious examples of currencies that
-this app could easily handle.
+**bookwerx-core** enables the user to maintain a list of currencies relevant to its app. Fiat, precious metals, and cryptocoins are three obvious examples of currencies that this app could easily handle.
 
-The "distributions" of a transaction (the debits and credits part) are all tagged
-with a currency and a single transaction can include any number of different
-currencies.
+The "distributions" of a transaction (the debits and credits part) are all tagged with a currency and a single transaction can include any number of different currencies.
 
-Any transaction which includes only a single currency should satisfy the usual
-sum-of-debits = sum-of-credits constraint.
+Any transaction which includes only a single currency should satisfy the usual sum-of-debits = sum-of-credits constraint.
 
-Any transaction which includes two currencies should still satisfy that constraint.
-[But...](https://www.youtube.com/watch?v=FaVFuX8z26c) We can modify said constraint
-a wee bit to make it fit. As you can readily imagine, the actual numbers involved
-won't add up the way we ordinarily expect. Instead, you can compute an
-implied exchange rate R such that sum-of-debits * R = sum-of-credits.
+Any transaction which includes two currencies should still satisfy that constraint. [But...](https://www.youtube.com/watch?v=FaVFuX8z26c) We can modify said constraint a wee bit to make it fit. As you can readily imagine, the actual numbers involved won't add up the way we ordinarily expect. Instead, you can compute an implied exchange rate R such that sum-of-debits * R = sum-of-credits.
 
-But be careful with this.  Although simple transactions such as currency exchanges
-can easily be recorded by debiting one currency and crediting the other, you
-could easily make nonsensical transactions if you're not paying attention when you do this.
+But be careful with this.  Although simple transactions such as currency exchanges can easily be recorded by debiting one currency and crediting the other, you could easily make nonsensical transactions if you're not paying attention when you do this.
 
 # Validation
 
-Notice I say "you" can do this or that, not **bookwerx-core**. This is intentional and keeping
-with the principal that this core is a minimalist thing.  Although there is a core of necessary
-referential integrity constaints that **bookwerx-core** enforces,
-extra fancy features, such as validation belong elsewhere.  You may easily use this API to make
- non-sensensical entries into your records.  GIGO.
+Notice I say "you" can do this or that, not **bookwerx-core**. This is intentional and keeping with the principal that this core is a minimalist thing.  Although there is a core of necessary referential integrity constaints that **bookwerx-core** enforces, extra fancy features, such as validation belong elsewhere.  You may easily use this API to make non-sensensical entries into your records.  GIGO.
+
+# Random Junk...
+
+Stuff after here is not relyable.  Beware.
 
 # On Categories and Ordering
 
-There are several places where we might want to "categorize" the various accounts. Not only
-do we want to categorize them, but we also want to deal with them in a particular order.
+There are several places where we might want to "categorize" the various accounts. Not only do we want to categorize them, but we also want to deal with them in a particular order.
 
 Some examples:
 

@@ -1,7 +1,5 @@
 
-
-
-/*let DistributionsTest = function () {
+/* let DistributionsTest = function () {
   function DistributionsTest (client, testdata) {
     this.client = client
     this.testdata = testdata

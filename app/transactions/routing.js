@@ -1,99 +1,99 @@
-import genericRoutes from '../generic_routes'
-//import authThenInvoke from '../authThenInvoke'
+// import genericRoutes from '../generic_routes'
+// import authThenInvoke from '../authThenInvoke'
 
-let ObjectId = require('mongodb').ObjectId
+// let ObjectId = require('mongodb').ObjectId
 
-const collectionSingular = 'transaction'
-const collectionPlural = 'transactions'
+// const collectionSingular = 'transaction'
+// const collectionPlural = 'transactions'
 
-const defineRoutes = function (server, mongoDb) {
+// const defineRoutes = function (server, mongoDb) {
 
-  //genericRoutes.get(server, mongoDb, collectionPlural)
-  //genericRoutes.getOne(server, mongoDb, collectionSingular, collectionPlural)
+// genericRoutes.get(server, mongoDb, collectionPlural)
+// genericRoutes.getOne(server, mongoDb, collectionSingular, collectionPlural)
 
-  // genericRoutes.post(server, mongoDb, collectionPlural)
-  // Override genericRoutes because we need to convert incoming date/time into ISODate
-  //server.post('/' + collectionPlural, (req, res, next) => {
+// genericRoutes.post(server, mongoDb, collectionPlural)
+// Override genericRoutes because we need to convert incoming date/time into ISODate
+// server.post('/' + collectionPlural, (req, res, next) => {
 
-    //const coreQuery = (apiKey) => {
+// const coreQuery = (apiKey) => {
 
-      //req.body.apiKey=apiKey
-      // insertOne only returns the new _id.  We want to return complete
-      // new document, which is what we originally requested to store
-      // with the new _id added to this.
-      //let retVal = req.body
-      //req.body.datetime = new Date(req.body.datetime)
-      //return mongoDb.collection(collectionPlural)
-      //.insertOne(req.body)
-      //.then(result => {
-      //retVal._id = result.insertedId.toString()
-      //res.json(retVal)
-      //}).catch(error => {
-      //res.json({error: error})
-      //})
-    //}
+// req.body.apiKey=apiKey
+// insertOne only returns the new _id.  We want to return complete
+// new document, which is what we originally requested to store
+// with the new _id added to this.
+// let retVal = req.body
+// req.body.datetime = new Date(req.body.datetime)
+// return mongoDb.collection(collectionPlural)
+// .insertOne(req.body)
+// .then(result => {
+// retVal._id = result.insertedId.toString()
+// res.json(retVal)
+// }).catch(error => {
+// res.json({error: error})
+// })
+// }
 
-    //authThenInvoke(req, res, coreQuery)
-  //})
+// authThenInvoke(req, res, coreQuery)
+// })
 
-  // genericRoutes.put(server, mongoDb, collectionSingular, collectionPlural)
-  // Override genericRoutes because we need to convert incoming date/time into ISODate
-  //server.put('/' + collectionPlural + '/:id', (req, res, next) => {
+// genericRoutes.put(server, mongoDb, collectionSingular, collectionPlural)
+// Override genericRoutes because we need to convert incoming date/time into ISODate
+// server.put('/' + collectionPlural + '/:id', (req, res, next) => {
 
-    //const coreQuery = (apiKey) => {
+// const coreQuery = (apiKey) => {
 
-      //return Promise.resolve()
-      //.then(result => {
-        //if (req.body.datetime) req.body.datetime = new Date(req.body.datetime)
-        //req.body.apiKey = apiKey
-        //return mongoDb.collection(collectionPlural).findOneAndUpdate(
-          //{'_id': ObjectId(req.params.id)},
-          //req.body,
-          //{returnOriginal: false}
-        //)
-        //.then(function resolve (result) {
-        //if (result.value === null) result.value = {error: collectionSingular + ' ' + req.params.id + ' does not exist'}
-        //res.json(result.value)
-        //}).catch(error => {
-        //res.json({'error': error})
-        //})
-      //})
-    //}
-    //authThenInvoke(req, res, coreQuery)
-  //})
+// return Promise.resolve()
+// .then(result => {
+// if (req.body.datetime) req.body.datetime = new Date(req.body.datetime)
+// req.body.apiKey = apiKey
+// return mongoDb.collection(collectionPlural).findOneAndUpdate(
+// {'_id': ObjectId(req.params.id)},
+// req.body,
+// {returnOriginal: false}
+// )
+// .then(function resolve (result) {
+// if (result.value === null) result.value = {error: collectionSingular + ' ' + req.params.id + ' does not exist'}
+// res.json(result.value)
+// }).catch(error => {
+// res.json({'error': error})
+// })
+// })
+// }
+// authThenInvoke(req, res, coreQuery)
+// })
 
-  // genericRoutes.delete(server, mongoDb, collectionSingular, collectionPlural)
-  // This differs from genericRoutes in that it must not delete if other
-  // foreign keys refer to it.  Presently, only distributions.
-  // Note: DELETE does not have a body, so find the currency_id in req.params
-  //server.del('/' + collectionPlural + '/:transaction_id', (req, res, next) => {
+// genericRoutes.delete(server, mongoDb, collectionSingular, collectionPlural)
+// This differs from genericRoutes in that it must not delete if other
+// foreign keys refer to it.  Presently, only distributions.
+// Note: DELETE does not have a body, so find the currency_id in req.params
+// server.del('/' + collectionPlural + '/:transaction_id', (req, res, next) => {
 
-    //const coreQuery = () => {
-      //new Promise((resolve, reject) => {
+// const coreQuery = () => {
+// new Promise((resolve, reject) => {
 
-      //const transactionId = ObjectId(req.params.transaction_id)
-      //mongoDb.collection('distributions').find({'transaction_id': transactionId}).toArray().then(result => {
-      //if (result.length === 0) {
-      //resolve(true)
-      //} else {
-      //let msg = 'Cannot delete this transaction because distributions refer to it'
-      //reject(msg)
-      //}
-      //})
-      //})
-      //.then((result) => {
-      //return mongoDb.collection(collectionPlural).findOneAndDelete({'_id': ObjectId(req.params.transaction_id)})
-      //.then(function resolve (result) {
-      //if (result.value === null) result.value = {error: collectionSingular + ' ' + req.params.transaction_id + ' does not exist'}
-      //res.json(result.value)
-      //})
-      //})
-      //.catch(error => {
-      //res.json({error: error})
-      ///})
-    //}
-    //authThenInvoke(req, res, coreQuery)
-  //})
+// const transactionId = ObjectId(req.params.transaction_id)
+// mongoDb.collection('distributions').find({'transaction_id': transactionId}).toArray().then(result => {
+// if (result.length === 0) {
+// resolve(true)
+// } else {
+// let msg = 'Cannot delete this transaction because distributions refer to it'
+// reject(msg)
+// }
+// })
+// })
+// .then((result) => {
+// return mongoDb.collection(collectionPlural).findOneAndDelete({'_id': ObjectId(req.params.transaction_id)})
+// .then(function resolve (result) {
+// if (result.value === null) result.value = {error: collectionSingular + ' ' + req.params.transaction_id + ' does not exist'}
+// res.json(result.value)
+// })
+// })
+// .catch(error => {
+// res.json({error: error})
+/// })
+// }
+// authThenInvoke(req, res, coreQuery)
+// })
 
 /*
 The transaction dashboard contains a list of all distributions for a particular transaction,
@@ -130,7 +130,7 @@ Even though account and currency are arrays (cuz that's how mongo rolls), in thi
 be exactly one of each.
 
 */
-/*server.get('/transactions/dashboard/:transaction_id', (req, res, next) => {
+/* server.get('/transactions/dashboard/:transaction_id', (req, res, next) => {
 let distributions
 return mongoDb.collection('distributions')
 .aggregate([
@@ -161,7 +161,7 @@ res.json({'distributions': distributions, 'transaction': result})
 }).catch(error => {
 res.json({'error': error})
 })
-})*/
-}
+}) */
+// }
 
-export default defineRoutes
+// export default defineRoutes
