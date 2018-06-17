@@ -35,9 +35,8 @@ const getMany = async ({apiKey, collName, expectedCnt, expectedError, fExpectSuc
 }
 
 // GET /{collectionPlural}/:id (a single document by id)
-/* const getOne = ({apiKey, collName, expectedError, fExpectSuccess, httpClient, id, pn, priorResults, requestSig}) => {
+const getOne = ({apiKey, collName, expectedError, fExpectSuccess, httpClient, id, pn, priorResults, requestSig}) => {
   return new Promise((resolve, reject) => {
-
     let url = '/' + collName + '/' + id
     // If no apiKey we don't care what the requestSig is
     if (apiKey) url += '?apiKey=' + apiKey + (requestSig ? '&requestSig=' + requestSig : '')
@@ -47,16 +46,16 @@ const getMany = async ({apiKey, collName, expectedCnt, expectedError, fExpectSuc
       if (err) reject(err)
       if (fExpectSuccess) {
       } else {
-        if (obj.error !== expectedError)
-          reject('this test must generate the error:[' + expectedError +']')
+        if (obj.error !== expectedError) {
+          reject(new Error('this test must generate the error:[' + expectedError + ']'))
+        }
         resolve(priorResults)
       }
-      console.log('P%s.3 Expected result: %j', pn, obj)
       resolve(priorResults)
     })
   })
-  .catch(error => {console.error(colors.red(64 + ' ' + error))})
-} */
+    .catch(error => { console.error(colors.red(64 + ' ' + error)) })
+}
 
 // POST /{collectionPlural}
 const post = ({apiKey, collName, document, expectedError, fExpectSuccess, httpClient, pn, priorResults, requestSig}) => {
@@ -134,7 +133,7 @@ const del = ({apiKey, collName, expectedError, fExpectSuccess, httpClient, id, p
 } */
 
 module.exports.getMany = getMany
-// module.exports.getOne = getOne
+module.exports.getOne = getOne
 module.exports.post = post
 // module.exports.put = put
 // module.exports.del = del

@@ -44,14 +44,14 @@ const restifyCore = restify.createServer()
 const corsMiddleware = require('restify-cors-middleware')
 const cors = corsMiddleware({
   // preflightMaxAge: 5, //Optional
-  // origins: ['*'],
+  origins: ['http://localhost:3004']
   // allowHeaders: ['API-Token'],
   // allowHeaders: ['Access-Control-Allow-Origin'],
   // exposeHeaders: ['API-Token-Expiry']
-  expose: ['Access-Control-Allow-Origin']
+  // expose: ['Access-Control-Allow-Origin']
 })
 
-// server.pre(cors.preflight)
+restifyCore.pre(cors.preflight)
 restifyCore.use(cors.actual)
 
 // restifyCore.use(restifyPlugins.queryParser())

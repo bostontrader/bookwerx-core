@@ -5,6 +5,7 @@
 const {getMany} = require('../RESTOps')
 
 // import {getOne}  from '../RESTOps'
+const {getOne} = require('../RESTOps')
 
 // import {post}    from '../RESTOps'
 const {post} = require('../RESTOps')
@@ -34,25 +35,34 @@ module.exports = async ({apiKey, collName, httpClient, newDoc1, newDoc2, pn}) =>
   // .then(priorResults => {
   // return getMany({apiKey, collName, expectedCnt:1, expectedError:undefined,fExpectSuccess:true, httpClient, requestSig:'goodsecret', pn, priorResults})
   // })
+  await getMany({apiKey, collName, expectedCnt: 1, expectedError: undefined, fExpectSuccess: true, httpClient, requestSig: 'goodsecret', pn, priorResults})
+  // })
 
   // Add a 2nd new document.
   // .then(priorResults => {
   // return post({apiKey, collName, document:newDoc2, expectedError:undefined,fExpectSuccess:true, httpClient, requestSig:'goodsecret', pn, priorResults})
+  // })
+  await post({apiKey, collName, document: newDoc2, expectedError: undefined, fExpectSuccess: true, httpClient, requestSig: 'goodsecret', pn, priorResults})
   // })
 
   // Do we have two documents now?
   // .then(priorResults => {
   // return getMany({apiKey, collName, expectedCnt:2, expectedError:undefined,fExpectSuccess:true, httpClient, requestSig:'goodsecret', pn, priorResults})
   // })
+  await getMany({apiKey, collName, expectedCnt: 2, expectedError: undefined, fExpectSuccess: true, httpClient, requestSig: 'goodsecret', pn, priorResults})
+  // })
 
   // 3. GET a document, using both a good and a bad id
   // .then(priorResults => {
   // return getOne({apiKey, collName, expectedError:undefined, fExpectSuccess:true, httpClient, id:priorResults.goodId[0], requestSig:'goodsecret', pn, priorResults})
   // })
+  await getOne({apiKey, collName, expectedError: undefined, fExpectSuccess: true, httpClient, id: priorResults.goodId[0], requestSig: 'goodsecret', pn, priorResults})
+  // })
   // .then(priorResults => {
   // return getOne({apiKey, collName, expectedError:undefined, fExpectSuccess:true, httpClient, id:'666666666666666666666666', requestSig:'goodsecret', pn, priorResults})
   // })
-
+  await getOne({apiKey, collName, expectedError: undefined, fExpectSuccess: true, httpClient, id: '666666666666666666666666', requestSig: 'goodsecret', pn, priorResults})
+  // })
   // 4. PUT a document, using both a good and a bad id
   // .then(priorResults => {
   // newDoc2.t = 'tom'

@@ -4,7 +4,7 @@ const genericRoutes = require('../genericRoutes')
 // import authThenInvoke from '../authThenInvoke'
 
 // let ObjectId = require('mongodb').ObjectId
-// const collectionSingular = 'currency'
+const collectionSingular = 'currency'
 const collectionPlural = 'currencies'
 
 // const defineRoutes = function (server, mongoDb) {
@@ -21,14 +21,14 @@ module.exports = (server, mongoDb) => {
   // })
   // },
 
-  // genericRoutes.getOne(server, mongoDb, collectionSingular, collectionPlural)
+  genericRoutes.getOne(server, mongoDb, collectionSingular, collectionPlural)
   genericRoutes.post(server, mongoDb, collectionPlural)
   // genericRoutes.put(server, mongoDb, collectionSingular, collectionPlural)
 
   // This differs from genericRoutes in that it must not delete if other
   // foreign keys refer to it.  Presently, only distributions.
   // Note: DELETE does not have a body, so find the currency_id in req.params
-  // genericRoutes.delete(server, mongoDb, collectionSingular, collectionPlural)
+  genericRoutes.delete(server, mongoDb, collectionSingular, collectionPlural)
   // server.del('/' + collectionPlural + '/:currency_id', (req, res, next) => {
 
   // const coreQuery = () => {

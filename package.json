@@ -8,7 +8,6 @@
     "url": "https://github.com/bostontrader/bookwerx-core/issues"
   },
   "dependencies": {
-    "crypto-random-string": "1.0.0",
     "mongodb": "2.2.31",
     "restify": "7.2.0",
     "restify-cors-middleware": "1.1.0",
@@ -43,8 +42,7 @@
     "url": "https://github.com/bostontrader/bookwerx-core.git"
   },
   "scripts": {
-    "test": "standard && BW_PORT=3000 BW_MONGO=mongodb://127.0.0.1:27017/bookwerx-core-test BW_TEST=true node integrationTest.js",
-    "start": "BW_PORT=3002 BW_MONGO=mongodb://127.0.0.1:27017/bookwerx-core-development node startServer.js",
+    "start": "BW_PORT=3003 BW_MONGO=mongodb://127.0.0.1:27017/bookwerx-core-development node startServer.js",
     "lint": "standard"
   },
   "version": "1.0.4"

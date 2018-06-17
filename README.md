@@ -6,7 +6,7 @@
 
 # Introduction
 
-The purpose of **bookwerx-core** is to provide an HTTP API that supports multi-currency, multi-tenant, bookkeeping, using the double-entry bookkeeping model, slightly adapted to squeeze
+The purpose of **bookwerx-core** is to provide an HTTP API that supports multi-currency bookkeeping, using the double-entry bookkeeping model, slightly adapted to squeeze
  in multiple currencies.  It uses [node](https://nodejs.org), [restify](http://restify.com/), and [mongodb](https://www.mongodb.com/).
 
 Any application that deals with "money" (fiat, precious metals, cryptocoins) will
@@ -15,12 +15,10 @@ quickly encounter the need for bookkeeping.  Rolling your own methods is, as usu
 
 With this API, the user can:
 
-* Obtain an API key and secret in order to use the other endpoints.
 * Perform ordinary CRUD operations on the various bookkeeping objects,
 such as accounts and transactions.
 * Perform a variety of functions that return aggregated data.
 * Perform general "linting" of the db.
-* Brainwipe and start over.
 
 This API is the minimum necessary to accomplish the above goals. Extra fancy
 features can be found elsewhere.  For example:
@@ -53,10 +51,10 @@ cd bookwerx-core
 npm install
 ```
 
-Next, study the section on **runtime configuration** so that you are properly in control of your configurations.  Using this new found knowledge, tweak package.json scripts.test, if necessary, to point to an active mongodb server.  And then:
+Next, study the section on **runtime configuration** so that you are properly in control of your configurations.  Using this [new learning](https://www.youtube.com/watch?v=9D5_V72jMtM&t=1323), tweak the following example as necessary:
 
 ```bash
-npm test
+BW_PORT=3003 BW_MONGO=mongodb://127.0.0.1:27017/bookwerx-core-test BWCORE_DOMAIN=127.0.0.1 BW_TEST=true node integrationTest.js
 ```
 
 Next, tweak package.json scripts.start, if necessary, to point to an active mongodb server that you can use for development purposes. And then:
@@ -67,21 +65,22 @@ npm start
 
 Watch the console and you'll see a message telling you what port the server is listening to.
 
-Finally, you'll need a set of API Keys in order to use the API.  Please review the **API** section for this.
-
 
 ## Runtime Configuration
 
-Runtime configuration is provided via environment variables. There are no other defaults and if these variables are not correctly set, then the server will not start.  These parameters can be fed to node on the command line.  See package.json scripts.start for an example to start the server in "development" mode and scripts.test for an example to start the server in "test" mode.
+Runtime configuration is provided via environment variables. There are no other defaults and if these variables are not correctly set, then the server will not start.  These parameters can be fed to node on the command line.  See package.json scripts.start for an example to start the server in "development" mode and scripts.test for an example to start the tests in "test" mode.
 
 The following env variables are used by **bookwerx-core**:
 
-* BW_PORT=3000 - Which port shall **bookwerx-core** listen to?
+* BW_PORT - Which port shall **bookwerx-core** listen to?
 
-* BW_MONGO=mongodb://127.0.0.1:27017/bookwerx-core-development - A connection string for your Mongodb.
+* BW_MONGO - A connection string for your Mongodb.  For example: mongodb://127.0.0.1:27017/bookwerx-core-development
 
-* BW_TEST=false - Nobody looks at this except testing.  Testing will not work unless this is set to true.  Don't fubar thy production data!
+In addition to the above, in order to get the testing to work, we need:
 
+* BW_TEST=true - Testing will not work unless this is set to true.  Don't fubar thy production data!
+
+* BWCORE_DOMAIN - The domain portion of the url for the **bookwerx-core** server.  For example: 127.0.0.1.  Testing will assume 'http' and use the value of BW_PORT.
 
 # A Few Words About Testing
 
@@ -106,13 +105,12 @@ None of these choices are obviously good.  I think the first choice is obviously
 
 # Dependencies
 
-* crypto-random-string - I need to be able to generate randoms string for the keys.
+* mongodb - No party is complete without mongo.
 
 * restify - I need an HTTP server.
 
 * restify-plugins - I need to be able to access the query parameters and response body.
 
-* mongodb - No party is complete without mongo.
 
 # devDependencies
 
@@ -123,6 +121,7 @@ None of these choices are obviously good.  I think the first choice is obviously
 * restify-clients - The tester will need a json client to do its thing.
 
 * standard - Code linter
+
 
 # On require vs import
 
@@ -146,7 +145,7 @@ Notice I say "you" can do this or that, not **bookwerx-core**. This is intention
 
 # Random Junk...
 
-Stuff after here is not relyable.  Beware.
+Stuff after here is not reliable.  Beware.
 
 # On Categories and Ordering
 
@@ -195,21 +194,6 @@ But "what does any of this mean" belongs elsewhere.
 
 
 # API
-
-## Keys
-
-The first step in using this system is to obtain a set of API keys.  This is easy:
-
-GET /apikeys
-
-This will return the set of keys that you need for the other API endpoints.
-
-All calls to the trading API are sent via HTTP POST and must contain the following headers:
-
-    Key - Your API key.
-    Sign - The query's POST data signed by your key's "secret" according to the HMAC-SHA512 method.
-
- "command" POST parameter:
 
 ## Errors
 

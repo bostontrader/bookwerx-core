@@ -12,5 +12,6 @@ module.exports = {
   // Runtime configuration
   NO_LISTENING_PORT_DEFINED: 'No listening port defined',
   NO_CONNECTION_TO_MONGODB_DEFINED: 'No connection to mongodb defined',
+  NO_BWCORE_DOMAIN_DEFINED: 'No bookwerx-core domain is defined',
   NOT_CONFIGURED_AS_TEST: 'This execution is not configured to be a test  Please set the BW_TEST env variable'
 }
