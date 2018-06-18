@@ -1,4 +1,4 @@
-// import bookWerxConstants from './constants'
+const bookWerxConstants = require('./constants')
 
 // Assume proper auth has been done already.  We shouldn't have to authenticate this
 // a 2nd time here.  But _be sure_ it's getting done.
@@ -54,7 +54,7 @@ module.exports = {
   // post will enable the creation of new documents but will not update or replace existing documents.  Custom _id is prohibited for new documents.
   post: function (server, mongoDb, collectionPlural) {
     server.post('/' + collectionPlural, (req, res, next) => {
-      req.body.apiKey = req.query.apiKey
+      // req.body.apiKey = req.query.apiKey
       mongoDb.collection(collectionPlural).insertOne(req.body)
         .then(result => {
           res.json(result)
@@ -63,6 +63,27 @@ module.exports = {
           res.json({error: error})
           next()
         })
+    })
+  },
+
+  // patch will enable the update of individual fields
+  patch: function (server, mongoDb, collectionSingular, collectionPlural) {
+    server.patch('/' + collectionPlural + '/:id', (req, res, next) => {
+      // req.body.apiKey = req.query.apiKey
+      const ObjectId = require('mongodb').ObjectId
+      const p = mongoDb.collection(collectionPlural).findOneAndUpdate(
+        {'_id': ObjectId(req.params.id)},
+        req.body,
+        {returnOriginal: false}
+      )
+        .then(function resolve (result) {
+          res.json((result.value === null) ? {error: bookWerxConstants.ATTEMPTED_IMPLICIT_CREATE} : result.value)
+          next()
+        })
+      p.catch(error => {
+        res.json({'error': error})
+        next()
+      })
     })
   }
 
@@ -80,7 +101,6 @@ module.exports = {
         next()
       })
       p.catch(error => {
-        console.log('generic_routes.190', result)
         res.json({'error': error})
         next()
       })

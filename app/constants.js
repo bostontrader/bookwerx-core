@@ -7,7 +7,7 @@ module.exports = {
 
 //  UNDEFINED_CATEGORY: 'undefined category',
 //  UNDEFINED_TRANSACTION: 'undefined transaction',
-//  ATTEMPTED_IMPLICIT_CREATE: 'the request tries to update a non-existing document'
+  ATTEMPTED_IMPLICIT_CREATE: 'the request tries to update a non-existing document',
 
   // Runtime configuration
   NO_LISTENING_PORT_DEFINED: 'No listening port defined',

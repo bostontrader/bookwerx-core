@@ -1,19 +1,9 @@
-// We need to use require
-// import bookWerxConstants from "../../constants";
+const bookWerxConstants = require('../../constants')
 
-// import {getMany} from '../RESTOps'
-const {getMany} = require('../RESTOps')
+const {getMany, getOne, post, patch} = require('../RESTOps')
 
-// import {getOne}  from '../RESTOps'
-const {getOne} = require('../RESTOps')
-
-// import {post}    from '../RESTOps'
-const {post} = require('../RESTOps')
-
-// import {put}     from '../RESTOps'
-
-// Perform a basic CRU test for a single apiKey
-module.exports = async ({apiKey, collName, httpClient, newDoc1, newDoc2, pn}) => {
+// Perform a basic CRU test
+module.exports = async ({collName, httpClient, newDoc1, newDoc2, pn}) => {
   let priorResults = {}
 
   // return Promise.resolve()
@@ -24,52 +14,56 @@ module.exports = async ({apiKey, collName, httpClient, newDoc1, newDoc2, pn}) =>
   // .then(() => {
   // return getMany({apiKey, collName, expectedCnt:0, expectedError:undefined, fExpectSuccess:true, httpClient, requestSig:'goodsecret', pn, priorResults})
   // })
-  await getMany({apiKey, collName, expectedCnt: 0, expectedError: undefined, fExpectSuccess: true, httpClient, requestSig: 'goodsecret', pn, priorResults})
+  await getMany({collName, expectedCnt: 0, expectedError: undefined, fExpectSuccess: true, httpClient, pn, priorResults})
 
   // Add one new document
   // .then(priorResults => {
   // return post({apiKey, collName, document:newDoc1, expectedError:undefined,fExpectSuccess:true, httpClient, requestSig:'goodsecret', pn, priorResults})
   // })
-  await post({apiKey, collName, document: newDoc1, expectedError: undefined, fExpectSuccess: true, httpClient, requestSig: 'goodsecret', pn, priorResults})
+  await post({collName, document: newDoc1, expectedError: undefined, fExpectSuccess: true, httpClient, pn, priorResults})
   // Do we have 1 document now?
   // .then(priorResults => {
   // return getMany({apiKey, collName, expectedCnt:1, expectedError:undefined,fExpectSuccess:true, httpClient, requestSig:'goodsecret', pn, priorResults})
   // })
-  await getMany({apiKey, collName, expectedCnt: 1, expectedError: undefined, fExpectSuccess: true, httpClient, requestSig: 'goodsecret', pn, priorResults})
+  await getMany({collName, expectedCnt: 1, expectedError: undefined, fExpectSuccess: true, httpClient, pn, priorResults})
   // })
 
   // Add a 2nd new document.
   // .then(priorResults => {
   // return post({apiKey, collName, document:newDoc2, expectedError:undefined,fExpectSuccess:true, httpClient, requestSig:'goodsecret', pn, priorResults})
   // })
-  await post({apiKey, collName, document: newDoc2, expectedError: undefined, fExpectSuccess: true, httpClient, requestSig: 'goodsecret', pn, priorResults})
+  await post({collName, document: newDoc2, expectedError: undefined, fExpectSuccess: true, httpClient, pn, priorResults})
   // })
 
   // Do we have two documents now?
   // .then(priorResults => {
   // return getMany({apiKey, collName, expectedCnt:2, expectedError:undefined,fExpectSuccess:true, httpClient, requestSig:'goodsecret', pn, priorResults})
   // })
-  await getMany({apiKey, collName, expectedCnt: 2, expectedError: undefined, fExpectSuccess: true, httpClient, requestSig: 'goodsecret', pn, priorResults})
+  await getMany({collName, expectedCnt: 2, expectedError: undefined, fExpectSuccess: true, httpClient, pn, priorResults})
   // })
 
   // 3. GET a document, using both a good and a bad id
   // .then(priorResults => {
   // return getOne({apiKey, collName, expectedError:undefined, fExpectSuccess:true, httpClient, id:priorResults.goodId[0], requestSig:'goodsecret', pn, priorResults})
   // })
-  await getOne({apiKey, collName, expectedError: undefined, fExpectSuccess: true, httpClient, id: priorResults.goodId[0], requestSig: 'goodsecret', pn, priorResults})
+  await getOne({collName, expectedError: undefined, fExpectSuccess: true, httpClient, id: priorResults.goodId[0], pn, priorResults})
   // })
   // .then(priorResults => {
   // return getOne({apiKey, collName, expectedError:undefined, fExpectSuccess:true, httpClient, id:'666666666666666666666666', requestSig:'goodsecret', pn, priorResults})
   // })
-  await getOne({apiKey, collName, expectedError: undefined, fExpectSuccess: true, httpClient, id: '666666666666666666666666', requestSig: 'goodsecret', pn, priorResults})
+  await getOne({collName, expectedError: undefined, fExpectSuccess: true, httpClient, id: '666666666666666666666666', pn, priorResults})
   // })
-  // 4. PUT a document, using both a good and a bad id
+
+  // 4. PATCH a document, using both a good and a bad id
   // .then(priorResults => {
   // newDoc2.t = 'tom'
   // return put({apiKey, collName, document:newDoc2, expectedError:undefined,fExpectSuccess:true, httpClient, id:priorResults.goodId[0], requestSig:'goodsecret', pn, priorResults})
+  await patch({collName, document: newDoc2, expectedError: undefined, fExpectSuccess: true, httpClient, id: priorResults.goodId[0], pn, priorResults})
+
   // })
   // .then(priorResults => {
   // return put({apiKey, collName, document:newDoc2, expectedError:bookWerxConstants.ATTEMPTED_IMPLICIT_CREATE,fExpectSuccess:false, httpClient, id:'666666666666666666666666', requestSig:'goodsecret', pn, priorResults})
+  await patch({collName, document: newDoc2, expectedError: bookWerxConstants.ATTEMPTED_IMPLICIT_CREATE, fExpectSuccess: false, httpClient, id: '666666666666666666666666', pn, priorResults})
   // })
 }
 

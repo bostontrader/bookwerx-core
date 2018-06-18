@@ -1,5 +1,5 @@
 // import genericCRUSingle  from './genericCRUSingle'
-const genericCRUSingle = require('./genericCRUSingle.js')
+const genericCRUSingle = require('./genericCRUSingle')
 // import bookWerxConstants from '../../constants'
 // const bookWerxConstants = require('../../constants')
 
@@ -14,9 +14,7 @@ Perform a genericCRU test on two different keys.  But first test the general abs
 and the authentication function.
 */
 
-const genericCRU = async ({collName, httpClient, keys, newDoc1, newDoc2, pn}) => {
-  // const apiKey0 = keys[0].key
-  const apiKey1 = keys[1].key
+const genericCRU = async ({collName, httpClient, newDoc1, newDoc2, pn}) => {
   // let priorResults = {}
 
   // These functions will invoke the basic HTTP function with various combinations
@@ -85,7 +83,7 @@ const genericCRU = async ({collName, httpClient, keys, newDoc1, newDoc2, pn}) =>
   // 3. Now perform the actual genericCRU twice, using two different keys.
   // .then(() => {return genericCRUSingle({apiKey:apiKey0, collName, httpClient, newDoc1, newDoc2, pn})})
   // .then(() => {return genericCRUSingle({apiKey:apiKey1, collName, httpClient, newDoc1, newDoc2, pn})})
-  return genericCRUSingle({apiKey: apiKey1, collName, httpClient, newDoc1, newDoc2, pn})
+  return genericCRUSingle({collName, httpClient, newDoc1, newDoc2, pn})
 }
 // export default genericCRU
 module.exports = genericCRU
