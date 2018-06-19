@@ -1,7 +1,5 @@
 const bookWerxConstants = require('./constants')
 
-// Assume proper auth has been done already.  We shouldn't have to authenticate this
-// a 2nd time here.  But _be sure_ it's getting done.
 module.exports = {
 
   delete: (server, mongoDb, collectionSingular, collectionPlural) => {
@@ -37,17 +35,22 @@ module.exports = {
 
   getOne: (server, mongoDb, collectionSingular, collectionPlural) => {
     server.get('/' + collectionPlural + '/:id', (req, res, next) => {
-      const ObjectId = require('mongodb').ObjectId
-      const p = mongoDb.collection(collectionPlural).findOne({'_id': ObjectId(req.params.id)})
-        .then(result => {
-          if (result === null) result = {error: collectionSingular + ' ' + req.params.id + ' does not exist'}
-          res.json(result)
-          next()
+      let oid
+      try {
+        oid = require('mongodb').ObjectId(req.params.id)
+
+        const p = mongoDb.collection(collectionPlural).findOne({'_id': oid})
+          .then(result => {
+            res.json((result === null) ? {error: collectionSingular + ' ' + req.params.id + ' does not exist'} : result)
+          })
+        p.catch(error => {
+          res.json({error: error})
         })
-      p.catch(error => {
-        res.json({error: error})
         next()
-      })
+      } catch (error) {
+        res.json({error: error.message})
+        next()
+      }
     })
   },
 
@@ -69,21 +72,23 @@ module.exports = {
   // patch will enable the update of individual fields
   patch: function (server, mongoDb, collectionSingular, collectionPlural) {
     server.patch('/' + collectionPlural + '/:id', (req, res, next) => {
-      // req.body.apiKey = req.query.apiKey
-      const ObjectId = require('mongodb').ObjectId
-      const p = mongoDb.collection(collectionPlural).findOneAndUpdate(
-        {'_id': ObjectId(req.params.id)},
-        req.body,
-        {returnOriginal: false}
-      )
-        .then(function resolve (result) {
-          res.json((result.value === null) ? {error: bookWerxConstants.ATTEMPTED_IMPLICIT_CREATE} : result.value)
-          next()
+      let oid
+      try {
+        oid = require('mongodb').ObjectId(req.params.id)
+
+        const p = mongoDb.collection(collectionPlural).findOneAndUpdate(
+          {'_id': oid}, req.body, {returnOriginal: false})
+          .then(function resolve (result) {
+            res.json((result.value === null) ? {error: bookWerxConstants.ATTEMPTED_IMPLICIT_CREATE} : result.value)
+          })
+        p.catch(error => {
+          res.json({'error': error})
         })
-      p.catch(error => {
-        res.json({'error': error})
         next()
-      })
+      } catch (error) {
+        res.json({error: error.message})
+        next()
+      }
     })
   }
 
@@ -108,5 +113,3 @@ module.exports = {
   } */
 
 }
-
-// export default generic_routes

@@ -18,7 +18,7 @@ const currenciesRouter = require('./currencies/routing')
 
 // import distributionsRouter from './distributions/routing'
 // import keysRouter          from './keys/routing'
-const keysRouter = require('./keys/routing')
+// const keysRouter = require('./keys/routing')
 
 // import toolsRouter         from './tools/routing'
 // import transactionsRouter  from './transactions/routing'
@@ -104,8 +104,7 @@ module.exports = {
 
       .then(mongoDb => {
         console.log('Connected to the mongo server: ', mongoConnectionURL)
-        console.log(keysRouter)
-        keysRouter(restifyCore, mongoDb)
+        // keysRouter(restifyCore, mongoDb)
         //      accountsRouter(restifyCore, mongoDb)
         //      categoriesRouter(restifyCore, mongoDb)
         currenciesRouter(restifyCore, mongoDb)

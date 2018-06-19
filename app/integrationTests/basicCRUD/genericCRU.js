@@ -1,89 +1,41 @@
-// import genericCRUSingle  from './genericCRUSingle'
-const genericCRUSingle = require('./genericCRUSingle')
-// import bookWerxConstants from '../../constants'
-// const bookWerxConstants = require('../../constants')
+const bookWerxConstants = require('../../constants')
 
-// import {getMany} from '../RESTOps'
-// import {getOne}  from '../RESTOps'
-// import {post}    from '../RESTOps'
-// import {put}     from '../RESTOps'
-// const {getMany /*, getOne, post, put */ } = require('../RESTOps.js')
+const {getMany, getOne, getOnee, post, patch} = require('../RESTOps')
 
-/*
-Perform a genericCRU test on two different keys.  But first test the general absence of good keys
-and the authentication function.
-*/
-
+// Perform a basic CRU test
 const genericCRU = async ({collName, httpClient, newDoc1, newDoc2, pn}) => {
-  // let priorResults = {}
+  let priorResults = {}
 
-  // These functions will invoke the basic HTTP function with various combinations
-  // of good and bad apiKey and requestSig.  After we know this part works correctly, we don't
-  // need to pollute the rest of the testing with probing the auth part.
-  /* const getManyTestAuth = (apiKey) => {
-      return Promise.resolve()
-        .then(() => {
-          return getMany({ apiKey: undefined, collName, expectedCnt: 0, expectedError: bookWerxConstants.MISSING_API_KEY, fExpectSuccess: false, httpClient, requestSig: undefined, pn, priorResults })
-      })
-      .then(() => {
-        return getMany({apiKey, collName, expectedCnt: 0, expectedError: bookWerxConstants.API_SIG_NOT_CORRECT, fExpectSuccess: false, httpClient, requestSig: undefined, pn, priorResults})
-      })
-      .then(() => {
-        return getMany({apiKey, collName, expectedCnt: 0, expectedError: bookWerxConstants.API_SIG_NOT_CORRECT, fExpectSuccess: false, httpClient, requestSig: 'badrequestSig', pn, priorResults})
-      })
-    } */
+  // 1. Now read the documents collection and post new documents and demonstrate that we correctly have 0, 1, or 2 documents in the collection.
 
-  /* const getOneTestAuth = (apiKey) => {
-      return Promise.resolve()
-      .then(() => {
-        return getOne({apiKey:undefined, collName, expectedError:bookWerxConstants.MISSING_API_KEY, fExpectSuccess:false, httpClient, id:'666666666666666666666666', requestSig:undefined, pn, priorResults})
-      })
-      .then(() => {
-        return getOne({apiKey, collName, expectedError:bookWerxConstants.API_SIG_NOT_CORRECT, fExpectSuccess:false, httpClient, id:'666666666666666666666666', requestSig:undefined, pn, priorResults})
-      })
-      .then(() => {
-        return getOne({apiKey, collName, expectedError:bookWerxConstants.API_SIG_NOT_CORRECT, fExpectSuccess:false, httpClient, id:'666666666666666666666666', requestSig:'badrequestSig', pn, priorResults})
-      })
-    }
+  // Do we have 0 documents now?
+  await getMany({collName, expectedCnt: 0, expectedError: undefined, fExpectSuccess: true, httpClient, pn, priorResults})
 
-    const postTestAuth = (apiKey) => {
-      return Promise.resolve()
-      .then(() => {
-        return post({apiKey:undefined, collName, document:{}, expectedError:bookWerxConstants.MISSING_API_KEY, fExpectSuccess:false, httpClient, requestSig:undefined, pn, priorResults})
-      })
-      .then(() => {
-        return post({apiKey, collName, document:{}, expectedError:bookWerxConstants.API_SIG_NOT_CORRECT, fExpectSuccess:false, httpClient, requestSig:undefined, pn, priorResults})
-      })
-      .then(() => {
-        return post({apiKey, collName, document:{}, expectedError:bookWerxConstants.API_SIG_NOT_CORRECT, fExpectSuccess:false, httpClient, requestSig:'badrequestSig', pn, priorResults})
-      })
-    }
+  // Add one new document
+  await post({collName, document: newDoc1, expectedError: undefined, fExpectSuccess: true, httpClient, pn, priorResults})
 
-    const putTestAuth = (apiKey) => {
-      return Promise.resolve()
-      .then(() => {
-        return put({apiKey:undefined, collName, document:{}, expectedError:bookWerxConstants.MISSING_API_KEY, fExpectSuccess:false, httpClient, id:'666666666666666666666666', requestSig:undefined, pn, priorResults})
-      })
-      .then(() => {
-        return put({apiKey, collName, document:{}, expectedError:bookWerxConstants.API_SIG_NOT_CORRECT, fExpectSuccess:false, httpClient, id:'666666666666666666666666', requestSig:undefined, pn, priorResults})
-      })
-      .then(() => {
-        return put({apiKey, collName, document:{}, expectedError:bookWerxConstants.API_SIG_NOT_CORRECT, fExpectSuccess:false, httpClient, id:'666666666666666666666666', requestSig:'badrequestSig', pn, priorResults})
-      })
-    }
+  // Do we have 1 document now?
+  await getMany({collName, expectedCnt: 1, expectedError: undefined, fExpectSuccess: true, httpClient, pn, priorResults})
 
-    // 1. Demonstrate that apiKey and requestSig are necessary and that their omission or warts
-    //    cause predictable errors.  Only do this once for one key.
-    return Promise.resolve()
-    .then(() => {return getManyTestAuth(apiKey0)})
-    .then(() => {return getOneTestAuth(apiKey0)})
-    .then(() => {return postTestAuth(apiKey0)})
-    .then(() => {return putTestAuth(apiKey0)}) */
+  // Add a 2nd new document.
+  await post({collName, document: newDoc2, expectedError: undefined, fExpectSuccess: true, httpClient, pn, priorResults})
 
-  // 3. Now perform the actual genericCRU twice, using two different keys.
-  // .then(() => {return genericCRUSingle({apiKey:apiKey0, collName, httpClient, newDoc1, newDoc2, pn})})
-  // .then(() => {return genericCRUSingle({apiKey:apiKey1, collName, httpClient, newDoc1, newDoc2, pn})})
-  return genericCRUSingle({collName, httpClient, newDoc1, newDoc2, pn})
+  // Do we have two documents now?
+  await getMany({collName, expectedCnt: 2, expectedError: undefined, fExpectSuccess: true, httpClient, pn, priorResults})
+
+  // 2. GET a document, using a good an id for an existing document, a well formed id that refers to a non-existant document, and a mal-formed id
+  await getOne({collName, expectedError: undefined, fExpectSuccess: true, httpClient, id: priorResults.goodId[0], pn, priorResults})
+
+  await getOne({collName, expectedError: 'currency 666666666666666666666666 does not exist', fExpectSuccess: false, httpClient, id: '666666666666666666666666', pn, priorResults})
+
+  await getOne({collName, expectedError: 'Argument passed in must be a single String of 12 bytes or a string of 24 hex characters', fExpectSuccess: false, httpClient, id: 'catfood', pn, priorResults})
+
+  // 3. PATCH  a document, using a good an id for an existing document, a well formed id that refers to a non-existant document, and a mal-formed id
+  await patch({collName, document: newDoc2, expectedError: undefined, fExpectSuccess: true, httpClient, id: priorResults.goodId[0], pn, priorResults})
+
+  await patch({collName, document: newDoc2, expectedError: bookWerxConstants.ATTEMPTED_IMPLICIT_CREATE, fExpectSuccess: false, httpClient, id: '666666666666666666666666', pn, priorResults})
+
+  await patch({collName, document: newDoc2, expectedError: 'Argument passed in must be a single String of 12 bytes or a string of 24 hex characters', fExpectSuccess: false, httpClient, id: 'catfood', pn, priorResults})
 }
-// export default genericCRU
+
 module.exports = genericCRU

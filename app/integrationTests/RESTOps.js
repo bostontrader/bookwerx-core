@@ -62,7 +62,9 @@ const patch = ({collName, document, expectedError, fExpectSuccess, httpClient, i
     httpClient.patch(url, document, function (err, req, res, obj) {
       if (err) reject(err)
       if (fExpectSuccess) {
-        if (!obj.lastErrorObject) reject(JSON.stringify(obj))
+        // if (!obj.lastErrorObject) {
+        //  reject(JSON.stringify(obj))
+        // }
         console.log('P%s.4 Expected result: %j', pn, obj)
         resolve(priorResults)
       } else {
@@ -73,7 +75,9 @@ const patch = ({collName, document, expectedError, fExpectSuccess, httpClient, i
       }
     })
   })
-    .catch(error => { console.error(colors.red(83 + ' ' + error)) })
+    .catch(error => {
+      console.error(colors.red(83 + ' ' + error))
+    })
 }
 
 // POST /{collectionPlural}

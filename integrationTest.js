@@ -38,11 +38,9 @@ if (!process.env.BWCORE_DOMAIN) {
   process.exit(1)
 }
 
-// import genericCRUDTest    from './app/integrationTest/generic_crud_test'
 const server = require('./app/server')
 
 // import accountsCategories from './app/integrationTest/accountsCategories'
-// import prolog             from './app/integrationTest/prolog'
 const genericCRU = require('./app/integrationTests/basicCRUD/genericCRU')
 const genericDel = require('./app/integrationTests/basicCRUD/genericDel')
 
@@ -62,25 +60,19 @@ async function run () {
   // 1.2 We want to drop the db in order to start with a fresh-slate.
   await mongoDb.dropDatabase()
 
-  // 2. genericCRU testing
-
-  // 2.1 We will need a client to make requests to the bookwerx-core server.
+  // 1.3 We will need a client to make subsequent requests to the bookwerx-core server.
   const jsonClient = restifyClients.createJsonClient({url: 'http://' + process.env.BWCORE_DOMAIN + ':' + process.env.BW_PORT})
 
-  await (async (jsonClient) => {
-    // .then(result => {
-    //  return genericCRU({collName: 'accounts', jsonClient, keys, newDoc1: testData.accountBank, newDoc2: testData.accountCash, pn: 20})
-    // })
+  // 2. genericCRU
+  // await (async (jsonClient) => {
+  // .then(result => {
+  //  return genericCRU({collName: 'accounts', jsonClient, keys, newDoc1: testData.accountBank, newDoc2: testData.accountCash, pn: 20})
+  // })
 
-    // .then(result => {return genericCRU({collName:'categories', jsonClient,  keys, newDoc1: testData.categoryAsset, newDoc2: testData.categoryExpense, pn:21})})
-    // await genericCRU({collName: 'categories', jsonClient,  keys, newDoc1: testData.categoryAsset, newDoc2: testData.categoryExpense, pn:21})
+  // .then(result => {return genericCRU({collName:'categories', jsonClient,  keys, newDoc1: testData.categoryAsset, newDoc2: testData.categoryExpense, pn:21})})
+  // await genericCRU({collName: 'categories', jsonClient,  keys, newDoc1: testData.categoryAsset, newDoc2: testData.categoryExpense, pn:21})
 
-    //   .then(result => { return genericCRU({ collName: 'currencies', jsonClient, keys, newDoc1: testData.currencyCNY, newDoc2: testData.currencyRUB, pn: 22 }) })
-    await genericCRU({collName: 'currencies', httpClient: jsonClient, newDoc1: testData.currencyCNY, newDoc2: testData.currencyRUB, pn: 22})
-
-    // .then(result => {return genericCRU({collName:'transactions', jsonClient, keys, newDoc1: testData.transaction1, newDoc2: testData.transaction2, pn: 23})})
-    // })(jsonClient, [key1, key2])
-  })(jsonClient)
+  await genericCRU({collName: 'currencies', httpClient: jsonClient, newDoc1: testData.currencyCNY, newDoc2: testData.currencyRUB, pn: 22})
 
   // 3. CustomCRU testing specialized for particular collections.
   // .then(() => {return accountsCategories({jsonClient,  keys, pn:30})})
@@ -103,18 +95,16 @@ async function run () {
   // })
 
   // 6. Generic delete testing.
-  await (async (jsonClient) => {
-    // .then(result => {return genericDel({collName:'accounts', jsonClient,  keys, pn:60})})
-    // .then(result => {return genericDel({collName:'categories', jsonClient,  keys, pn:61})})
-    // .then(result => {return genericDel({collName:'currencies', jsonClient,  keys, pn:62})})
-    await genericDel({collName: 'currencies', httpClient: jsonClient, pn: 62})
+  // await (async (jsonClient) => {
+  // .then(result => {return genericDel({collName:'accounts', jsonClient,  keys, pn:60})})
+  // .then(result => {return genericDel({collName:'categories', jsonClient,  keys, pn:61})})
+  // .then(result => {return genericDel({collName:'currencies', jsonClient,  keys, pn:62})})
+  await genericDel({collName: 'currencies', httpClient: jsonClient, pn: 62})
 
-    // .then(result => {return genericDel({collName:'transactions', jsonClient,  keys, pn:63})})
-  })(jsonClient)
+  // .then(result => {return genericDel({collName:'transactions', jsonClient,  keys, pn:63})})
+  // })(jsonClient)
 
   // 7. Verify that all collections are empty
-  await (async (jsonClient) => {
-  })(jsonClient)
 
   console.log(colors.green('All tests passed'))
 
