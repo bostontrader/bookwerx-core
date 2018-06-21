@@ -68,11 +68,11 @@ async function run () {
   // .then(result => {
   //  return genericCRU({collName: 'accounts', jsonClient, keys, newDoc1: testData.accountBank, newDoc2: testData.accountCash, pn: 20})
   // })
-
+  await genericCRU({collName: 'accounts', collSingular: 'account', httpClient: jsonClient, newDoc1: testData.accountBank, newDoc2: testData.accountCash, pn: 20})
   // .then(result => {return genericCRU({collName:'categories', jsonClient,  keys, newDoc1: testData.categoryAsset, newDoc2: testData.categoryExpense, pn:21})})
   // await genericCRU({collName: 'categories', jsonClient,  keys, newDoc1: testData.categoryAsset, newDoc2: testData.categoryExpense, pn:21})
 
-  await genericCRU({collName: 'currencies', httpClient: jsonClient, newDoc1: testData.currencyCNY, newDoc2: testData.currencyRUB, pn: 22})
+  await genericCRU({collName: 'currencies', collSingular: 'currency', httpClient: jsonClient, newDoc1: testData.currencyCNY, newDoc2: testData.currencyRUB, pn: 22})
 
   // 3. CustomCRU testing specialized for particular collections.
   // .then(() => {return accountsCategories({jsonClient,  keys, pn:30})})
@@ -97,12 +97,11 @@ async function run () {
   // 6. Generic delete testing.
   // await (async (jsonClient) => {
   // .then(result => {return genericDel({collName:'accounts', jsonClient,  keys, pn:60})})
+  await genericDel({collName: 'accounts', httpClient: jsonClient, pn: 60})
+
   // .then(result => {return genericDel({collName:'categories', jsonClient,  keys, pn:61})})
   // .then(result => {return genericDel({collName:'currencies', jsonClient,  keys, pn:62})})
   await genericDel({collName: 'currencies', httpClient: jsonClient, pn: 62})
-
-  // .then(result => {return genericDel({collName:'transactions', jsonClient,  keys, pn:63})})
-  // })(jsonClient)
 
   // 7. Verify that all collections are empty
 

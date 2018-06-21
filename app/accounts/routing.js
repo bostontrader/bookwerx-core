@@ -1,7 +1,8 @@
-const genericRoutes = require('../generic_routes.js')
+const genericRoutes = require('../genericRoutes')
+
 // let ObjectId = require('mongodb').ObjectId
-// let collectionSingular = 'account'
-let collectionPlural = 'accounts'
+const collectionSingular = 'account'
+const collectionPlural = 'accounts'
 
 module.exports = (server, mongoDb) => {
   genericRoutes.get(server, mongoDb, collectionPlural)
@@ -52,7 +53,7 @@ module.exports = (server, mongoDb) => {
   // })
   // })
 
-  // genericRoutes.getOne(server, mongoDb, collectionSingular, collectionPlural)
+  genericRoutes.getOne(server, mongoDb, collectionSingular, collectionPlural)
   // This differs from genericRoutes in that it must retrieve related account_category records.
   /* server.get('/' + collectionPlural + '/:id', (req, res, next) => {
     // This section is duplicated elsewhere.  Factor this out.
@@ -115,12 +116,14 @@ module.exports = (server, mongoDb) => {
     .catch(error => {
       res.json({error: error})
     })
-  })
+  }) */
 
-  // genericRoutes.post(server, mongoDb, collectionPlural)
+  genericRoutes.patch(server, mongoDb, collectionSingular, collectionPlural)
+  genericRoutes.post(server, mongoDb, collectionPlural)
+
   // This differs from genericRoutes in that it must update accounts_categories
   // WARNING! This should all be in a transaction!
-  server.post('/' + collectionPlural, (req, res, next) => {
+  /* server.post('/' + collectionPlural, (req, res, next) => {
     // convert req.body.categories from strings to ObjectId
     if (req.body.categories) {
       for (let i = 0; i < req.body.categories.length; i++) {
@@ -198,13 +201,13 @@ module.exports = (server, mongoDb) => {
       .catch(error => {
         res.json({error: error})
       })
-  })
+  }) */
 
-  // genericRoutes.delete(server, mongoDb, collectionSingular, collectionPlural)
+  genericRoutes.delete(server, mongoDb, collectionSingular, collectionPlural)
   // This differs from genericRoutes in that it must not delete if other
   // foreign keys refer to it.  Presently, only distributions and accounts_categories.
   // Note: DELETE does not have a body, so find the account_id in req.params
-  server.del('/' + collectionPlural + '/:account_id', (req, res, next) => {
+  /* server.del('/' + collectionPlural + '/:account_id', (req, res, next) => {
     let accountId = ObjectId(req.params.account_id)
     Promise.all([
       new Promise((resolve, reject) => {

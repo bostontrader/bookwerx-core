@@ -1,35 +1,24 @@
-// import restify        from 'restify'
 const restify = require('restify')
 
-// const express = require('express')
 // const bodyParser = require('body-parser')
 // import restifyClients from 'restify-clients'
 // const restifyClients = require('restify-clients')
 
-// import restifyPlugins from 'restify-plugins'
 const restifyPlugins = require('restify-plugins')
 
-// import accountsRouter      from './accounts/routing'
+const accountsRouter = require('./accounts/routing')
 // import categoriesRouter    from './categories/routing'
 // import bookWerxConstants from './constants'
-
-// import currenciesRouter    from './currencies/routing'
 const currenciesRouter = require('./currencies/routing')
 
 // import distributionsRouter from './distributions/routing'
-// import keysRouter          from './keys/routing'
-// const keysRouter = require('./keys/routing')
 
 // import toolsRouter         from './tools/routing'
 // import transactionsRouter  from './transactions/routing'
 
-// Mongo is special.  Do it this way.
 const MongoClient = require('mongodb').MongoClient
 // const mongoConnectionURL = config.get('mongoConnectionURL')
 
-// const restifyCore = restify.createServer()
-// var app = express()
-// const expressCore = express()
 const restifyCore = restify.createServer()
 
 // expressCore.post('/currencies', bodyParser.json)
@@ -88,10 +77,6 @@ restifyCore.use(restifyPlugins.bodyParser())
 // headers: ['x-foo']                 // sets expose-headers
 // }))
 
-// restifyCore.on('uncaughtException', (req, res, route, err) => {
-//  console.log(colors.red('server.35', err))
-//  res.send({ success: false, error: err.message });
-// })
 
 // restifyCore.on('NotFound', function (request, response, cb) {console.log(34,'NotFound')});
 // restifyCore.on('MethodNotAllowed', function (request, response, cb) {35,'MethoNotAllowed'})
@@ -104,14 +89,13 @@ module.exports = {
 
       .then(mongoDb => {
         console.log('Connected to the mongo server: ', mongoConnectionURL)
-        // keysRouter(restifyCore, mongoDb)
-        //      accountsRouter(restifyCore, mongoDb)
-        //      categoriesRouter(restifyCore, mongoDb)
+        accountsRouter(restifyCore, mongoDb)
+        // categoriesRouter(restifyCore, mongoDb)
         currenciesRouter(restifyCore, mongoDb)
-        //      distributionsRouter(restifyCore, mongoDb)
-        //      toolsRouter(restifyCore, mongoDb)
-        //      transactionsRouter(restifyCore, mongoDb)
-        //     app.listen(4000, () => console.log('Express GraphQL Server Now Running On localhost:4000/graphql'))
+        // distributionsRouter(restifyCore, mongoDb)
+        // toolsRouter(restifyCore, mongoDb)
+        // transactionsRouter(restifyCore, mongoDb)
+
         return new Promise((resolve, reject) => {
           restifyCore.listen(port, () => {
             console.log('The bookwerx-core server is listening on port', port)

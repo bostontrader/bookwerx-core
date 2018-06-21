@@ -45,5 +45,5 @@
     "start": "BW_PORT=3003 BW_MONGO=mongodb://127.0.0.1:27017/bookwerx-core-development node startServer.js",
     "lint": "standard"
   },
-  "version": "1.0.6"
+  "version": "1.0.7"
 }

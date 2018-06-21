@@ -1,9 +1,9 @@
 const bookWerxConstants = require('../../constants')
 
-const {getMany, getOne, getOnee, post, patch} = require('../RESTOps')
+const {getMany, getOne, post, patch} = require('../RESTOps')
 
 // Perform a basic CRU test
-const genericCRU = async ({collName, httpClient, newDoc1, newDoc2, pn}) => {
+const genericCRU = async ({collName, collSingular, httpClient, newDoc1, newDoc2, pn}) => {
   let priorResults = {}
 
   // 1. Now read the documents collection and post new documents and demonstrate that we correctly have 0, 1, or 2 documents in the collection.
@@ -26,7 +26,7 @@ const genericCRU = async ({collName, httpClient, newDoc1, newDoc2, pn}) => {
   // 2. GET a document, using a good an id for an existing document, a well formed id that refers to a non-existant document, and a mal-formed id
   await getOne({collName, expectedError: undefined, fExpectSuccess: true, httpClient, id: priorResults.goodId[0], pn, priorResults})
 
-  await getOne({collName, expectedError: 'currency 666666666666666666666666 does not exist', fExpectSuccess: false, httpClient, id: '666666666666666666666666', pn, priorResults})
+  await getOne({collName, expectedError: collSingular + ' 666666666666666666666666 does not exist', fExpectSuccess: false, httpClient, id: '666666666666666666666666', pn, priorResults})
 
   await getOne({collName, expectedError: 'Argument passed in must be a single String of 12 bytes or a string of 24 hex characters', fExpectSuccess: false, httpClient, id: 'catfood', pn, priorResults})
 
