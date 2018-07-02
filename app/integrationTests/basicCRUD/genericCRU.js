@@ -23,14 +23,14 @@ const genericCRU = async ({collName, collSingular, httpClient, newDoc1, newDoc2,
   // Do we have two documents now?
   await getMany({collName, expectedCnt: 2, expectedError: undefined, fExpectSuccess: true, httpClient, pn, priorResults})
 
-  // 2. GET a document, using a good an id for an existing document, a well formed id that refers to a non-existant document, and a mal-formed id
+  // 2. GET a document, using a good an id for an existing document, a well formed id that refers to a non-existent document, and a mal-formed id
   await getOne({collName, expectedError: undefined, fExpectSuccess: true, httpClient, id: priorResults.goodId[0], pn, priorResults})
 
   await getOne({collName, expectedError: collSingular + ' 666666666666666666666666 does not exist', fExpectSuccess: false, httpClient, id: '666666666666666666666666', pn, priorResults})
 
   await getOne({collName, expectedError: 'Argument passed in must be a single String of 12 bytes or a string of 24 hex characters', fExpectSuccess: false, httpClient, id: 'catfood', pn, priorResults})
 
-  // 3. PATCH  a document, using a good an id for an existing document, a well formed id that refers to a non-existant document, and a mal-formed id
+  // 3. PATCH  a document, using a good id for an existing document, a well formed id that refers to a non-existent document, and a mal-formed id
   await patch({collName, document: newDoc2, expectedError: undefined, fExpectSuccess: true, httpClient, id: priorResults.goodId[0], pn, priorResults})
 
   await patch({collName, document: newDoc2, expectedError: bookWerxConstants.ATTEMPTED_IMPLICIT_CREATE, fExpectSuccess: false, httpClient, id: '666666666666666666666666', pn, priorResults})

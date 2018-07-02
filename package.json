@@ -9,14 +9,14 @@
   },
   "dependencies": {
     "mongodb": "2.2.31",
-    "restify": "7.2.0",
-    "restify-cors-middleware": "1.1.0",
+    "restify": "7.2.1",
+    "restify-cors-middleware": "1.1.1",
     "restify-plugins": "1.6.0"
   },
   "devDependencies": {
     "bookwerx-testdata": "git+https://git@github.com/bostontrader/bookwerx-testdata.git",
     "colors": "1.3.0",
-    "restify-clients": "2.0.2",
+    "restify-clients": "2.2.0",
     "standard": "11.0.1"
   },
   "description": "A double-entry bookkeeping engine that supports multiple currencies.",
@@ -45,5 +45,5 @@
     "start": "BW_PORT=3003 BW_MONGO=mongodb://127.0.0.1:27017/bookwerx-core-development node startServer.js",
     "lint": "standard"
   },
-  "version": "1.0.7"
+  "version": "1.0.8"
 }
