@@ -68,7 +68,7 @@ Watch the console and you'll see a message telling you what port the server is l
 
 ## Runtime Configuration
 
-Runtime configuration is provided via environment variables. There are no other defaults and if these variables are not correctly set, then the server will not start.  These parameters can be fed to node on the command line.  See package.json scripts.start for an example to start the server in "development" mode and scripts.test for an example to start the tests in "test" mode.
+You provide runtime configuration via environment variables. There are no other defaults and if these variables are not correctly set, then the server will not start.  These parameters can be fed to node on the command line.  See package.json scripts.start for an example to start the server in "development" mode and scripts.test for an example to start the tests in "test" mode.
 
 The following env variables are used by **bookwerx-core**:
 
@@ -78,22 +78,23 @@ The following env variables are used by **bookwerx-core**:
 
 In addition to the above, in order to get the testing to work, we need:
 
-* BW_TEST=true - Testing will not work unless this is set to true.  Don't fubar thy production data!
+* BW_TEST=true - Testing will not work unless this is set to true. Don't fubar thy production data!
 
 * BWCORE_DOMAIN - The domain portion of the url for the **bookwerx-core** server.  For example: 127.0.0.1.  Testing will assume 'http' and use the value of BW_PORT.
 
+
 # A Few Words About Testing
 
-This app has no code of its own that we might reasonably want to unit test.  It starts a server and listens for http requests.  When it gets one, the app queries a mongo db and sends back the results. Perhaps I'm just [abby normal](https://www.youtube.com/watch?v=yH97lImrr0Q&t=65) but I just don't see any value to be had in trying to unit test any of this.  Hence, I do not.
+This app has no code of its own that we might reasonably want to unit test.  It starts a server and listens for http requests.  When it gets one, the app queries a mongo db and sends back the results. Perhaps we are just [abby normal](https://www.youtube.com/watch?v=inqdiNVzQcc&t=37) but we just don't see any value to be had in trying to unit test any of this.  Hence, we do not.
 
-Using similar logic I'm also tempted to ditch integration testing.  But I can't bring myself to do that.  However, in order to make a decent test, I need to hand-craft a fairly elaborate set of example data and execute a tedious sequence of operations on them.  I make use of example data from **bookwerx-testdata** to do this.
+Using similar logic we are also tempted to ditch integration testing.  But we cannot bring ourselves to do that.  However, in order to make a decent test, we need to hand-craft a fairly elaborate set of example data and execute a tedious sequence of operations on them.  We make use of example data from **bookwerx-testdata** to do this.
 
-Finally, I don't care much about code coverage.  Obviously some of these paths get covered.  And I'm fairly certain that most of the code does indeed get covered.  If there are other bits of code that are neglected the consequences will eventually manifest themeselves and I can then rectify. Perhaps this divine insight will enable Wintermute to get that key that's been lost in the wardrobe all these years, but probably not.  In any event, I'm going to live dangerously and just take my chances. Until and unless I discover otherwise, agonizing over code coverage, in this context, is just another way to [fritter and waste the hours in an off-hand way](https://www.youtube.com/watch?v=JwYX52BP2Sk&t=140)
+Finally, we don't care much about code coverage.  Obviously some of these paths get covered.  And we are fairly certain that most of the code does indeed get covered.  If there are other bits of code that are neglected the consequences will eventually manifest themeselves and we can then rectify. Perhaps this divine insight will enable Wintermute to get that key that's been lost in the wardrobe all these years, but probably not.  In any event, we are going to live dangerously and just take our chances. Until and unless we discover otherwise, agonizing over code coverage, in this context, is just another way to [fritter and waste the hours in an off-hand way](https://www.youtube.com/watch?v=JwYX52BP2Sk&t=140)
 
 
 # Brainwipe
 
-In testing I need to be able to start with a fresh slate.  How shall I do that?
+In testing we need to [nuke it (the db) from orbit](https://www.youtube.com/watch?v=nnHmUk_J6xQ&t=27) and start over. How shall we do that?
 
 * Maybe directly build this capacity into the API.
 
@@ -101,22 +102,22 @@ In testing I need to be able to start with a fresh slate.  How shall I do that?
 
 * Maybe simply invoke dropDatabase on the mongodb driver.
 
-None of these choices are obviously good.  I think the first choice is obviously bad, and the second is a lot of work for not much benefit.  Choice the last, dropDatabase, is easy to implement and is a good enough solution for now.
+None of these choices are obviously good. We think the first choice is obviously bad, and the second is a lot of work for not much benefit. Choice the last, dropDatabase, is easy to implement and is a good enough solution for now.
 
 # Dependencies
 
 * mongodb - No party is complete without mongo.
 
-* restify - I need an HTTP server.
+* restify - We need an HTTP server.
 
-* restify-plugins - I need to be able to access the query parameters and response body.
+* restify-plugins - We need to be able to access the query parameters and response body.
 
 
 # devDependencies
 
 * bookwerx-testdata
 
-* colors - I want to be able to print pretty colors on the console
+* colors - We want to be able to print pretty colors on the console
 
 * restify-clients - The tester will need a json client to do its thing.
 
@@ -125,7 +126,7 @@ None of these choices are obviously good.  I think the first choice is obviously
 
 # On require vs import
 
-There exists a giant can of worms re: using the 'require' statement vs the 'import' statement.  The bottom line, IMHO, is that the 'import' statement, although shiny, new, and modern, just doesn't earn its keep.  Everybody else in the world already uses 'require' and that works well enough, especially in this particular context. At this time, the 'import' statement is not very well supported and requires too many contortions to use.  All this and for what benefit?  So we can load modules asynchonously? Homey don't play that.
+There exists a giant can of worms re: using the 'require' statement vs the 'import' statement.  The bottom line, IOHO, is that the 'import' statement, although shiny, new, and modern, just doesn't earn its keep.  Everybody else in the world already uses 'require' and that works well enough, especially in this particular context. At this time, the 'import' statement is not very well supported and requires too many contortions to use.  All this and for what benefit?  So we can load modules asynchonously? Homey don't play that.
 
 # Working with Multiple Currencies
 
@@ -141,7 +142,7 @@ But be careful with this.  Although simple transactions such as currency exchang
 
 # Validation
 
-Notice I say "you" can do this or that, not **bookwerx-core**. This is intentional and keeping with the principal that this core is a minimalist thing.  Although there is a core of necessary referential integrity constaints that **bookwerx-core** enforces, extra fancy features, such as validation belong elsewhere.  You may easily use this API to make non-sensensical entries into your records.  GIGO.
+Notice We say "you" can do this or that, not **bookwerx-core**. This is intentional and keeping with the principal that this core is a minimalist thing.  Although there is a core of necessary referential integrity constaints that **bookwerx-core** enforces, extra fancy features, such as validation belong elsewhere.  You may easily use this API to make non-sensensical entries into your records.  GIGO.
 
 # Random Junk...
 
@@ -161,7 +162,7 @@ appearing on a report in that order.
 3. "Liquid" accounts such as cash-in-mattress, bank deposits, and perhaps short-term notes, might be tagged so that
 they could all appear on a graph.
 
-I will spare you the hand-wringing, agonization, and derivation that led to our final solution, and cut to the chase.
+We will spare you the hand-wringing, agonization, and derivation that led to our final solution, and cut to the chase.
 The bottom line is that, considering how broad and diverse this problem is, attempting to build a robust system that can
  manage these groupings is far beyond the scope of this app.  So in keeping with the minimalist philosophy, **bookwerx-core**
  provides the following minimal solution. It:
@@ -282,15 +283,3 @@ Possible errors:
 5.  transaction_id does not reference an existing transaction
 6.  account_id does not reference an existing account
 7.  currency_id does not reference an existing currency
-
-Authentication:
-
-1. Using the key API generate a Key and a Secret pair.
-
-2. When calling to the private API send 'sig' as a header where 'sig' = HMAC-SHA512 encoding of the body, using the secret.
-
-3. The body should contain the key and the signature means that the sender has the secret.  This should still be sent via HTTPS.
-
-4. Every collection is filtered on the key.
-
-the the Key in the header and tthe he body of the message The query's POST data signed by your key's "secret" according to the HMAC-SHA512 method.
