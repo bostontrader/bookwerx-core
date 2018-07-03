@@ -10,25 +10,14 @@ const accountsRouter = require('./accounts/routing')
 // import categoriesRouter    from './categories/routing'
 // import bookWerxConstants from './constants'
 const currenciesRouter = require('./currencies/routing')
-
 // import distributionsRouter from './distributions/routing'
-
 // import toolsRouter         from './tools/routing'
-// import transactionsRouter  from './transactions/routing'
+const transactionsRouter = require('./transactions/routing')
 
 const MongoClient = require('mongodb').MongoClient
 // const mongoConnectionURL = config.get('mongoConnectionURL')
 
 const restifyCore = restify.createServer()
-
-// expressCore.post('/currencies', bodyParser.json)
-// expressCore.post(express.json())
-// Create a GraphQL endpoint
-/* expressCore.use('/graphql', expressGraphQL({
-  schema: schema,
-  rootValue: root,
-  graphiql: true
-})) */
 
 const corsMiddleware = require('restify-cors-middleware')
 const cors = corsMiddleware({
@@ -50,33 +39,11 @@ restifyCore.use(restifyPlugins.bodyParser())
 //  console.log('server.31', req.path(), req.query, req.body)
 //  if (req.path() === '/keys') return next()
 
-// This request must be authorized
-//  if('apiKey' in req.query) {
-//    if('requestSig' in req.query) {
-//      if(req.query.requestSig === 'goodsecret') { // if the signature is correct
-// The signature is good so continue
-//        next()
-//      } else {
-//        res.json({error: bookWerxConstants.API_SIG_NOT_CORRECT})
-//        next(false)
-//      }
-//    } else {
-//      res.json({error: bookWerxConstants.API_SIG_NOT_CORRECT})
-//      next(false)
-//    }
-//    return next()
-//  } else {
-//    res.json({error: bookWerxConstants.MISSING_API_KEY})
-//    next(false)
-//  }
-// })
-
 // restifyCore.use(restify.CORS({
 // origins: ['https://foo.com', 'http://bar.com', 'http://baz.com:8081'],   // defaults to ['*']
 // credentials: true,                 // defaults to false
 // headers: ['x-foo']                 // sets expose-headers
 // }))
-
 
 // restifyCore.on('NotFound', function (request, response, cb) {console.log(34,'NotFound')});
 // restifyCore.on('MethodNotAllowed', function (request, response, cb) {35,'MethoNotAllowed'})
@@ -94,7 +61,7 @@ module.exports = {
         currenciesRouter(restifyCore, mongoDb)
         // distributionsRouter(restifyCore, mongoDb)
         // toolsRouter(restifyCore, mongoDb)
-        // transactionsRouter(restifyCore, mongoDb)
+        transactionsRouter(restifyCore, mongoDb)
 
         return new Promise((resolve, reject) => {
           restifyCore.listen(port, () => {

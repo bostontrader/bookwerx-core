@@ -1,4 +1,4 @@
-const colors = require('colors/safe')
+// const colors = require('colors/safe')
 
 // GET /{collectionPlural} (the entire collection)
 const getMany = async ({collName, expectedCnt, expectedError, fExpectSuccess, httpClient, pn, priorResults}) => {
@@ -29,7 +29,7 @@ const getMany = async ({collName, expectedCnt, expectedError, fExpectSuccess, ht
       resolve(priorResults)
     })
   })
-    // .catch(error => { console.error(colors.red(32 + ' ' + error)) })
+  // .catch(error => { console.error(colors.red(32 + ' ' + error)) })
 }
 
 // GET /{collectionPlural}/:id (a single document by id)
@@ -51,7 +51,7 @@ const getOne = ({collName, expectedError, fExpectSuccess, httpClient, id, pn, pr
       resolve(priorResults)
     })
   })
-    // .catch(error => { console.error(colors.red(53 + ' ' + error)) })
+  // .catch(error => { console.error(colors.red(53 + ' ' + error)) })
 }
 
 // PATCH /{collectionPlural}/:id
@@ -76,7 +76,7 @@ const patch = ({collName, document, expectedError, fExpectSuccess, httpClient, i
       }
     })
   })
-    // .catch(error => {console.error(colors.red(80 + ' ' + error))})
+  // .catch(error => {console.error(colors.red(80 + ' ' + error))})
 }
 
 // POST /{collectionPlural}
@@ -98,7 +98,7 @@ const post = ({collName, document, expectedError, fExpectSuccess, httpClient, pn
       resolve(priorResults)
     })
   })
-    // .catch(error => { console.error(colors.red(101 + ' ' + error)) })
+  // .catch(error => { console.error(colors.red(101 + ' ' + error)) })
 }
 
 // PUT /{collectionPlural}/:id
@@ -148,7 +148,7 @@ const del = ({collName, expectedError, fExpectSuccess, httpClient, id, pn, prior
       resolve(priorResults)
     })
   })
-    // .catch(error => { console.error(colors.red(151 + ' ' + error)) })
+  // .catch(error => { console.error(colors.red(151 + ' ' + error)) })
 }
 
 module.exports.getMany = getMany

@@ -41,14 +41,14 @@ module.exports = {
 
         const p = mongoDb.collection(collectionPlural).findOne({'_id': oid})
           .then(result => {
-            res.json((result === null) ? {errors: [{key:"1", value: collectionSingular + ' ' + req.params.id + ' does not exist'}]} : {data: result})
+            res.json((result === null) ? {errors: [{key: '1', value: collectionSingular + ' ' + req.params.id + ' does not exist'}]} : {data: result})
           })
         p.catch(error => {
-          res.json({errors: [{key:"1", value: error}]})
+          res.json({errors: [{key: '1', value: error}]})
         })
         next()
       } catch (error) {
-        res.json({errors: [{key:"1", value: error.message}]})
+        res.json({errors: [{key: '1', value: error.message}]})
         next()
       }
     })
