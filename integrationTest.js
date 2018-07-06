@@ -33,8 +33,8 @@ if (!process.env.BW_MONGO) {
   process.exit(1)
 }
 
-if (!process.env.BWCORE_DOMAIN) {
-  console.log(bookwerxConstants.NO_BWCORE_DOMAIN_DEFINED)
+if (!process.env.BWCORE_HOSTNAME) {
+  console.log(bookwerxConstants.NO_BWCORE_HOSTNAME_DEFINED)
   process.exit(1)
 }
 
@@ -61,7 +61,7 @@ async function run () {
   await mongoDb.dropDatabase()
 
   // 1.3 We will need a client to make subsequent requests to the bookwerx-core server.
-  const jsonClient = restifyClients.createJsonClient({url: 'http://' + process.env.BWCORE_DOMAIN + ':' + process.env.BW_PORT})
+  const jsonClient = restifyClients.createJsonClient({url: 'http://' + process.env.BWCORE_HOSTNAME + ':' + process.env.BW_PORT})
 
   // 2. genericCRU
   await genericCRU({collName: 'accounts', collSingular: 'account', httpClient: jsonClient, newDoc1: testData.accountBank, newDoc2: testData.accountCash, pn: 20})

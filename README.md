@@ -54,7 +54,7 @@ npm install
 Next, study the section on **runtime configuration** so that you are properly in control of your configurations.  Using this [new learning](https://www.youtube.com/watch?v=9D5_V72jMtM&t=1323), tweak the following example as necessary:
 
 ```bash
-BW_PORT=3003 BW_MONGO=mongodb://127.0.0.1:27017/bookwerx-core-test BWCORE_DOMAIN=127.0.0.1 BW_TEST=true node integrationTest.js
+BW_PORT=3003 BW_MONGO=mongodb://127.0.0.1:27017/bookwerx-core-test BWCORE_HOSTNAME=127.0.0.1 BW_TEST=true node integrationTest.js
 ```
 
 Next, tweak package.json scripts.start, if necessary, to point to an active mongodb server that you can use for development purposes. And then:
@@ -62,9 +62,6 @@ Next, tweak package.json scripts.start, if necessary, to point to an active mong
 ```bash
 npm start
 ```
-
-Watch the console and you'll see a message telling you what port the server is listening to.
-
 
 ## Runtime Configuration
 
@@ -80,7 +77,7 @@ In addition to the above, in order to get the testing to work, we need:
 
 * BW_TEST=true - Testing will not work unless this is set to true. Don't fubar thy production data!
 
-* BWCORE_DOMAIN - The domain portion of the url for the **bookwerx-core** server.  For example: 127.0.0.1.  Testing will assume 'http' and use the value of BW_PORT.
+* BWCORE_HOSTNAME - The domain portion of the url for the **bookwerx-core** server.  For example: 127.0.0.1.  Testing will assume 'http' and use the value of BW_PORT.
 
 
 # A Few Words About Testing
