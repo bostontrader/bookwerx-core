@@ -43,7 +43,8 @@
   },
   "scripts": {
     "start": "BW_PORT=3003 BW_MONGO=mongodb://127.0.0.1:27017/bookwerx-core-development node startServer.js",
+    "test": "BW_PORT=3003 BW_MONGO=mongodb://127.0.0.1:27017/bookwerx-core-test BW_TEST=true, BWCORE_DOMAIN=127.0.0.1 node integrationTest.js",
     "lint": "standard"
   },
-  "version": "1.0.10"
+  "version": "1.0.11"
 }
