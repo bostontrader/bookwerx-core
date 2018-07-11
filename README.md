@@ -75,7 +75,7 @@ The following env variables are used by **bookwerx-core**:
 
 In addition to the above, in order to get the testing to work, we need:
 
-* BW_TEST=true - Testing will not work unless this is set to true. Don't fubar thy production data!
+* BW_TEST=true - Testing will not work unless this is set to true. Just a minor speed bump and a determined saboteur can probably evade this.  Be careful. Don't fubar thy production data!
 
 * BWCORE_HOSTNAME - The domain portion of the url for the **bookwerx-core** server.  For example: 127.0.0.1.  Testing will assume 'http' and use the value of BW_PORT.
 
