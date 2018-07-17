@@ -65,12 +65,12 @@ async function run () {
 
   // 2. genericCRU
   await genericCRU({collName: 'accounts', collSingular: 'account', httpClient: jsonClient, newDoc1: testData.accountBank, newDoc2: testData.accountCash, pn: 20})
-  // .then(result => {return genericCRU({collName:'categories', jsonClient,  keys, newDoc1: testData.categoryAsset, newDoc2: testData.categoryExpense, pn:21})})
-  // await genericCRU({collName: 'categories', jsonClient,  keys, newDoc1: testData.categoryAsset, newDoc2: testData.categoryExpense, pn:21})
+  await genericCRU({collName: 'categories', collSingular: 'category', httpClient: jsonClient, newDoc1: testData.categoryAsset, newDoc2: testData.categoryExpense, pn: 21})
 
   await genericCRU({collName: 'currencies', collSingular: 'currency', httpClient: jsonClient, newDoc1: testData.currencyCNY, newDoc2: testData.currencyRUB, pn: 22})
 
-  await genericCRU({collName: 'transactions', collSingular: 'transaction', httpClient: jsonClient, newDoc1: testData.transaction1, newDoc2: testData.transaction2, pn: 22})
+  await genericCRU({collName: 'transactions', collSingular: 'transaction', httpClient: jsonClient, newDoc1: testData.transaction1, newDoc2: testData.transaction2, pn: 23})
+
   // 3. CustomCRU testing specialized for particular collections.
   // .then(() => {return accountsCategories({jsonClient,  keys, pn:30})})
 

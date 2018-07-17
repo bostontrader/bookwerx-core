@@ -79,6 +79,68 @@ In addition to the above, in order to get the testing to work, we need:
 
 * BWCORE_HOSTNAME - The domain portion of the url for the **bookwerx-core** server.  For example: 127.0.0.1.  Testing will assume 'http' and use the value of BW_PORT.
 
+# Working with Multiple Currencies
+
+**bookwerx-core** enables the user to maintain a list of currencies relevant to its app. Fiat, precious metals, and cryptocoins are three obvious examples of currencies that this app could easily handle.
+
+The "distributions" of a transaction (the debits and credits part) are all tagged with a currency and a single transaction can include any number of different currencies.
+
+Any transaction which includes only a single currency should satisfy the usual sum-of-debits = sum-of-credits constraint.
+
+Any transaction which includes two currencies should still satisfy that constraint. [But...](https://www.youtube.com/watch?v=FaVFuX8z26c) We can modify said constraint a wee bit to make it fit. As you can readily imagine, the actual numbers involved won't add up the way we ordinarily expect. Instead, you can compute an implied exchange rate R such that sum-of-debits * R = sum-of-credits.
+
+But be careful with this.  Although simple transactions such as currency exchanges can easily be recorded by debiting one currency and crediting the other, you could easily make nonsensical transactions if you're not paying attention when you do this.
+
+# Validation
+
+Notice We say "you" can do this or that, not **bookwerx-core**. This is intentional and keeping with the principal that this core is a minimalist thing.  Although there is a core of necessary referential integrity constraints that **bookwerx-core** enforces, extra fancy features, such as validation belong elsewhere.  You may easily use this API to make non-sensical entries into your records.  GIGO.
+
+
+# On Categories and Ordering
+
+There are several places where we might want to "categorize" the various accounts. Not only do we want to categorize them, but we also want to deal with them in a particular order.
+
+Some examples:
+
+1. Each account might be one of [Assets, Liabilities, Equity, Revenue, Expenses] and these broad categories have a customary position in financial statements.
+
+2. Asset categorization might be further subdivided into Current, Equipment, and Building with them
+appearing on a report in that order.
+
+3. "Liquid" accounts such as cash-in-mattress, bank deposits, and perhaps short-term notes, might be tagged so that
+they could all appear on a graph.
+
+We will spare you the hand-wringing, agonization, and derivation that led to our final solution, and cut to the chase.
+The bottom line is that, considering how broad and diverse this problem is, attempting to build a robust system that can
+ manage these groupings is far beyond the scope of this app.  So in keeping with the minimalist philosophy, **bookwerx-core**
+ provides the following minimal solution. It:
+
+1. Maintains a collection of categories.
+
+2. Maintains a collection of "accounts_categories".  Each account_category points to exactly one account and one
+category.  In this way, an account can be tagged with zero or more categories, and a category may
+apply to zero or more accounts.
+
+This is the essential minimal foundation required.  In light of this let's revisit the prior
+ examples and see how they could be implemented.
+
+1. Create categories for "Assets","Liabilities","Equity","Revenue", and "Expenses."  Every account gets tagged with exactly one of these.  The Balance Sheet and Income Statements verify this and display their information in a hardwired customary order.  The report decides how to order individual accounts, perhaps alphabetically by their titles.
+
+2. Create categories for "Current" and "Long-term" (for example.)  Assets deemed "current" or "long-term" get tagged thus.  The financial reports will display current assets before long-term because it's hardwired to look for these categories and display them in said order.  We can use the same same tags for liabilities. The financial reports should include an implicit category for "uncategorized" to include accounts that are not otherwise categorized.
+
+3. Create categories for "cash", "bank", and "short-term note".  Tag certain accounts as one or the other of these.  A graph can operate only on these specific accounts and separately display each category.  No individual accounts need apply.
+
+In each case it is the responsibility of the report or graph to understand the available categories, present
+them in the proper order, and to ensure that the categorization is plausible. For example, nothing should be tagged as an
+asset _and_ a liability.
+
+
+# Data Analysis
+
+As mentioned earlier, this package merely records the basic bookkeeping objects.
+More sophisticated analysis belongs in other packages such as
+[bookwerx-reporting](https://github.com/bostontrader/bookwerx-reporting).  "What actually happened" (the transactions) belong here.
+But "what does any of this mean" belongs elsewhere.
 
 # A Few Words About Testing
 
@@ -125,71 +187,10 @@ None of these choices are obviously good. We think the first choice is obviously
 
 There exists a giant can of worms re: using the 'require' statement vs the 'import' statement.  The bottom line, IOHO, is that the 'import' statement, although shiny, new, and modern, just doesn't earn its keep.  Everybody else in the world already uses 'require' and that works well enough, especially in this particular context. At this time, the 'import' statement is not very well supported and requires too many contortions to use.  All this and for what benefit?  So we can load modules asynchonously? Homey don't play that.
 
-# Working with Multiple Currencies
-
-**bookwerx-core** enables the user to maintain a list of currencies relevant to its app. Fiat, precious metals, and cryptocoins are three obvious examples of currencies that this app could easily handle.
-
-The "distributions" of a transaction (the debits and credits part) are all tagged with a currency and a single transaction can include any number of different currencies.
-
-Any transaction which includes only a single currency should satisfy the usual sum-of-debits = sum-of-credits constraint.
-
-Any transaction which includes two currencies should still satisfy that constraint. [But...](https://www.youtube.com/watch?v=FaVFuX8z26c) We can modify said constraint a wee bit to make it fit. As you can readily imagine, the actual numbers involved won't add up the way we ordinarily expect. Instead, you can compute an implied exchange rate R such that sum-of-debits * R = sum-of-credits.
-
-But be careful with this.  Although simple transactions such as currency exchanges can easily be recorded by debiting one currency and crediting the other, you could easily make nonsensical transactions if you're not paying attention when you do this.
-
-# Validation
-
-Notice We say "you" can do this or that, not **bookwerx-core**. This is intentional and keeping with the principal that this core is a minimalist thing.  Although there is a core of necessary referential integrity constaints that **bookwerx-core** enforces, extra fancy features, such as validation belong elsewhere.  You may easily use this API to make non-sensensical entries into your records.  GIGO.
 
 # Random Junk...
 
 Stuff after here is not reliable.  Beware.
-
-# On Categories and Ordering
-
-There are several places where we might want to "categorize" the various accounts. Not only do we want to categorize them, but we also want to deal with them in a particular order.
-
-Some examples:
-
-1. Each account might be one of [Assets, Liabilities, Equity, Revenue, Expenses] and these broad categories have a customary position in financial statements.
-
-2. Asset categorization might be further subdivided into Current, Equipment, and Building with them
-appearing on a report in that order.
-
-3. "Liquid" accounts such as cash-in-mattress, bank deposits, and perhaps short-term notes, might be tagged so that
-they could all appear on a graph.
-
-We will spare you the hand-wringing, agonization, and derivation that led to our final solution, and cut to the chase.
-The bottom line is that, considering how broad and diverse this problem is, attempting to build a robust system that can
- manage these groupings is far beyond the scope of this app.  So in keeping with the minimalist philosophy, **bookwerx-core**
- provides the following minimal solution. It:
-
-1. Maintains a collection of categories.
-
-2. Maintains a collection of "accounts_categories".  Each account_category points to exactly one account and one
-category.  In this way, an account can be tagged with zero or more categories, and a category may
-apply to zero or more accounts.
-
-This is the essential minimal foundation required.  In light of this let's revisit the prior
- examples and see how they could be implemented.
-
-1. Create categories for "Assets","Liabilities","Equity","Revenue", and "Expenses."  Every account gets tagged with exactly one of these.  The Balance Sheet and Income Statements verify this and display their information in a hardwired customary order.  The report decides how to order individual accounts, perhaps alphabetically by their titles.
-
-2. Create categories for "Current" and "Long-term" (for example.)  Assets deemed "current" or "long-term" get tagged thus.  The financial reports will display current assets before long-term because it's hardwired to look for these categories and display them in said order.  We can use the same same tags for liabilities. The financial reports should include an implicit category for "uncategorized" to include accounts that are not otherwise categorized.
-
-3. Create categories for "cash", "bank", and "short-term note".  Tag certain accounts as one or the other of these.  A graph can operate only on these specific accounts and seperately display each category.  No individual accounts need apply.
-
-In each case it is the reponsibility of the report or graph to understand the available categories, present
-them in the proper order, and to ensure that the categorization is plausible. For example, nothing should be tagged as an
-asset _and_ a liability.
-
-# Data Analysis
-
-As mentioned earlier, this package merely records the basic bookkeeping objects.
-More sophisticated analysis belongs in other packages such as
-[bookwerx-reporting](https://github.com/bostontrader/bookwerx-reporting).  "What actually happened" (the transactions) belong here.
-But "what does any of this mean" belongs elsewhere.
-
 
 # API
 

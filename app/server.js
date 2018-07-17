@@ -1,21 +1,13 @@
+const MongoClient = require('mongodb').MongoClient
 const restify = require('restify')
-
-// const bodyParser = require('body-parser')
-// import restifyClients from 'restify-clients'
-// const restifyClients = require('restify-clients')
-
 const restifyPlugins = require('restify-plugins')
 
 const accountsRouter = require('./accounts/routing')
-// import categoriesRouter    from './categories/routing'
-// import bookWerxConstants from './constants'
+const categoriesRouter = require('./categories/routing')
 const currenciesRouter = require('./currencies/routing')
 // import distributionsRouter from './distributions/routing'
 // import toolsRouter         from './tools/routing'
 const transactionsRouter = require('./transactions/routing')
-
-const MongoClient = require('mongodb').MongoClient
-// const mongoConnectionURL = config.get('mongoConnectionURL')
 
 const restifyCore = restify.createServer()
 
@@ -57,7 +49,7 @@ module.exports = {
       .then(mongoDb => {
         console.log('Connected to the mongo server: ', mongoConnectionURL)
         accountsRouter(restifyCore, mongoDb)
-        // categoriesRouter(restifyCore, mongoDb)
+        categoriesRouter(restifyCore, mongoDb)
         currenciesRouter(restifyCore, mongoDb)
         // distributionsRouter(restifyCore, mongoDb)
         // toolsRouter(restifyCore, mongoDb)

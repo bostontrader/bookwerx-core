@@ -16,7 +16,7 @@
   "devDependencies": {
     "bookwerx-testdata": "git+https://git@github.com/bostontrader/bookwerx-testdata.git",
     "colors": "1.3.0",
-    "restify-clients": "2.2.0",
+    "restify-clients": "2.4.0",
     "standard": "11.0.1"
   },
   "description": "A double-entry bookkeeping engine that supports multiple currencies.",
@@ -46,5 +46,5 @@
     "test": "BW_PORT=3003 BW_MONGO=mongodb://127.0.0.1:27017/bookwerx-core-test BW_TEST=true, BWCORE_HOSTNAME=127.0.0.1 node integrationTest.js",
     "lint": "standard"
   },
-  "version": "1.0.13"
+  "version": "1.0.14"
 }
