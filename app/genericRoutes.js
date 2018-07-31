@@ -57,10 +57,9 @@ module.exports = {
   // post will enable the creation of new documents but will not update or replace existing documents.  Custom _id is prohibited for new documents.
   post: function (server, mongoDb, collectionPlural) {
     server.post('/' + collectionPlural, (req, res, next) => {
-      // req.body.apiKey = req.query.apiKey
       mongoDb.collection(collectionPlural).insertOne(req.body)
         .then(result => {
-          res.json(result)
+          res.json(result.result)
           next()
         }).catch(error => {
           res.json({error: error})

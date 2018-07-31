@@ -51,10 +51,10 @@ cd bookwerx-core
 npm install
 ```
 
-Next, study the section on **runtime configuration** so that you are properly in control of your configurations.  Using this [new learning](https://www.youtube.com/watch?v=9D5_V72jMtM&t=1323), tweak the following example as necessary:
+Next, study the section on **runtime configuration** so that you are properly in control of your configurations.  Using this [new learning](https://www.youtube.com/watch?v=9D5_V72jMtM&t=1323), tweak package.json scripts.test, if necessary, to point to an active mongodb server that you can use for testing.  And then:
 
 ```bash
-BW_PORT=3003 BW_MONGO=mongodb://127.0.0.1:27017/bookwerx-core-test BWCORE_HOSTNAME=127.0.0.1 BW_TEST=true node integrationTest.js
+npm test
 ```
 
 Next, tweak package.json scripts.start, if necessary, to point to an active mongodb server that you can use for development purposes. And then:
@@ -65,7 +65,7 @@ npm start
 
 ## Runtime Configuration
 
-You provide runtime configuration via environment variables. There are no other defaults and if these variables are not correctly set, then the server will not start.  These parameters can be fed to node on the command line.  See package.json scripts.start for an example to start the server in "development" mode and scripts.test for an example to start the tests in "test" mode.
+You provide runtime configuration via environment variables. There are no other defaults and if these variables are not correctly set, then the server will not start.  These parameters can be fed to node on the command line.
 
 The following env variables are used by **bookwerx-core**:
 
@@ -187,6 +187,14 @@ None of these choices are obviously good. We think the first choice is obviously
 
 There exists a giant can of worms re: using the 'require' statement vs the 'import' statement.  The bottom line, IOHO, is that the 'import' statement, although shiny, new, and modern, just doesn't earn its keep.  Everybody else in the world already uses 'require' and that works well enough, especially in this particular context. At this time, the 'import' statement is not very well supported and requires too many contortions to use.  All this and for what benefit?  So we can load modules asynchonously? Homey don't play that.
 
+
+# On CORS vs Proxy
+
+When developing other software that interfaces to **bookwerx-core** you will probably trip over the necessity of doing Cross-Domain muckery.  For example, a UI served from one origin may want to submit requests directly to **bookwerx-core**.  This is a big no-can-do because of Cross-Domain prohibitions in browsers.  Two basic methods to deal with this are to figure out CORS or use a proxy.
+
+In order to use CORS, **bookwerx-core** must specifically be configured to cooperate.  In a past life we attempted to do exactly that.  Unfortunately, CORS appears to be a bizarre joke crafted by dis-gruntled engineers on their way out the door.  The way it's supposed to work is complicated enough as it is, but combine that with erratic implementation on the part of the various browers, useless error messages, and sparse tools of debuggery, and you might agree that the pursuit of CORS is a doomed mission.
+
+Instead, you will likely find that proxying requests is a more tractable thing to do.
 
 # Random Junk...
 

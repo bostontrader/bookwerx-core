@@ -44,7 +44,7 @@ const server = require('./app/server')
 const genericCRU = require('./app/integrationTests/basicCRUD/genericCRU')
 const genericDel = require('./app/integrationTests/basicCRUD/genericDel')
 
-// We don't want to run this test on any db that's not explicitly marked for testing lest we cause serious dain bramage.
+// We don't want to run this test on any db unless we explicity request testing lest we cause serious dain bramage.
 if (!process.env.BW_TEST) {
   console.log(bookwerxConstants.NOT_CONFIGURED_AS_TEST)
   process.exit(1)
