@@ -1,0 +1,13 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.13.5
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:debug:20170905':
+    - restify > spdy > debug:
+        patched: '2019-06-05T02:15:23.280Z'
+    - restify > spdy > spdy-transport > debug:
+        patched: '2019-06-05T02:15:23.280Z'
+  'npm:moment:20170905':
+    - restify > bunyan > moment:
+        patched: '2019-06-05T02:15:23.280Z'

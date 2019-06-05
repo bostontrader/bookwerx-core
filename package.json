@@ -11,8 +11,9 @@
     "bluebird": "3.4.3",
     "bookwerx-testdata": "git+https://github.com/bostontrader/bookwerx-testdata.git",
     "config": "1.21.0",
-    "mongodb": "2.2.4",
-    "restify": "4.1.1"
+    "mongodb": "2.2.13",
+    "restify": "5.0.1",
+    "snyk": "^1.171.1"
   },
   "devDependencies": {
     "standard": "7.1.2"
@@ -36,7 +37,10 @@
   "scripts": {
     "test": "node ./app/server_test.js",
     "start": "node ./app/server.js",
-    "lint": "standard"
+    "lint": "standard",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
-  "version": "0.8.0"
+  "version": "0.8.0",
+  "snyk": true
 }
