@@ -1,6 +1,0 @@
-{
-  "configName": "production",
-  //"mongoConnectionURL": "mongodb://localhost:27017/bookwerx-core-production",
-  "mongoConnectionURL": "mongodb://127.0.0.1:27017/bookwerx-core-production",
-  "port": 3003
-}

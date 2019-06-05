@@ -1,59 +1,61 @@
-let ObjectId = require('mongodb').ObjectId
-let collectionSingular = 'account'
-let collectionPlural = 'accounts'
+const genericRoutes = require('../genericRoutes')
 
-exports.defineRoutes = function (server, mongoDb) {
-  // genericRoutes.get(server, mongoDb, collectionPlural)
+// let ObjectId = require('mongodb').ObjectId
+const collectionSingular = 'account'
+const collectionPlural = 'accounts'
+
+module.exports = (server, mongoDb) => {
+  genericRoutes.get(server, mongoDb, collectionPlural)
   // This differs from genericRoutes in that it must retrieve related account_category records.
-  server.get('/' + collectionPlural, (req, res, next) => {
-    mongoDb.collection('accounts')
-      .aggregate([
-        {$match: {}},
-        {
-          $lookup: {
-            from: 'accounts_categories',
-            localField: '_id',
-            foreignField: 'account_id',
-            as: 'accounts_categories'
-          }
-        },
+  // server.get('/' + collectionPlural, (req, res, next) => {
+  // mongoDb.collection('accounts')
+  // .aggregate([
+  // {$match: {}},
+  //        {
+  //          $lookup: {
+  //            from: 'accounts_categories',
+  //            localField: '_id',
+  //            foreignField: 'account_id',
+  //            as: 'accounts_categories'
+  //          }
+  //        },
 
-        // This will de-normalize and result in one account document for every category present,
-        // including null categories.
-        {$unwind: {path: '$categories', preserveNullAndEmptyArrays: true}},
+  // This will de-normalize and result in one account document for every category present,
+  // including null categories.
+  //        {$unwind: {path: '$categories', preserveNullAndEmptyArrays: true}},
 
-        // Now "join" the related category document.  The from and as fields will conspire
-        // to replace the original array of ObjectId in from with the related category documents.
-        {
-          $lookup: {
-            from: 'categories',
-            localField: 'categories',
-            foreignField: '_id',
-            as: 'categories'
-          }
-        },
+  // Now "join" the related category document.  The from and as fields will conspire
+  // to replace the original array of ObjectId in from with the related category documents.
+  //        {
+  //          $lookup: {
+  //            from: 'categories',
+  //          localField: 'categories',
+  //          foreignField: '_id',
+  //          as: 'categories'
+  //        }
+  //      },
 
-        // This will re-normalize so that we only have one document per account,
-        // with an array of related category documents.
-        {$group: {_id: {_id: '$_id', title: '$title'}, categories: {$addToSet: '$categories'}}},
-        {$unwind: {path: '$_id', preserveNullAndEmptyArrays: true}},
+  // This will re-normalize so that we only have one document per account,
+  // with an array of related category documents.
+  // {$group: {_id: {_id: '$_id', title: '$title'}, categories: {$addToSet: '$categories'}}},
+  //  {$unwind: {path: '$_id', preserveNullAndEmptyArrays: true}},
 
-        // At this point _id is made of _id and title.  Unwind this.  Also, categories is an array of
-        // arrays.  This is tedious to work with later. How can we unwind this?
-        {$project: {_id: 0, _id: '$_id._id', title: '$_id.title', categories: 1}},
-        {$sort: {title: 1}}
-      ]).toArray()
-      .then(result => {
-        res.json(result)
-      })
-      .catch(error => {
-        res.json({error: error})
-      })
-  })
+  // At this point _id is made of _id and title.  Unwind this.  Also, categories is an array of
+  // arrays.  This is tedious to work with later. How can we unwind this?
+  //  {$project: {_id: 0, _id: '$_id._id', title: '$_id.title', categories: 1}},
+  //  {$sort: {title: 1}}
+  // ]).toArray()
+  //  .then(result => {
+  //  res.json(result)
+  // })
+  //  .catch(error => {
+  //  res.json({error: error})
+  // })
+  // })
 
-  // genericRoutes.getOne(server, mongoDb, collectionSingular, collectionPlural)
+  genericRoutes.getOne(server, mongoDb, collectionSingular, collectionPlural)
   // This differs from genericRoutes in that it must retrieve related account_category records.
-  server.get('/' + collectionPlural + '/:id', (req, res, next) => {
+  /* server.get('/' + collectionPlural + '/:id', (req, res, next) => {
     // This section is duplicated elsewhere.  Factor this out.
     mongoDb.collection('accounts')
       .aggregate([
@@ -114,12 +116,14 @@ exports.defineRoutes = function (server, mongoDb) {
     .catch(error => {
       res.json({error: error})
     })
-  })
+  }) */
 
-  // genericRoutes.post(server, mongoDb, collectionPlural)
+  genericRoutes.patch(server, mongoDb, collectionSingular, collectionPlural)
+  genericRoutes.post(server, mongoDb, collectionPlural)
+
   // This differs from genericRoutes in that it must update accounts_categories
   // WARNING! This should all be in a transaction!
-  server.post('/' + collectionPlural, (req, res, next) => {
+  /* server.post('/' + collectionPlural, (req, res, next) => {
     // convert req.body.categories from strings to ObjectId
     if (req.body.categories) {
       for (let i = 0; i < req.body.categories.length; i++) {
@@ -197,13 +201,13 @@ exports.defineRoutes = function (server, mongoDb) {
       .catch(error => {
         res.json({error: error})
       })
-  })
+  }) */
 
-  // genericRoutes.delete(server, mongoDb, collectionSingular, collectionPlural)
+  genericRoutes.delete(server, mongoDb, collectionSingular, collectionPlural)
   // This differs from genericRoutes in that it must not delete if other
   // foreign keys refer to it.  Presently, only distributions and accounts_categories.
   // Note: DELETE does not have a body, so find the account_id in req.params
-  server.del('/' + collectionPlural + '/:account_id', (req, res, next) => {
+  /* server.del('/' + collectionPlural + '/:account_id', (req, res, next) => {
     let accountId = ObjectId(req.params.account_id)
     Promise.all([
       new Promise((resolve, reject) => {
@@ -239,7 +243,7 @@ exports.defineRoutes = function (server, mongoDb) {
     })
   })
 
-  /*
+/*
    The account dashboard requires a list of all distributions for a particular account,
    listed in transaction_datetime order, as well as other various joined fields such as a currency symbol.
    In addition, we also want info from the account document itself as well as related categories.
@@ -276,90 +280,90 @@ exports.defineRoutes = function (server, mongoDb) {
 
    */
 
-  server.get('/accounts/dashboard/:account_id', (req, res, next) => {
-    let distributions
-    return mongoDb.collection('distributions')
-        .aggregate([
-          {$match: {account_id: ObjectId(req.params.account_id)}},
-          {
-            $lookup: {
-              from: 'transactions',
-              localField: 'transaction_id',
-              foreignField: '_id',
-              as: 'transaction_info'
-            }
-          },
-          //{
-            //$lookup: {
-              //from: 'currencies',
-              //localField: 'currency_id',
-              //foreignField: '_id',
-              //as: 'currency_info'
-            //}
-          //},
-          {$sort: {'currency_info.symbol': 1, 'transaction_info.datetime': 1}}
-        ]).toArray()
-        .then(result => {
-          distributions = result
-          // return mongoDb.collection('accounts').findOne({'_id': ObjectId(req.params.account_id)})
-          // Start DupA
-          return mongoDb.collection('accounts')
-              .aggregate([
-                {$match: {_id: ObjectId(req.params.account_id)}},
-                {
-                  $lookup: {
-                    from: 'accounts_categories',
-                    localField: '_id',
-                    foreignField: 'account_id',
-                    as: 'accounts_categories'
-                  }
-                }
-              ]).toArray()
-        })
+  // server.get('/accounts/dashboard/:account_id', (req, res, next) => {
+  //  let distributions
+  // return mongoDb.collection('distributions')
+  //    .aggregate([
+  //    {$match: {account_id: ObjectId(req.params.account_id)}},
+  //    {
+  //      $lookup: {
+  //        from: 'transactions',
+  //        localField: 'transaction_id',
+  //        foreignField: '_id',
+  //        as: 'transaction_info'
+  //      }
+  //    },
+  // {
+  // $lookup: {
+  // from: 'currencies',
+  // localField: 'currency_id',
+  // foreignField: '_id',
+  // as: 'currency_info'
+  // }
+  // },
+  //    {$sort: {'currency_info.symbol': 1, 'transaction_info.datetime': 1}}
+  //  ]).toArray()
+  //    .then(result => {
+  //    distributions = result
+  // return mongoDb.collection('accounts').findOne({'_id': ObjectId(req.params.account_id)})
+  // Start DupA
+  //    return mongoDb.collection('accounts')
+  //          .aggregate([
+  //          {$match: {_id: ObjectId(req.params.account_id)}},
+  //          {
+  //            $lookup: {
+  //              from: 'accounts_categories',
+  //              localField: '_id',
+  //              foreignField: 'account_id',
+  //              as: 'accounts_categories'
+  //            }
+  //          }
+  //        ]).toArray()
+  //  })
 
-      .then(priorResults => {
-        return new Promise((resolve, reject) => {
-          if (priorResults.length > 0) {
-            let account = priorResults[0]
-            priorResults = {account: account}
-            resolve(priorResults)
-          }
-          reject(collectionSingular + ' ' + req.params.account_id + ' does not exist')
-        })
-      })
+  //  .then(priorResults => {
+  //  return new Promise((resolve, reject) => {
+  //    if (priorResults.length > 0) {
+  //      let account = priorResults[0]
+  //      priorResults = {account: account}
+  //      resolve(priorResults)
+  //    }
+  //    reject(collectionSingular + ' ' + req.params.account_id + ' does not exist')
+  //  })
+  //  })
 
-      .then(priorResults => {
-        return new Promise((resolve, reject) => {
-          if (priorResults.account) {
-            let n = []
-            let categories = priorResults.account.categories
-            for (let idx in categories) {
-              let category = categories[idx]
-              n.push(ObjectId(category))
-            }
-            priorResults.account.categories = n
-            delete priorResults.account.accounts_categories
-          }
-          resolve(priorResults)
-        })
-      })
-        .then(priorResults => {
-          let n = priorResults.account
-          return new Promise((resolve, reject) => {
-            mongoDb.collection('categories').find({_id: {$in: n.categories}}).toArray().then(results => {
-              n.categories = results
-              resolve(n)
-            }).catch(error => {
-              reject({error: error})
-            })
-          })
-        })
-        // End DupA
+  //  .then(priorResults => {
+  //  return new Promise((resolve, reject) => {
+  //    if (priorResults.account) {
+  //      let n = []
+  //      let categories = priorResults.account.categories
+  //      for (let idx in categories) {
+  //        let category = categories[idx]
+  //        n.push(ObjectId(category))
+  //      }
+  //      priorResults.account.categories = n
+  //      delete priorResults.account.accounts_categories
+  //    }
+  //    resolve(priorResults)
+  //  })
+  //   })
+  //    .then(priorResults => {
+  //    let n = priorResults.account
+  //    return new Promise((resolve, reject) => {
+  //      mongoDb.collection('categories').find({_id: {$in: n.categories}}).toArray().then(results => {
+  //             n.categories = results
+  //        resolve(n)
+  //      }).catch(error => {
+  //        reject({error: error})
+  //      })
+  //    })
+  //  })
+  // End DupA
 
-        .then(result => {
-          res.json({'distributions': distributions, 'account': result})
-        }).catch(error => {
-          res.json({'error': error})
-        })
-  })
+  //    .then(result => {
+  //    res.json({'distributions': distributions, 'account': result})
+  //  }).catch(error => {
+  //    res.json({'error': error})
+  //  })
+  // })
 }
