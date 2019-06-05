@@ -1,7 +1,4 @@
-
-
-
-/*let DistributionsTest = function () {
+let DistributionsTest = function () {
   function DistributionsTest (client, testdata) {
     this.client = client
     this.testdata = testdata
@@ -22,7 +19,7 @@
     4. Finally, we have a good distribution that references accounts, currencies, and transactions.
     So now we can try to delete these items to test that referential integrity is preserved.
 
-   /
+   */
   DistributionsTest.prototype.testRunner = function (pn, testdata, priorResults) {
     // buildDist will build a suitable distribution for use in testing.
     // If invoked with no args, then return a valid distribution example.
@@ -233,4 +230,3 @@
 }
 
 module.exports = DistributionsTest()
-*/
