@@ -5,6 +5,8 @@
 [![Dependency Status](https://david-dm.org/bostontrader/bookwerx-core.svg)](https://david-dm.org/bostontrader/bookwerx-core)
 [![devDependency Status](https://david-dm.org/bostontrader/bookwerx-core/dev-status.svg)](https://david-dm.org/bostontrader/bookwerx-core#info=devDependencies)
 
+This repository is obsolete and no longer maintained.  It has been succeeded by [bookwerx-core-rust](https://github.com/bostontrader/bookwerx-core-rust)
+
 The purpose of **bookwerx-core** is to provide an API that supports multi-currency
  bookkeeping, using the double-entry bookkeeping model, slightly adapted to squeeze 
  in multiple currencies.  It uses [node](https://nodejs.org), [restify](http://restify.com/), and [mongodb](https://www.mongodb.com/).
