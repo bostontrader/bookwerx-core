@@ -11,7 +11,7 @@
     "bluebird": "3.4.3",
     "bookwerx-testdata": "git+https://github.com/bostontrader/bookwerx-testdata.git",
     "config": "1.21.0",
-    "mongodb": "2.2.4",
+    "mongodb": "3.1.13",
     "restify": "4.1.1"
   },
   "devDependencies": {
